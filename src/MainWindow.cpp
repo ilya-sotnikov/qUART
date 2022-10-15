@@ -129,7 +129,7 @@ void MainWindow::openData()
         QTextStream stream(&file);
         while (!stream.atEnd())
             dataList.append(stream.readLine().toDouble());
-        plot->addData(&dataList);
+        plot->addRawData(&dataList);
     }
 }
 

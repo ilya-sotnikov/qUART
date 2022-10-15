@@ -26,6 +26,13 @@ Plot::~Plot()
     delete dataList;
 }
 
+void Plot::addRawData(QList<qreal> *receivedData)
+{
+    dataList->append(*receivedData);
+    updatePlot();
+    receivedData->clear();
+}
+
 void Plot::updatePlot()
 {
     curve->setRawSamples(dataList->constData(), dataList->size());

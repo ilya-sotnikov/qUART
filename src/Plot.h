@@ -13,6 +13,7 @@ class Plot : public QwtPlot
 public:
     explicit Plot(QWidget* parent = nullptr);
     ~Plot();
+    void addRawData(QList<qreal>* receivedData);
     void updatePlot();
     void changeType();
     void clear();
@@ -25,6 +26,7 @@ private:
     QwtPlotPanner *plotPanner {nullptr};
     QwtPlotPicker *plotPicker {nullptr};
     QwtPlotMagnifier *plotMagnifier {nullptr};
+
 
 public slots:
     void addData(QList<qreal>* receivedData);
