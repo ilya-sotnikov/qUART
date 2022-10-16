@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget* parent) :
     ui->actionPortSettings->setEnabled(true);
 
     ui->statusBar->addPermanentWidget(chartTypeWidget);
-    chartTypeWidget->setText("Chart type: Spectre");
+    chartTypeWidget->setText("Chart type: Spectrum");
 
     connect(serialTransceiver, &SerialTransceiver::newDataAvailable, plot, &Plot::addData);
     connect(ui->actionConnect, &QAction::triggered, this, &MainWindow::serialConnect);
@@ -146,7 +146,7 @@ void MainWindow::statusBarUpdateChartType()
 {
     auto style {plot->getCurveStyle()};
     if (style == QwtPlotCurve::Sticks)
-        chartTypeWidget->setText("Chart type: Spectre");
+        chartTypeWidget->setText("Chart type: Spectrum");
     else if (style == QwtPlotCurve::Lines)
         chartTypeWidget->setText("Chart type: Plot");
 }
