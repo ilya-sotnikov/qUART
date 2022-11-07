@@ -83,7 +83,12 @@ set_target_properties(qUART PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-target_compile_options(qUART PRIVATE -Wall -Wextra -Wpedantic)
+
+if(MSVC)
+  target_compile_options(${PROJECT_NAME} PRIVATE /W4)
+else()
+  target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
+endif()
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(qUART)
