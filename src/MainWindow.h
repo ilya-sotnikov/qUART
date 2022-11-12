@@ -29,23 +29,23 @@ private:
     QString createFileDialog(QFileDialog::AcceptMode acceptMode, QString nameFilter,
                              QString defaultSuffix);
 
-    QAction *actionConnect;
-    QAction *actionDisconnect;
-    QAction *actionPortSettings;
-    QAction *actionClear;
-    QAction *actionSaveImage;
-    QAction *actionSaveData;
-    QAction *actionOpenData;
-    QAction *actionDataSettings;
-    QAction *actionChartType;
-    QAction *actionResetZoom;
-    QWidget *centralWidget;
-    QVBoxLayout *verticalLayout;
-    QMenuBar *menuBar;
-    QMenu *menuFile;
-    QMenu *menuSettings;
-    QStatusBar *statusBar;
-    QToolBar *toolBar;
+    QAction *actionConnect{ nullptr };
+    QAction *actionDisconnect{ nullptr };
+    QAction *actionPortSettings{ nullptr };
+    QAction *actionClear{ nullptr };
+    QAction *actionSaveImage{ nullptr };
+    QAction *actionSaveData{ nullptr };
+    QAction *actionOpenData{ nullptr };
+    QAction *actionDataSettings{ nullptr };
+    QAction *actionChartType{ nullptr };
+    QAction *actionResetZoom{ nullptr };
+    QWidget *centralWidget{ nullptr };
+    QVBoxLayout *verticalLayout{ nullptr };
+    QMenuBar *menuBar{ nullptr };
+    QMenu *menuFile{ nullptr };
+    QMenu *menuSettings{ nullptr };
+    QStatusBar *statusBar{ nullptr };
+    QToolBar *toolBar{ nullptr };
 
 private slots:
     void serialConnect();
