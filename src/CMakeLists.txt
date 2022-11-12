@@ -32,7 +32,6 @@ set(PROJECT_SOURCES
         main.cpp
         MainWindow.h
         MainWindow.cpp
-        MainWindow.ui
         Plot.h
         Plot.cpp
         SerialTransceiver.h
