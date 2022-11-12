@@ -42,21 +42,21 @@ private:
     QDialogButtonBox *buttonBox{ nullptr };
     QGroupBox *selectBox{ nullptr };
     QGridLayout *controlsLayout{ nullptr };
-    QLabel *flowControlLabel{ nullptr };
-    QComboBox *parityBox{ nullptr };
-    QComboBox *flowControlBox{ nullptr };
-    QComboBox *serialPortBox{ nullptr };
-    QLabel *stopBitsLabel{ nullptr };
-    QComboBox *baudRateBox{ nullptr };
-    QLabel *serialPortLabel{ nullptr };
-    QComboBox *dataBitsBox{ nullptr };
-    QLabel *parityLabel{ nullptr };
-    QLabel *baudRateLabel{ nullptr };
-    QLabel *dataBitsLabel{ nullptr };
-    QComboBox *stopBitsBox{ nullptr };
 
     QLabel *portsInfoLabel{ nullptr };
     QPushButton *portsInfoButton{ nullptr };
+    QLabel *serialPortLabel{ nullptr };
+    QComboBox *serialPortBox{ nullptr };
+    QLabel *baudRateLabel{ nullptr };
+    QComboBox *baudRateBox{ nullptr };
+    QLabel *dataBitsLabel{ nullptr };
+    QComboBox *dataBitsBox{ nullptr };
+    QLabel *parityLabel{ nullptr };
+    QComboBox *parityBox{ nullptr };
+    QLabel *stopBitsLabel{ nullptr };
+    QComboBox *stopBitsBox{ nullptr };
+    QLabel *flowControlLabel{ nullptr };
+    QComboBox *flowControlBox{ nullptr };
 
 private slots:
     void ok();
