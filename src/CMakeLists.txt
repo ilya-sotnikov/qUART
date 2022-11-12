@@ -42,7 +42,6 @@ set(PROJECT_SOURCES
         PortSettingsDialog.ui
         DataSettingsDialog.h
         DataSettingsDialog.cpp
-        DataSettingsDialog.ui
         PortsInfoDialog.h
         PortsInfoDialog.cpp
         TextWidget.h
