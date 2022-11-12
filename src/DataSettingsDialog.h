@@ -18,7 +18,6 @@ public:
 
 private:
     SerialTransceiver::DataTypes currentDataType{ SerialTransceiver::u8 };
-    // QGridLayout *gridLayout_5;
     QDialogButtonBox *buttonBox{ nullptr };
     QGroupBox *groupBox{ nullptr };
     QVBoxLayout *layout{ nullptr };
