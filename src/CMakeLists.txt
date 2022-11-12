@@ -39,7 +39,6 @@ set(PROJECT_SOURCES
         SerialTransceiver.cpp
         PortSettingsDialog.h
         PortSettingsDialog.cpp
-        PortSettingsDialog.ui
         DataSettingsDialog.h
         DataSettingsDialog.cpp
         PortsInfoDialog.h

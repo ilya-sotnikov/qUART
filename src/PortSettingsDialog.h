@@ -3,6 +3,7 @@
 
 #include "PortsInfoDialog.h"
 
+#include <QtWidgets>
 #include <QDialog>
 #include <QSerialPort>
 
@@ -16,9 +17,9 @@ class PortSettingsDialog : public QDialog
 
 public:
     explicit PortSettingsDialog(QWidget *parent = nullptr);
-    ~PortSettingsDialog();
 
-    struct Settings {
+    struct Settings
+    {
         QString name;
         QSerialPort::BaudRate baudRate;
         QSerialPort::DataBits dataBits;
@@ -26,11 +27,10 @@ public:
         QSerialPort::StopBits stopBits;
         QSerialPort::FlowControl flowControl;
     };
-    const auto& getCurrentSettings() const { return currentSettings; };
+    const auto &getCurrentSettings() const { return currentSettings; };
 
 private:
-    Ui::PortSettingsDialog *ui;
-    PortsInfoDialog* portsInfoDialog {nullptr};
+    PortsInfoDialog *portsInfoDialog{ nullptr };
     Settings currentSettings;
 
     void fillSettings() const;
@@ -38,6 +38,25 @@ private:
     void checkCustomPath(const int index) const;
     void updateSettings();
 
+    QVBoxLayout *layout{ nullptr };
+    QDialogButtonBox *buttonBox{ nullptr };
+    QGroupBox *selectBox{ nullptr };
+    QGridLayout *controlsLayout{ nullptr };
+    QLabel *flowControlLabel{ nullptr };
+    QComboBox *parityBox{ nullptr };
+    QComboBox *flowControlBox{ nullptr };
+    QComboBox *serialPortBox{ nullptr };
+    QLabel *stopBitsLabel{ nullptr };
+    QComboBox *baudRateBox{ nullptr };
+    QLabel *serialPortLabel{ nullptr };
+    QComboBox *dataBitsBox{ nullptr };
+    QLabel *parityLabel{ nullptr };
+    QLabel *baudRateLabel{ nullptr };
+    QLabel *dataBitsLabel{ nullptr };
+    QComboBox *stopBitsBox{ nullptr };
+
+    QLabel *portsInfoLabel{ nullptr };
+    QPushButton *portsInfoButton{ nullptr };
 
 private slots:
     void ok();
