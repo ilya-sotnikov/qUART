@@ -7,10 +7,6 @@
 #include <QDialog>
 #include <QSerialPort>
 
-namespace Ui {
-class PortSettingsDialog;
-}
-
 class PortSettingsDialog : public QDialog
 {
     Q_OBJECT
