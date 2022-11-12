@@ -1,16 +1,17 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QMainWindow>
+#include <QFileDialog>
+#include <QMenuBar>
+#include <QStatusBar>
+#include <QToolBar>
+
 #include "SerialTransceiver.h"
 #include "PortSettingsDialog.h"
 #include "DataSettingsDialog.h"
 #include "Plot.h"
 #include "TextWidget.h"
-
-#include <QMainWindow>
-#include <QtWidgets>
-#include <QWidget>
-#include <QFileDialog>
 
 class MainWindow : public QMainWindow
 {

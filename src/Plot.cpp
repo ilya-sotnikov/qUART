@@ -2,13 +2,14 @@
 
 #include <QwtSymbol>
 
-Plot::Plot(QWidget* parent) :
-    QwtPlot{parent},
-    curve{new QwtPlotCurve},
-    dataList{new QList<qreal>},
-    plotPanner{new QwtPlotPanner{canvas()}},
-    plotPicker{new QwtPlotPicker(xBottom, yLeft, QwtPicker::CrossRubberBand, QwtPicker::AlwaysOn, canvas())},
-    plotMagnifier{new QwtPlotMagnifier{canvas()}}
+Plot::Plot(QWidget *parent)
+    : QwtPlot{ parent },
+      curve{ new QwtPlotCurve },
+      dataList{ new QList<qreal> },
+      plotPanner{ new QwtPlotPanner{ canvas() } },
+      plotPicker{ new QwtPlotPicker(xBottom, yLeft, QwtPicker::CrossRubberBand, QwtPicker::AlwaysOn,
+                                    canvas()) },
+      plotMagnifier{ new QwtPlotMagnifier{ canvas() } }
 {
     curve->setStyle(QwtPlotCurve::Sticks);
     curve->setPaintAttribute(QwtPlotCurve::FilterPoints);
@@ -16,7 +17,7 @@ Plot::Plot(QWidget* parent) :
     curve->attach(this);
     plotMagnifier->setMouseButton(Qt::MiddleButton);
     setAutoFillBackground(true);
-    QPalette p {palette()};
+    QPalette p{ palette() };
     p.setColor(QPalette::Window, "white");
     setPalette(p);
 }
@@ -54,7 +55,7 @@ void Plot::clear()
     updatePlot();
 }
 
-const QList<qreal>& Plot::getData() const
+const QList<qreal> &Plot::getData() const
 {
     return *dataList;
 }
@@ -64,12 +65,12 @@ QwtPlotCurve::CurveStyle Plot::getCurveStyle() const
     return curve->style();
 }
 
-void Plot::addData(QList<qreal>* receivedData)
+void Plot::addData(QList<qreal> *receivedData)
 {
     if (curve->style() == QwtPlotCurve::Lines) {
         dataList->append(*receivedData);
     } else {
-        for (const auto& data : *receivedData) {
+        for (const auto &data : *receivedData) {
             if (data >= dataList->size())
                 dataList->resize(data + 1);
             dataList->replace(data, dataList->at(data) + 1);

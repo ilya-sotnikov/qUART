@@ -3,9 +3,15 @@
 
 #include "PortsInfoDialog.h"
 
-#include <QtWidgets>
 #include <QDialog>
 #include <QSerialPort>
+#include <QVBoxLayout>
+#include <QDialogButtonBox>
+#include <QGroupBox>
+#include <QGridLayout>
+#include <QComboBox>
+#include <QLabel>
+#include <QPushButton>
 
 class PortSettingsDialog : public QDialog
 {

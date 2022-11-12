@@ -8,11 +8,11 @@ class TextWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit TextWidget(QWidget* parent = nullptr, const QString& text = "");
-    void setText(const QString& text) const;
+    explicit TextWidget(QWidget *parent = nullptr, const QString &text = "");
+    void setText(const QString &text) const;
 
 private:
-    QLabel* label {nullptr};
+    QLabel *label{ nullptr };
 };
 
 #endif // TEXTWIDGET_H

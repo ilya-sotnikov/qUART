@@ -4,7 +4,10 @@
 #include "SerialTransceiver.h"
 
 #include <QDialog>
-#include <QtWidgets>
+#include <QDialogButtonBox>
+#include <QGroupBox>
+#include <QVBoxLayout>
+#include <QRadioButton>
 
 class DataSettingsDialog : public QDialog
 {

@@ -5,10 +5,8 @@
 // define it if this problem occurs for you too
 //#define BUG_0xff
 
-SerialTransceiver::SerialTransceiver(QObject* parent) :
-    QSerialPort{parent},
-    timer{new QTimer{this}},
-    dataList{new QList<qreal>}
+SerialTransceiver::SerialTransceiver(QObject *parent)
+    : QSerialPort{ parent }, timer{ new QTimer{ this } }, dataList{ new QList<qreal> }
 {
     connect(this, &QSerialPort::readyRead, this, &SerialTransceiver::receiveData);
     connect(timer, &QTimer::timeout, this, &SerialTransceiver::timerTimeout);
@@ -22,7 +20,7 @@ SerialTransceiver::~SerialTransceiver()
 
 bool SerialTransceiver::serialOpen()
 {
-    bool isOpen {open(QIODevice::ReadWrite)};
+    bool isOpen{ open(QIODevice::ReadWrite) };
     if (isOpen) {
         clear();
         timer->start(200);
@@ -45,8 +43,8 @@ void SerialTransceiver::setDataType(DataTypes dataType)
     this->dataType = dataType;
 }
 
-template <typename T>
-void SerialTransceiver::deserializeByteArray(QByteArray* byteArray)
+template<typename T>
+void SerialTransceiver::deserializeByteArray(QByteArray *byteArray)
 {
 #ifdef BUG_0xff
     for (qsizetype i = 0; i < byteArray->size(); ++i) {
@@ -58,14 +56,14 @@ void SerialTransceiver::deserializeByteArray(QByteArray* byteArray)
     byteArray->append(bufferArray);
     bufferArray.clear();
 
-    qsizetype byteArraySize {byteArray->size()};
-    quint8 byteCnt {static_cast<quint8>(byteArraySize % sizeof(T))};
+    qsizetype byteArraySize{ byteArray->size() };
+    quint8 byteCnt{ static_cast<quint8>(byteArraySize % sizeof(T)) };
 
     bufferArray = byteArray->last(byteCnt);
     byteArray->chop(byteCnt);
 
     T data;
-    QDataStream stream {byteArray, QIODevice::ReadOnly};
+    QDataStream stream{ byteArray, QIODevice::ReadOnly };
     if (dataType == f32)
         stream.setFloatingPointPrecision(QDataStream::SinglePrecision);
     while (!stream.atEnd()) {
@@ -74,8 +72,9 @@ void SerialTransceiver::deserializeByteArray(QByteArray* byteArray)
     }
 }
 
-void SerialTransceiver::receiveData() {
-    QByteArray byteArray {readAll()};
+void SerialTransceiver::receiveData()
+{
+    QByteArray byteArray{ readAll() };
 
     switch (dataType) {
     case DataTypes::u8:
@@ -111,7 +110,8 @@ void SerialTransceiver::receiveData() {
     }
 }
 
-void SerialTransceiver::timerTimeout() {
+void SerialTransceiver::timerTimeout()
+{
     if (!dataList->isEmpty()) {
         emit newDataAvailable(dataList);
     }

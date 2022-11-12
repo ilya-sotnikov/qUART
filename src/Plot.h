@@ -11,25 +11,24 @@ class Plot : public QwtPlot
 {
     Q_OBJECT
 public:
-    explicit Plot(QWidget* parent = nullptr);
+    explicit Plot(QWidget *parent = nullptr);
     ~Plot();
-    void addRawData(QList<qreal>* receivedData);
+    void addRawData(QList<qreal> *receivedData);
     void updatePlot();
     void changeType();
     void clear();
-    const QList<qreal>& getData() const;
+    const QList<qreal> &getData() const;
     QwtPlotCurve::CurveStyle getCurveStyle() const;
 
 private:
-    QwtPlotCurve* curve {nullptr};
-    QList<qreal>* dataList {nullptr};
-    QwtPlotPanner *plotPanner {nullptr};
-    QwtPlotPicker *plotPicker {nullptr};
-    QwtPlotMagnifier *plotMagnifier {nullptr};
-
+    QwtPlotCurve *curve{ nullptr };
+    QList<qreal> *dataList{ nullptr };
+    QwtPlotPanner *plotPanner{ nullptr };
+    QwtPlotPicker *plotPicker{ nullptr };
+    QwtPlotMagnifier *plotMagnifier{ nullptr };
 
 public slots:
-    void addData(QList<qreal>* receivedData);
+    void addData(QList<qreal> *receivedData);
     void resetZoom();
 };
 

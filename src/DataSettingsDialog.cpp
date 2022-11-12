@@ -1,5 +1,7 @@
 #include "DataSettingsDialog.h"
 
+#include <QButtonGroup>
+
 DataSettingsDialog::DataSettingsDialog(QWidget *parent) : QDialog{ parent }
 {
     layout = new QVBoxLayout{ this };
