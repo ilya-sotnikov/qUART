@@ -35,6 +35,7 @@ private:
 public slots:
     void addData(QList<qreal> *receivedData);
     void resetZoom();
+    void hideMarker();
 
 private slots:
     void updateSelected(const QPointF &point);

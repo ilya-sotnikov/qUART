@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     actionDataSettings = new QAction{ "Data", this };
     actionChartType = new QAction{ "Chart type", this };
     actionResetZoom = new QAction{ "Reset zoom", this };
+    actionHideMarker = new QAction{ "Hide marker", this };
 
     centralWidget = new QWidget{ this };
     verticalLayout = new QVBoxLayout{ centralWidget };
@@ -52,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
     toolBar->addAction(actionClear);
     toolBar->addAction(actionChartType);
     toolBar->addAction(actionResetZoom);
+    toolBar->addAction(actionHideMarker);
 
     setWindowTitle("qUART");
     setCentralWidget(plot);
@@ -76,6 +78,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(actionSaveData, &QAction::triggered, this, &MainWindow::saveData);
     connect(actionOpenData, &QAction::triggered, this, &MainWindow::openData);
     connect(actionResetZoom, &QAction::triggered, plot, &Plot::resetZoom);
+    connect(actionHideMarker, &QAction::triggered, plot, &Plot::hideMarker);
     connect(plot, &Plot::pointSelected, this, &MainWindow::updateSelectedPoint);
 }
 

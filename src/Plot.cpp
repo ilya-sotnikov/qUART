@@ -17,6 +17,7 @@ Plot::Plot(QWidget *parent)
     marker->setValue(0.0, 0.0);
     marker->setLineStyle(QwtPlotMarker::VLine);
     marker->setLinePen(Qt::black, 0, Qt::SolidLine);
+    marker->hide();
     marker->attach(this);
     curve->setStyle(QwtPlotCurve::Sticks);
     curve->setPaintAttribute(QwtPlotCurve::FilterPoints);
@@ -97,6 +98,13 @@ void Plot::updateSelected(const QPointF &point)
     auto selectedPoint{ QPointF(x, dataList->at(x)) };
 
     marker->setValue(selectedPoint);
+    marker->show();
     replot();
     emit pointSelected(selectedPoint);
+}
+
+void Plot::hideMarker()
+{
+    marker->hide();
+    replot();
 }

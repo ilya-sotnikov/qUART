@@ -40,6 +40,7 @@ private:
     QAction *actionDataSettings{ nullptr };
     QAction *actionChartType{ nullptr };
     QAction *actionResetZoom{ nullptr };
+    QAction *actionHideMarker{ nullptr };
     QWidget *centralWidget{ nullptr };
     QVBoxLayout *verticalLayout{ nullptr };
     QMenuBar *menuBar{ nullptr };
