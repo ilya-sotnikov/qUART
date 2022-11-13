@@ -5,6 +5,9 @@
 #include <QwtPlot>
 #include <QwtPlotPanner>
 #include <QwtPlotPicker>
+#include <QwtPlotMarker>
+#include <QwtPicker>
+#include <QwtPickerClickPointMachine>
 #include <QwtPlotMagnifier>
 
 class Plot : public QwtPlot
@@ -17,19 +20,27 @@ public:
     void updatePlot();
     void changeType();
     void clear();
-    const QList<qreal> &getData() const;
-    QwtPlotCurve::CurveStyle getCurveStyle() const;
+    const QList<qreal> &getData() const { return *dataList; }
+    QwtPlotCurve::CurveStyle getCurveStyle() const { return curve->style(); }
 
 private:
-    QwtPlotCurve *curve{ nullptr };
-    QList<qreal> *dataList{ nullptr };
-    QwtPlotPanner *plotPanner{ nullptr };
-    QwtPlotPicker *plotPicker{ nullptr };
-    QwtPlotMagnifier *plotMagnifier{ nullptr };
+    QwtPlotCurve *curve;
+    QList<qreal> *dataList;
+    QwtPlotMarker *marker;
+    QwtPlotPanner *panner;
+    QwtPickerClickPointMachine *plotPickerStateMachine;
+    QwtPlotPicker *picker;
+    QwtPlotMagnifier *magnifier;
 
 public slots:
     void addData(QList<qreal> *receivedData);
     void resetZoom();
+
+private slots:
+    void updateSelected(const QPointF &point);
+
+signals:
+    void pointSelected(const QPointF point);
 };
 
 #endif // PLOT_H

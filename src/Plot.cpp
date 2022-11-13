@@ -1,25 +1,36 @@
 #include "Plot.h"
 
-#include <QwtSymbol>
+#include <QwtScaleMap>
+#include <QwtText>
 
 Plot::Plot(QWidget *parent)
     : QwtPlot{ parent },
-      curve{ new QwtPlotCurve },
+      curve{ new QwtPlotCurve{} },
       dataList{ new QList<qreal> },
-      plotPanner{ new QwtPlotPanner{ canvas() } },
-      plotPicker{ new QwtPlotPicker(xBottom, yLeft, QwtPicker::CrossRubberBand, QwtPicker::AlwaysOn,
-                                    canvas()) },
-      plotMagnifier{ new QwtPlotMagnifier{ canvas() } }
+      marker{ new QwtPlotMarker{} },
+      panner{ new QwtPlotPanner{ canvas() } },
+      plotPickerStateMachine{ new QwtPickerClickPointMachine{} },
+      picker{ new QwtPlotPicker(xBottom, yLeft, QwtPlotPicker::CrossRubberBand,
+                                QwtPlotPicker::AlwaysOn, canvas()) },
+      magnifier{ new QwtPlotMagnifier{ canvas() } }
 {
+    marker->setValue(0.0, 0.0);
+    marker->setLineStyle(QwtPlotMarker::VLine);
+    marker->setLinePen(Qt::black, 0, Qt::SolidLine);
+    marker->attach(this);
     curve->setStyle(QwtPlotCurve::Sticks);
     curve->setPaintAttribute(QwtPlotCurve::FilterPoints);
     curve->setPen(Qt::black, 2);
     curve->attach(this);
-    plotMagnifier->setMouseButton(Qt::MiddleButton);
+    plotPickerStateMachine->setState(QwtPickerMachine::PointSelection);
+    picker->setStateMachine(plotPickerStateMachine);
+    magnifier->setMouseButton(Qt::MiddleButton);
     setAutoFillBackground(true);
     QPalette p{ palette() };
     p.setColor(QPalette::Window, "white");
     setPalette(p);
+
+    connect(picker, SIGNAL(selected(const QPointF &)), SLOT(updateSelected(const QPointF &)));
 }
 
 Plot::~Plot()
@@ -55,16 +66,6 @@ void Plot::clear()
     updatePlot();
 }
 
-const QList<qreal> &Plot::getData() const
-{
-    return *dataList;
-}
-
-QwtPlotCurve::CurveStyle Plot::getCurveStyle() const
-{
-    return curve->style();
-}
-
 void Plot::addData(QList<qreal> *receivedData)
 {
     if (curve->style() == QwtPlotCurve::Lines) {
@@ -85,4 +86,17 @@ void Plot::resetZoom()
     setAxisAutoScale(QwtPlot::xBottom);
     setAxisAutoScale(QwtPlot::yLeft);
     replot();
+}
+
+void Plot::updateSelected(const QPointF &point)
+{
+    qsizetype x = qRound(point.x());
+    if (x < 0 || x >= dataList->size())
+        return;
+
+    auto selectedPoint{ QPointF(x, dataList->at(x)) };
+
+    marker->setValue(selectedPoint);
+    replot();
+    emit pointSelected(selectedPoint);
 }

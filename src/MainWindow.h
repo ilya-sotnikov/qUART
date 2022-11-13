@@ -57,5 +57,6 @@ private slots:
     void openData();
     void updateDataSettingsDialog();
     void statusBarUpdateChartType();
+    void updateSelectedPoint(const QPointF point);
 };
 #endif // MAINWINDOW_H

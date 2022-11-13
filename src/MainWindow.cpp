@@ -76,6 +76,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(actionSaveData, &QAction::triggered, this, &MainWindow::saveData);
     connect(actionOpenData, &QAction::triggered, this, &MainWindow::openData);
     connect(actionResetZoom, &QAction::triggered, plot, &Plot::resetZoom);
+    connect(plot, &Plot::pointSelected, this, &MainWindow::updateSelectedPoint);
 }
 
 MainWindow::~MainWindow()
@@ -188,4 +189,13 @@ void MainWindow::statusBarUpdateChartType()
         chartTypeWidget->setText("Chart type: Spectrum");
     else if (style == QwtPlotCurve::Lines)
         chartTypeWidget->setText("Chart type: Plot");
+}
+
+void MainWindow::updateSelectedPoint(const QPointF point)
+{
+    QString msg{ "x: " };
+    msg += QString::number(point.x());
+    msg += "     y: ";
+    msg += QString::number(point.y());
+    statusBar->showMessage(msg);
 }
