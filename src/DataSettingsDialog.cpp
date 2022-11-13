@@ -9,7 +9,7 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent) : QDialog{ parent }
     buttonBox = new QDialogButtonBox{ QDialogButtonBox::Cancel | QDialogButtonBox::Ok,
                                       Qt::Horizontal, this };
 
-    buttonsLayout = new QVBoxLayout{ this };
+    buttonsLayout = new QVBoxLayout{};
     groupBox = new QGroupBox{ "Data format", this };
     button_u8 = new QRadioButton{ "unsigned 8 bit" };
     button_u16 = new QRadioButton{ "unsigned 16 bit" };
