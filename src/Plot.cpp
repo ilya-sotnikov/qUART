@@ -6,7 +6,8 @@
 Plot::Plot(QWidget *parent)
     : QwtPlot{ parent },
       curve{ new QwtPlotCurve{} },
-      dataList{ new QList<qreal> },
+      dataPlot{ new QList<qreal> },
+      dataSpectrum{ new QList<qreal> },
       marker{ new QwtPlotMarker{} },
       panner{ new QwtPlotPanner{ canvas() } },
       plotPickerStateMachine{ new QwtPickerClickPointMachine{} },
@@ -36,20 +37,17 @@ Plot::Plot(QWidget *parent)
 
 Plot::~Plot()
 {
-    delete dataList;
-}
-
-void Plot::addRawData(QList<qreal> *receivedData)
-{
-    dataList->append(*receivedData);
-    updatePlot();
-    receivedData->clear();
+    delete dataPlot;
+    delete dataSpectrum;
 }
 
 void Plot::updatePlot()
 {
-    curve->setRawSamples(dataList->constData(), dataList->size());
-    replot();
+    if (chartType == Plot::plot)
+        curve->setRawSamples(dataPlot->constData(), dataPlot->size());
+    else if (chartType == Plot::spectrum)
+        curve->setRawSamples(dataSpectrum->constData(), dataSpectrum->size());
+    resetZoom();
 }
 
 void Plot::changeType()
@@ -61,24 +59,39 @@ void Plot::changeType()
         curve->setStyle(QwtPlotCurve::Sticks);
         chartType = Plot::spectrum;
     }
-    clear();
+    updatePlot();
 }
 
 void Plot::clear()
 {
-    dataList->clear();
+    dataPlot->clear();
+    dataSpectrum->clear();
     updatePlot();
+}
+
+void Plot::addRawData(QList<qreal> *rawData)
+{
+    dataPlot->clear();
+    dataSpectrum->clear();
+    if (chartType == Plot::plot) {
+        addData(rawData);
+    } else if (chartType == Plot::spectrum) {
+        dataSpectrum->append(*rawData);
+        updatePlot();
+        rawData->clear();
+    }
 }
 
 void Plot::addData(QList<qreal> *receivedData)
 {
-    if (chartType == Plot::plot) {
-        dataList->append(*receivedData);
-    } else if (chartType == Plot::spectrum) {
+    if (appendToPlot)
+        dataPlot->append(*receivedData);
+
+    if (appendToSpectrum) {
         for (const auto &data : *receivedData) {
-            if (data >= dataList->size())
-                dataList->resize(data + 1);
-            dataList->replace(data, dataList->at(data) + 1);
+            if (data >= dataSpectrum->size())
+                dataSpectrum->resize(data + 1);
+            dataSpectrum->replace(data, dataSpectrum->at(data) + 1);
         }
     }
     updatePlot();
@@ -94,6 +107,8 @@ void Plot::resetZoom()
 
 void Plot::updateSelected(const QPointF &point)
 {
+    const auto dataList = (chartType == Plot::plot) ? dataPlot : dataSpectrum;
+
     qsizetype x = qRound(point.x());
     if (x < 0 || x >= dataList->size())
         return;
@@ -110,4 +125,13 @@ void Plot::hideMarker()
 {
     marker->hide();
     replot();
+}
+Plot::ChartType Plot::getChartType() const
+{
+    return chartType;
+}
+
+const QList<qreal> &Plot::getData() const
+{
+    return (chartType == Plot::plot) ? *dataPlot : *dataSpectrum;
 }

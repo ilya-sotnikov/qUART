@@ -16,19 +16,24 @@ class Plot : public QwtPlot
 public:
     explicit Plot(QWidget *parent = nullptr);
     ~Plot();
-    void addRawData(QList<qreal> *receivedData);
     void updatePlot();
     void changeType();
     void clear();
-    const QList<qreal> &getData() const { return *dataList; }
+    void addRawData(QList<qreal> *rawData);
+    const QList<qreal> &getData() const;
+
     enum ChartType { plot, spectrum };
     Q_ENUM(ChartType)
-    Plot::ChartType getChartType() const { return chartType; }
+    Plot::ChartType getChartType() const;
+
+    bool appendToPlot{ true };
+    bool appendToSpectrum{ true };
 
 private:
     Plot::ChartType chartType{ Plot::plot };
     QwtPlotCurve *curve;
-    QList<qreal> *dataList;
+    QList<qreal> *dataPlot;
+    QList<qreal> *dataSpectrum;
     QwtPlotMarker *marker;
     QwtPlotPanner *panner;
     QwtPickerClickPointMachine *plotPickerStateMachine;

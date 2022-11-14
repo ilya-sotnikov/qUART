@@ -63,7 +63,10 @@ MainWindow::MainWindow(QWidget *parent)
     actionPortSettings->setEnabled(true);
 
     statusBar->addPermanentWidget(chartTypeWidget);
-    chartTypeWidget->setText("Chart type: Spectrum");
+    if (plot->getChartType() == Plot::plot)
+        chartTypeWidget->setText("Chart type: Plot");
+    else if (plot->getChartType() == Plot::spectrum)
+        chartTypeWidget->setText("Chart type: Spectrum");
 
     connect(serialTransceiver, &SerialTransceiver::newDataAvailable, plot, &Plot::addData);
     connect(actionConnect, &QAction::triggered, this, &MainWindow::serialConnect);
@@ -118,7 +121,6 @@ void MainWindow::serialConnect()
         actionDataSettings->setEnabled(false);
         actionOpenData->setEnabled(false);
         actionSaveData->setEnabled(false);
-        actionChartType->setEnabled(false);
     } else {
         QMessageBox::critical(this, "Error", serialTransceiver->errorString());
     }
@@ -133,7 +135,6 @@ void MainWindow::serialDisconnect()
     actionDataSettings->setEnabled(true);
     actionOpenData->setEnabled(true);
     actionSaveData->setEnabled(true);
-    actionChartType->setEnabled(true);
 }
 
 void MainWindow::saveImage()
