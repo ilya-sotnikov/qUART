@@ -3,12 +3,15 @@
 // for some reason 0xff is always received twice on my PC
 // can't reproduce on anything else
 // define it if this problem occurs for you too
-//#define BUG_0xff
+// #define BUG_0xff
 
 SerialTransceiver::SerialTransceiver(QObject *parent)
-    : QSerialPort{ parent }, timer{ new QTimer{ this } }, dataList{ new QList<qreal> }
+    : QObject{ parent },
+      serialPort{ new QSerialPort{ this } },
+      timer{ new QTimer{ this } },
+      dataList{ new QList<qreal> }
 {
-    connect(this, &QSerialPort::readyRead, this, &SerialTransceiver::receiveData);
+    connect(serialPort, &QSerialPort::readyRead, this, &SerialTransceiver::receiveData);
     connect(timer, &QTimer::timeout, this, &SerialTransceiver::timerTimeout);
 }
 
@@ -20,9 +23,9 @@ SerialTransceiver::~SerialTransceiver()
 
 bool SerialTransceiver::serialOpen()
 {
-    bool isOpen{ open(QIODevice::ReadWrite) };
+    bool isOpen{ serialPort->open(QIODevice::ReadWrite) };
     if (isOpen) {
-        clear();
+        serialPort->clear();
         timer->start(200);
     }
     return isOpen;
@@ -30,17 +33,12 @@ bool SerialTransceiver::serialOpen()
 
 void SerialTransceiver::serialClose()
 {
-    if (isOpen())
-        close();
+    if (serialPort->isOpen())
+        serialPort->close();
     if (timer->isActive())
         timer->stop();
     dataList->clear();
     bufferArray.clear();
-}
-
-void SerialTransceiver::setDataType(DataTypes dataType)
-{
-    this->dataType = dataType;
 }
 
 template<typename T>
@@ -74,7 +72,7 @@ void SerialTransceiver::deserializeByteArray(QByteArray *byteArray)
 
 void SerialTransceiver::receiveData()
 {
-    QByteArray byteArray{ readAll() };
+    QByteArray byteArray{ serialPort->readAll() };
 
     switch (dataType) {
     case DataTypes::u8:
@@ -115,4 +113,38 @@ void SerialTransceiver::timerTimeout()
     if (!dataList->isEmpty()) {
         emit newDataAvailable(dataList);
     }
+}
+
+void SerialTransceiver::setDataType(DataTypes dataType)
+{
+    this->dataType = dataType;
+}
+
+bool SerialTransceiver::setBaudRate(qint32 baudRate, QSerialPort::Directions directions)
+{
+    return serialPort->setBaudRate(baudRate, directions);
+}
+void SerialTransceiver::setPortName(const QString &name)
+{
+    serialPort->setPortName(name);
+}
+QString SerialTransceiver::errorString() const
+{
+    return serialPort->errorString();
+}
+bool SerialTransceiver::setFlowControl(QSerialPort::FlowControl flowControl)
+{
+    return serialPort->setFlowControl(flowControl);
+}
+bool SerialTransceiver::setStopBits(QSerialPort::StopBits stopBits)
+{
+    return serialPort->setStopBits(stopBits);
+}
+bool SerialTransceiver::setParity(QSerialPort::Parity parity)
+{
+    return serialPort->setParity(parity);
+}
+bool SerialTransceiver::setDataBits(QSerialPort::DataBits dataBits)
+{
+    return serialPort->setDataBits(dataBits);
 }
