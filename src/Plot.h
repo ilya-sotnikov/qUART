@@ -21,9 +21,12 @@ public:
     void changeType();
     void clear();
     const QList<qreal> &getData() const { return *dataList; }
-    QwtPlotCurve::CurveStyle getCurveStyle() const { return curve->style(); }
+    enum ChartType { plot, spectrum };
+    Q_ENUM(ChartType)
+    Plot::ChartType getChartType() const { return chartType; }
 
 private:
+    Plot::ChartType chartType{ Plot::plot };
     QwtPlotCurve *curve;
     QList<qreal> *dataList;
     QwtPlotMarker *marker;

@@ -19,7 +19,7 @@ Plot::Plot(QWidget *parent)
     marker->setLinePen(Qt::black, 0, Qt::SolidLine);
     marker->hide();
     marker->attach(this);
-    curve->setStyle(QwtPlotCurve::Sticks);
+    curve->setStyle(QwtPlotCurve::Lines);
     curve->setPaintAttribute(QwtPlotCurve::FilterPoints);
     curve->setPen(Qt::black, 2);
     curve->attach(this);
@@ -54,10 +54,13 @@ void Plot::updatePlot()
 
 void Plot::changeType()
 {
-    if (curve->style() == QwtPlotCurve::Sticks)
+    if (chartType == Plot::spectrum) {
         curve->setStyle(QwtPlotCurve::Lines);
-    else
+        chartType = Plot::plot;
+    } else if (chartType == Plot::plot) {
         curve->setStyle(QwtPlotCurve::Sticks);
+        chartType = Plot::spectrum;
+    }
     clear();
 }
 
@@ -69,9 +72,9 @@ void Plot::clear()
 
 void Plot::addData(QList<qreal> *receivedData)
 {
-    if (curve->style() == QwtPlotCurve::Lines) {
+    if (chartType == Plot::plot) {
         dataList->append(*receivedData);
-    } else {
+    } else if (chartType == Plot::spectrum) {
         for (const auto &data : *receivedData) {
             if (data >= dataList->size())
                 dataList->resize(data + 1);

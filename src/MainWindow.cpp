@@ -178,19 +178,19 @@ void MainWindow::openData()
 
 void MainWindow::updateDataSettingsDialog()
 {
-    auto style{ plot->getCurveStyle() };
-    if (style == QwtPlotCurve::Sticks)
+    auto chartType{ plot->getChartType() };
+    if (chartType == Plot::spectrum)
         dataSettingsDialog->hideAdditionalDataTypes();
-    else if (style == QwtPlotCurve::Lines)
+    else if (chartType == Plot::plot)
         dataSettingsDialog->showAdditionalDataTypes();
 }
 
 void MainWindow::statusBarUpdateChartType()
 {
-    auto style{ plot->getCurveStyle() };
-    if (style == QwtPlotCurve::Sticks)
+    auto chartType{ plot->getChartType() };
+    if (chartType == Plot::spectrum)
         chartTypeWidget->setText("Chart type: Spectrum");
-    else if (style == QwtPlotCurve::Lines)
+    else if (chartType == Plot::plot)
         chartTypeWidget->setText("Chart type: Plot");
 }
 
