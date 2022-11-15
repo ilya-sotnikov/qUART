@@ -24,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent)
     actionChartType = new QAction{ "Chart type", this };
     actionResetZoom = new QAction{ "Reset zoom", this };
     actionHideMarker = new QAction{ "Hide marker", this };
+    actionAppendToPlot = new QAction{ "Append to plot", this };
+    actionAppendToSpectrum = new QAction{ "Append to spectrum", this };
 
     centralWidget = new QWidget{ this };
     verticalLayout = new QVBoxLayout{ centralWidget };
@@ -54,6 +56,8 @@ MainWindow::MainWindow(QWidget *parent)
     toolBar->addAction(actionChartType);
     toolBar->addAction(actionResetZoom);
     toolBar->addAction(actionHideMarker);
+    toolBar->addAction(actionAppendToPlot);
+    toolBar->addAction(actionAppendToSpectrum);
 
     setWindowTitle("qUART");
     setCentralWidget(plot);
@@ -83,6 +87,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(actionResetZoom, &QAction::triggered, plot, &Plot::resetZoom);
     connect(actionHideMarker, &QAction::triggered, plot, &Plot::hideMarker);
     connect(plot, &Plot::pointSelected, this, &MainWindow::updateSelectedPoint);
+    connect(actionAppendToPlot, &QAction::triggered, this,
+            [this] { plot->appendToPlot = !plot->appendToPlot; });
+    connect(actionAppendToSpectrum, &QAction::triggered, this,
+            [this] { plot->appendToSpectrum = !plot->appendToSpectrum; });
 }
 
 MainWindow::~MainWindow()

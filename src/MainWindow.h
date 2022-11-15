@@ -41,6 +41,8 @@ private:
     QAction *actionChartType{ nullptr };
     QAction *actionResetZoom{ nullptr };
     QAction *actionHideMarker{ nullptr };
+    QAction *actionAppendToPlot{ nullptr };
+    QAction *actionAppendToSpectrum{ nullptr };
     QWidget *centralWidget{ nullptr };
     QVBoxLayout *verticalLayout{ nullptr };
     QMenuBar *menuBar{ nullptr };
