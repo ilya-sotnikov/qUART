@@ -1,14 +1,14 @@
 #ifndef PLOT_H
 #define PLOT_H
 
-#include <QwtPlotCurve>
-#include <QwtPlot>
-#include <QwtPlotPanner>
-#include <QwtPlotPicker>
-#include <QwtPlotMarker>
 #include <QwtPicker>
 #include <QwtPickerClickPointMachine>
+#include <QwtPlot>
+#include <QwtPlotCurve>
 #include <QwtPlotMagnifier>
+#include <QwtPlotMarker>
+#include <QwtPlotPanner>
+#include <QwtPlotPicker>
 
 class Plot : public QwtPlot
 {
@@ -26,11 +26,11 @@ public:
     Q_ENUM(ChartType)
     Plot::ChartType getChartType() const;
 
-    bool appendToPlot{ true };
-    bool appendToSpectrum{ true };
+    bool appendToPlot{true};
+    bool appendToSpectrum{true};
 
 private:
-    Plot::ChartType chartType{ Plot::plot };
+    Plot::ChartType chartType{Plot::plot};
     QwtPlotCurve *curve;
     QList<qreal> *dataPlot;
     QList<qreal> *dataSpectrum;

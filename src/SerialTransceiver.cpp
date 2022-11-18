@@ -6,10 +6,10 @@
 // #define BUG_0xff
 
 SerialTransceiver::SerialTransceiver(QObject *parent)
-    : QObject{ parent },
-      serialPort{ new QSerialPort{ this } },
-      timer{ new QTimer{ this } },
-      dataList{ new QList<qreal> }
+    : QObject{parent}
+    , serialPort{new QSerialPort{this}}
+    , timer{new QTimer{this}}
+    , dataList{new QList<qreal>}
 {
     connect(serialPort, &QSerialPort::readyRead, this, &SerialTransceiver::receiveData);
     connect(timer, &QTimer::timeout, this, &SerialTransceiver::timerTimeout);
@@ -23,7 +23,7 @@ SerialTransceiver::~SerialTransceiver()
 
 bool SerialTransceiver::serialOpen()
 {
-    bool isOpen{ serialPort->open(QIODevice::ReadWrite) };
+    bool isOpen{serialPort->open(QIODevice::ReadWrite)};
     if (isOpen) {
         serialPort->clear();
         timer->start(200);
@@ -54,14 +54,14 @@ void SerialTransceiver::deserializeByteArray(QByteArray *byteArray)
     byteArray->append(bufferArray);
     bufferArray.clear();
 
-    qsizetype byteArraySize{ byteArray->size() };
-    quint8 byteCnt{ static_cast<quint8>(byteArraySize % sizeof(T)) };
+    qsizetype byteArraySize{byteArray->size()};
+    quint8 byteCnt{static_cast<quint8>(byteArraySize % sizeof(T))};
 
     bufferArray = byteArray->last(byteCnt);
     byteArray->chop(byteCnt);
 
     T data;
-    QDataStream stream{ byteArray, QIODevice::ReadOnly };
+    QDataStream stream{byteArray, QIODevice::ReadOnly};
     if (dataType == f32)
         stream.setFloatingPointPrecision(QDataStream::SinglePrecision);
     while (!stream.atEnd()) {
@@ -72,7 +72,7 @@ void SerialTransceiver::deserializeByteArray(QByteArray *byteArray)
 
 void SerialTransceiver::receiveData()
 {
-    QByteArray byteArray{ serialPort->readAll() };
+    QByteArray byteArray{serialPort->readAll()};
 
     switch (dataType) {
     case DataTypes::u8:

@@ -1,10 +1,10 @@
 #ifndef SERIALTRANSCEIVER_H
 #define SERIALTRANSCEIVER_H
 
-#include <QObject>
 #include <QDataStream>
-#include <QSerialPort>
+#include <QObject>
 #include <QPointF>
+#include <QSerialPort>
 #include <QTimer>
 #include <qserialport.h>
 
@@ -31,10 +31,10 @@ public:
     QString errorString() const;
 
 private:
-    QSerialPort *serialPort{ nullptr };
-    QTimer *timer{ nullptr };
-    QList<qreal> *dataList{ nullptr };
-    DataTypes dataType{ DataTypes::u8 };
+    QSerialPort *serialPort{nullptr};
+    QTimer *timer{nullptr};
+    QList<qreal> *dataList{nullptr};
+    DataTypes dataType{DataTypes::u8};
     QByteArray bufferArray;
 
     template<typename T>

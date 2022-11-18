@@ -3,15 +3,15 @@
 
 #include "PortsInfoDialog.h"
 
-#include <QDialog>
-#include <QSerialPort>
-#include <QVBoxLayout>
-#include <QDialogButtonBox>
-#include <QGroupBox>
-#include <QGridLayout>
 #include <QComboBox>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QGridLayout>
+#include <QGroupBox>
 #include <QLabel>
 #include <QPushButton>
+#include <QSerialPort>
+#include <QVBoxLayout>
 
 class PortSettingsDialog : public QDialog
 {
@@ -32,7 +32,7 @@ public:
     const auto &getCurrentSettings() const { return currentSettings; };
 
 private:
-    PortsInfoDialog *portsInfoDialog{ nullptr };
+    PortsInfoDialog *portsInfoDialog{nullptr};
     Settings currentSettings;
 
     void fillSettings() const;
@@ -40,25 +40,25 @@ private:
     void checkCustomPath(const int index) const;
     void updateSettings();
 
-    QVBoxLayout *layout{ nullptr };
-    QDialogButtonBox *buttonBox{ nullptr };
-    QGroupBox *selectBox{ nullptr };
-    QGridLayout *controlsLayout{ nullptr };
+    QVBoxLayout *layout{nullptr};
+    QDialogButtonBox *buttonBox{nullptr};
+    QGroupBox *selectBox{nullptr};
+    QGridLayout *controlsLayout{nullptr};
 
-    QLabel *portsInfoLabel{ nullptr };
-    QPushButton *portsInfoButton{ nullptr };
-    QLabel *serialPortLabel{ nullptr };
-    QComboBox *serialPortBox{ nullptr };
-    QLabel *baudRateLabel{ nullptr };
-    QComboBox *baudRateBox{ nullptr };
-    QLabel *dataBitsLabel{ nullptr };
-    QComboBox *dataBitsBox{ nullptr };
-    QLabel *parityLabel{ nullptr };
-    QComboBox *parityBox{ nullptr };
-    QLabel *stopBitsLabel{ nullptr };
-    QComboBox *stopBitsBox{ nullptr };
-    QLabel *flowControlLabel{ nullptr };
-    QComboBox *flowControlBox{ nullptr };
+    QLabel *portsInfoLabel{nullptr};
+    QPushButton *portsInfoButton{nullptr};
+    QLabel *serialPortLabel{nullptr};
+    QComboBox *serialPortBox{nullptr};
+    QLabel *baudRateLabel{nullptr};
+    QComboBox *baudRateBox{nullptr};
+    QLabel *dataBitsLabel{nullptr};
+    QComboBox *dataBitsBox{nullptr};
+    QLabel *parityLabel{nullptr};
+    QComboBox *parityBox{nullptr};
+    QLabel *stopBitsLabel{nullptr};
+    QComboBox *stopBitsBox{nullptr};
+    QLabel *flowControlLabel{nullptr};
+    QComboBox *flowControlBox{nullptr};
 
 private slots:
     void ok();

@@ -4,16 +4,19 @@
 #include <QwtText>
 
 Plot::Plot(QWidget *parent)
-    : QwtPlot{ parent },
-      curve{ new QwtPlotCurve{} },
-      dataPlot{ new QList<qreal> },
-      dataSpectrum{ new QList<qreal> },
-      marker{ new QwtPlotMarker{} },
-      panner{ new QwtPlotPanner{ canvas() } },
-      plotPickerStateMachine{ new QwtPickerClickPointMachine{} },
-      picker{ new QwtPlotPicker(xBottom, yLeft, QwtPlotPicker::CrossRubberBand,
-                                QwtPlotPicker::AlwaysOn, canvas()) },
-      magnifier{ new QwtPlotMagnifier{ canvas() } }
+    : QwtPlot{parent}
+    , curve{new QwtPlotCurve{}}
+    , dataPlot{new QList<qreal>}
+    , dataSpectrum{new QList<qreal>}
+    , marker{new QwtPlotMarker{}}
+    , panner{new QwtPlotPanner{canvas()}}
+    , plotPickerStateMachine{new QwtPickerClickPointMachine{}}
+    , picker{new QwtPlotPicker(xBottom,
+                               yLeft,
+                               QwtPlotPicker::CrossRubberBand,
+                               QwtPlotPicker::AlwaysOn,
+                               canvas())}
+    , magnifier{new QwtPlotMagnifier{canvas()}}
 {
     marker->setValue(0.0, 0.0);
     marker->setLineStyle(QwtPlotMarker::VLine);
@@ -28,7 +31,7 @@ Plot::Plot(QWidget *parent)
     picker->setStateMachine(plotPickerStateMachine);
     magnifier->setMouseButton(Qt::MiddleButton);
     setAutoFillBackground(true);
-    QPalette p{ palette() };
+    QPalette p{palette()};
     p.setColor(QPalette::Window, "white");
     setPalette(p);
 
@@ -113,7 +116,7 @@ void Plot::updateSelected(const QPointF &point)
     if (x < 0 || x >= dataList->size())
         return;
 
-    auto selectedPoint{ QPointF(x, dataList->at(x)) };
+    auto selectedPoint{QPointF(x, dataList->at(x))};
 
     marker->setValue(selectedPoint);
     marker->show();

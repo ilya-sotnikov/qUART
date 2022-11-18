@@ -4,42 +4,42 @@
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow{ parent },
-      plot{ new Plot{ this } },
-      portSettingsDialog{ new PortSettingsDialog{ this } },
-      dataSettingsDialog{ new DataSettingsDialog{ this } },
-      serialTransceiver{ new SerialTransceiver{ this } },
-      chartTypeWidget{ new TextWidget{ this } }
+    : QMainWindow{parent}
+    , plot{new Plot{this}}
+    , portSettingsDialog{new PortSettingsDialog{this}}
+    , dataSettingsDialog{new DataSettingsDialog{this}}
+    , serialTransceiver{new SerialTransceiver{this}}
+    , chartTypeWidget{new TextWidget{this}}
 {
-    setMinimumSize(QSize{ 320, 240 });
-    resize(QSize{ 800, 600 });
-    actionConnect = new QAction{ "Connect", this };
-    actionDisconnect = new QAction{ "Disconnect", this };
-    actionPortSettings = new QAction{ "Port", this };
-    actionClear = new QAction{ "Clear", this };
-    actionSaveImage = new QAction{ "Save image", this };
-    actionSaveData = new QAction{ "Save data", this };
-    actionOpenData = new QAction{ "Open data", this };
-    actionDataSettings = new QAction{ "Data", this };
-    actionChartType = new QAction{ "Chart type", this };
-    actionResetZoom = new QAction{ "Reset zoom", this };
-    actionHideMarker = new QAction{ "Hide marker", this };
-    actionAppendToPlot = new QAction{ "Append to plot", this };
-    actionAppendToSpectrum = new QAction{ "Append to spectrum", this };
+    setMinimumSize(QSize{320, 240});
+    resize(QSize{800, 600});
+    actionConnect = new QAction{"Connect", this};
+    actionDisconnect = new QAction{"Disconnect", this};
+    actionPortSettings = new QAction{"Port", this};
+    actionClear = new QAction{"Clear", this};
+    actionSaveImage = new QAction{"Save image", this};
+    actionSaveData = new QAction{"Save data", this};
+    actionOpenData = new QAction{"Open data", this};
+    actionDataSettings = new QAction{"Data", this};
+    actionChartType = new QAction{"Chart type", this};
+    actionResetZoom = new QAction{"Reset zoom", this};
+    actionHideMarker = new QAction{"Hide marker", this};
+    actionAppendToPlot = new QAction{"Append to plot", this};
+    actionAppendToSpectrum = new QAction{"Append to spectrum", this};
 
-    centralWidget = new QWidget{ this };
-    verticalLayout = new QVBoxLayout{ centralWidget };
+    centralWidget = new QWidget{this};
+    verticalLayout = new QVBoxLayout{centralWidget};
     setCentralWidget(centralWidget);
 
-    menuBar = new QMenuBar{ this };
-    menuFile = new QMenu{ "File", menuBar };
-    menuSettings = new QMenu{ "Settings", menuBar };
+    menuBar = new QMenuBar{this};
+    menuFile = new QMenu{"File", menuBar};
+    menuSettings = new QMenu{"Settings", menuBar};
     setMenuBar(menuBar);
 
-    statusBar = new QStatusBar{ this };
+    statusBar = new QStatusBar{this};
     setStatusBar(statusBar);
 
-    toolBar = new QToolBar{ this };
+    toolBar = new QToolBar{this};
     addToolBar(Qt::TopToolBarArea, toolBar);
 
     menuBar->addAction(menuFile->menuAction());
@@ -87,10 +87,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(actionResetZoom, &QAction::triggered, plot, &Plot::resetZoom);
     connect(actionHideMarker, &QAction::triggered, plot, &Plot::hideMarker);
     connect(plot, &Plot::pointSelected, this, &MainWindow::updateSelectedPoint);
-    connect(actionAppendToPlot, &QAction::triggered, this,
-            [this] { plot->appendToPlot = !plot->appendToPlot; });
-    connect(actionAppendToSpectrum, &QAction::triggered, this,
-            [this] { plot->appendToSpectrum = !plot->appendToSpectrum; });
+    connect(actionAppendToPlot, &QAction::triggered, this, [this] {
+        plot->appendToPlot = !plot->appendToPlot;
+    });
+    connect(actionAppendToSpectrum, &QAction::triggered, this, [this] {
+        plot->appendToSpectrum = !plot->appendToSpectrum;
+    });
 }
 
 MainWindow::~MainWindow()
@@ -98,10 +100,11 @@ MainWindow::~MainWindow()
     delete serialTransceiver;
 }
 
-QString MainWindow::createFileDialog(QFileDialog::AcceptMode acceptMode, QString nameFilter,
+QString MainWindow::createFileDialog(QFileDialog::AcceptMode acceptMode,
+                                     QString nameFilter,
                                      QString defaultSuffix)
 {
-    QFileDialog fileDialog{ this };
+    QFileDialog fileDialog{this};
     fileDialog.setAcceptMode(acceptMode);
     fileDialog.setNameFilter(nameFilter);
     fileDialog.setDefaultSuffix(defaultSuffix);
@@ -113,8 +116,8 @@ QString MainWindow::createFileDialog(QFileDialog::AcceptMode acceptMode, QString
 
 void MainWindow::serialConnect()
 {
-    const auto &serialSettings{ portSettingsDialog->getCurrentSettings() };
-    const auto dataType{ dataSettingsDialog->getCurrentDataType() };
+    const auto &serialSettings{portSettingsDialog->getCurrentSettings()};
+    const auto dataType{dataSettingsDialog->getCurrentDataType()};
     serialTransceiver->setDataType(dataType);
     serialTransceiver->setPortName(serialSettings.name);
     serialTransceiver->setBaudRate(serialSettings.baudRate);
@@ -147,10 +150,10 @@ void MainWindow::serialDisconnect()
 
 void MainWindow::saveImage()
 {
-    auto fileName{ createFileDialog(QFileDialog::AcceptSave, "Images (*.png)", "png") };
+    auto fileName{createFileDialog(QFileDialog::AcceptSave, "Images (*.png)", "png")};
     if (fileName.isEmpty())
         return;
-    QPixmap pixMap{ plot->grab() };
+    QPixmap pixMap{plot->grab()};
     pixMap.save(fileName, "PNG");
 }
 
@@ -161,10 +164,10 @@ void MainWindow::clearChart()
 
 void MainWindow::saveData()
 {
-    auto fileName{ createFileDialog(QFileDialog::AcceptSave, "Text files (*.txt)", "txt") };
+    auto fileName{createFileDialog(QFileDialog::AcceptSave, "Text files (*.txt)", "txt")};
     QFile file(fileName);
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        const auto dataList{ plot->getData() };
+        const auto dataList{plot->getData()};
         QTextStream stream(&file);
         for (const auto &data : dataList)
             stream << QString::number(data) << "\n";
@@ -187,7 +190,7 @@ void MainWindow::openData()
 
 void MainWindow::updateDataSettingsDialog()
 {
-    auto chartType{ plot->getChartType() };
+    auto chartType{plot->getChartType()};
     if (chartType == Plot::spectrum)
         dataSettingsDialog->hideAdditionalDataTypes();
     else if (chartType == Plot::plot)
@@ -196,7 +199,7 @@ void MainWindow::updateDataSettingsDialog()
 
 void MainWindow::statusBarUpdateChartType()
 {
-    auto chartType{ plot->getChartType() };
+    auto chartType{plot->getChartType()};
     if (chartType == Plot::spectrum)
         chartTypeWidget->setText("Chart type: Spectrum");
     else if (chartType == Plot::plot)
@@ -205,7 +208,7 @@ void MainWindow::statusBarUpdateChartType()
 
 void MainWindow::updateSelectedPoint(const QPointF point)
 {
-    QString msg{ "x: " };
+    QString msg{"x: "};
     msg += QString::number(point.x());
     msg += "     y: ";
     msg += QString::number(point.y());

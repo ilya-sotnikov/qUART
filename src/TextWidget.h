@@ -12,7 +12,7 @@ public:
     void setText(const QString &text) const;
 
 private:
-    QLabel *label{ nullptr };
+    QLabel *label{nullptr};
 };
 
 #endif // TEXTWIDGET_H

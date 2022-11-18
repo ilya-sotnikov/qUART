@@ -3,49 +3,51 @@
 #include <QSerialPortInfo>
 
 PortSettingsDialog::PortSettingsDialog(QWidget *parent)
-    : QDialog{ parent }, portsInfoDialog{ new PortsInfoDialog{ this } }
+    : QDialog{parent}
+    , portsInfoDialog{new PortsInfoDialog{this}}
 {
-    layout = new QVBoxLayout{ this };
-    buttonBox = new QDialogButtonBox{ QDialogButtonBox::Cancel | QDialogButtonBox::Ok,
-                                      Qt::Horizontal, this };
+    layout = new QVBoxLayout{this};
+    buttonBox = new QDialogButtonBox{QDialogButtonBox::Cancel | QDialogButtonBox::Ok,
+                                     Qt::Horizontal,
+                                     this};
 
-    selectBox = new QGroupBox{ "Serial port configuration", this };
+    selectBox = new QGroupBox{"Serial port configuration", this};
 
-    controlsLayout = new QGridLayout{ selectBox };
+    controlsLayout = new QGridLayout{selectBox};
 
-    portsInfoLabel = new QLabel{ "Ports info", selectBox };
+    portsInfoLabel = new QLabel{"Ports info", selectBox};
     controlsLayout->addWidget(portsInfoLabel, 0, 0, 1, 1);
-    portsInfoButton = new QPushButton{ "Show", selectBox };
+    portsInfoButton = new QPushButton{"Show", selectBox};
     controlsLayout->addWidget(portsInfoButton, 0, 1, 1, 1);
 
-    serialPortLabel = new QLabel{ "Serial port", selectBox };
+    serialPortLabel = new QLabel{"Serial port", selectBox};
     controlsLayout->addWidget(serialPortLabel, 1, 0, 1, 1);
-    serialPortBox = new QComboBox{ selectBox };
+    serialPortBox = new QComboBox{selectBox};
     controlsLayout->addWidget(serialPortBox, 1, 1, 1, 1);
 
-    baudRateLabel = new QLabel{ "Baud rate", selectBox };
+    baudRateLabel = new QLabel{"Baud rate", selectBox};
     controlsLayout->addWidget(baudRateLabel, 2, 0, 1, 1);
-    baudRateBox = new QComboBox{ selectBox };
+    baudRateBox = new QComboBox{selectBox};
     controlsLayout->addWidget(baudRateBox, 2, 1, 1, 1);
 
-    dataBitsLabel = new QLabel{ "Data bits", selectBox };
+    dataBitsLabel = new QLabel{"Data bits", selectBox};
     controlsLayout->addWidget(dataBitsLabel, 3, 0, 1, 1);
-    dataBitsBox = new QComboBox{ selectBox };
+    dataBitsBox = new QComboBox{selectBox};
     controlsLayout->addWidget(dataBitsBox, 3, 1, 1, 1);
 
-    parityLabel = new QLabel{ "Parity", selectBox };
+    parityLabel = new QLabel{"Parity", selectBox};
     controlsLayout->addWidget(parityLabel, 4, 0, 1, 1);
-    parityBox = new QComboBox{ selectBox };
+    parityBox = new QComboBox{selectBox};
     controlsLayout->addWidget(parityBox, 4, 1, 1, 1);
 
-    stopBitsLabel = new QLabel{ "Stop bits", selectBox };
+    stopBitsLabel = new QLabel{"Stop bits", selectBox};
     controlsLayout->addWidget(stopBitsLabel, 5, 0, 1, 1);
-    stopBitsBox = new QComboBox{ selectBox };
+    stopBitsBox = new QComboBox{selectBox};
     controlsLayout->addWidget(stopBitsBox, 5, 1, 1, 1);
 
-    flowControlLabel = new QLabel{ "Flow control", selectBox };
+    flowControlLabel = new QLabel{"Flow control", selectBox};
     controlsLayout->addWidget(flowControlLabel, 6, 0, 1, 1);
-    flowControlBox = new QComboBox{ selectBox };
+    flowControlBox = new QComboBox{selectBox};
     controlsLayout->addWidget(flowControlBox, 6, 1, 1, 1);
 
     layout->addWidget(selectBox, 0, Qt::AlignTop);
@@ -57,7 +59,9 @@ PortSettingsDialog::PortSettingsDialog(QWidget *parent)
     connect(portsInfoButton, &QPushButton::pressed, portsInfoDialog, &PortsInfoDialog::show);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &PortSettingsDialog::ok);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &PortSettingsDialog::cancel);
-    connect(serialPortBox, &QComboBox::currentIndexChanged, this,
+    connect(serialPortBox,
+            &QComboBox::currentIndexChanged,
+            this,
             &PortSettingsDialog::checkCustomPath);
     enumeratePorts();
     fillSettings();
