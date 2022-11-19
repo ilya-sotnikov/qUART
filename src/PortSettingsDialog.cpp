@@ -5,49 +5,48 @@
 PortSettingsDialog::PortSettingsDialog(QWidget *parent)
     : QDialog{parent}
     , portsInfoDialog{new PortsInfoDialog{this}}
+    , serialPortBox{new QComboBox{this}}
+    , baudRateBox{new QComboBox{this}}
+    , dataBitsBox{new QComboBox{this}}
+    , parityBox{new QComboBox{this}}
+    , stopBitsBox{new QComboBox{this}}
+    , flowControlBox{new QComboBox{this}}
 {
-    layout = new QVBoxLayout{this};
-    buttonBox = new QDialogButtonBox{QDialogButtonBox::Cancel | QDialogButtonBox::Ok,
-                                     Qt::Horizontal,
-                                     this};
+    auto layout{new QVBoxLayout{this}};
+    auto buttonBox{
+        new QDialogButtonBox{QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this}};
 
-    selectBox = new QGroupBox{"Serial port configuration", this};
+    auto selectBox{new QGroupBox{"Serial port configuration", this}};
 
-    controlsLayout = new QGridLayout{selectBox};
+    auto controlsLayout{new QGridLayout{selectBox}};
 
-    portsInfoLabel = new QLabel{"Ports info", selectBox};
+    auto portsInfoLabel{new QLabel{"Ports info", selectBox}};
     controlsLayout->addWidget(portsInfoLabel, 0, 0, 1, 1);
-    portsInfoButton = new QPushButton{"Show", selectBox};
+    auto portsInfoButton{new QPushButton{"Show", selectBox}};
     controlsLayout->addWidget(portsInfoButton, 0, 1, 1, 1);
 
-    serialPortLabel = new QLabel{"Serial port", selectBox};
+    auto serialPortLabel{new QLabel{"Serial port", selectBox}};
     controlsLayout->addWidget(serialPortLabel, 1, 0, 1, 1);
-    serialPortBox = new QComboBox{selectBox};
     controlsLayout->addWidget(serialPortBox, 1, 1, 1, 1);
 
-    baudRateLabel = new QLabel{"Baud rate", selectBox};
+    auto baudRateLabel{new QLabel{"Baud rate", selectBox}};
     controlsLayout->addWidget(baudRateLabel, 2, 0, 1, 1);
-    baudRateBox = new QComboBox{selectBox};
     controlsLayout->addWidget(baudRateBox, 2, 1, 1, 1);
 
-    dataBitsLabel = new QLabel{"Data bits", selectBox};
+    auto dataBitsLabel{new QLabel{"Data bits", selectBox}};
     controlsLayout->addWidget(dataBitsLabel, 3, 0, 1, 1);
-    dataBitsBox = new QComboBox{selectBox};
     controlsLayout->addWidget(dataBitsBox, 3, 1, 1, 1);
 
-    parityLabel = new QLabel{"Parity", selectBox};
+    auto parityLabel{new QLabel{"Parity", selectBox}};
     controlsLayout->addWidget(parityLabel, 4, 0, 1, 1);
-    parityBox = new QComboBox{selectBox};
     controlsLayout->addWidget(parityBox, 4, 1, 1, 1);
 
-    stopBitsLabel = new QLabel{"Stop bits", selectBox};
+    auto stopBitsLabel{new QLabel{"Stop bits", selectBox}};
     controlsLayout->addWidget(stopBitsLabel, 5, 0, 1, 1);
-    stopBitsBox = new QComboBox{selectBox};
     controlsLayout->addWidget(stopBitsBox, 5, 1, 1, 1);
 
-    flowControlLabel = new QLabel{"Flow control", selectBox};
+    auto flowControlLabel{new QLabel{"Flow control", selectBox}};
     controlsLayout->addWidget(flowControlLabel, 6, 0, 1, 1);
-    flowControlBox = new QComboBox{selectBox};
     controlsLayout->addWidget(flowControlBox, 6, 1, 1, 1);
 
     layout->addWidget(selectBox, 0, Qt::AlignTop);

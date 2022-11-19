@@ -9,27 +9,33 @@ Plot::Plot(QWidget *parent)
     , dataPlot{new QList<qreal>}
     , dataSpectrum{new QList<qreal>}
     , marker{new QwtPlotMarker{}}
-    , panner{new QwtPlotPanner{canvas()}}
-    , plotPickerStateMachine{new QwtPickerClickPointMachine{}}
-    , picker{new QwtPlotPicker(xBottom,
-                               yLeft,
-                               QwtPlotPicker::CrossRubberBand,
-                               QwtPlotPicker::AlwaysOn,
-                               canvas())}
-    , magnifier{new QwtPlotMagnifier{canvas()}}
 {
-    marker->setValue(0.0, 0.0);
+    [[maybe_unused]] auto panner{new QwtPlotPanner{canvas()}};
+
+    auto plotPickerStateMachine{new QwtPickerClickPointMachine{}};
+
     marker->setLineStyle(QwtPlotMarker::VLine);
     marker->setLinePen(Qt::black, 0, Qt::SolidLine);
     marker->hide();
     marker->attach(this);
+    marker->setValue(0.0, 0.0);
+
     curve->setStyle(QwtPlotCurve::Lines);
     curve->setPaintAttribute(QwtPlotCurve::FilterPoints);
     curve->setPen(Qt::black, 2);
     curve->attach(this);
+
     plotPickerStateMachine->setState(QwtPickerMachine::PointSelection);
+    auto picker{new QwtPlotPicker(xBottom,
+                                  yLeft,
+                                  QwtPlotPicker::CrossRubberBand,
+                                  QwtPlotPicker::AlwaysOn,
+                                  canvas())};
     picker->setStateMachine(plotPickerStateMachine);
+
+    auto magnifier{new QwtPlotMagnifier{canvas()}};
     magnifier->setMouseButton(Qt::MiddleButton);
+
     setAutoFillBackground(true);
     QPalette p{palette()};
     p.setColor(QPalette::Window, "white");

@@ -35,10 +35,6 @@ private:
     QList<qreal> *dataPlot;
     QList<qreal> *dataSpectrum;
     QwtPlotMarker *marker;
-    QwtPlotPanner *panner;
-    QwtPickerClickPointMachine *plotPickerStateMachine;
-    QwtPlotPicker *picker;
-    QwtPlotMagnifier *magnifier;
 
 public slots:
     void addData(QList<qreal> *receivedData);

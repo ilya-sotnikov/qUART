@@ -10,36 +10,35 @@ MainWindow::MainWindow(QWidget *parent)
     , dataSettingsDialog{new DataSettingsDialog{this}}
     , serialTransceiver{new SerialTransceiver{this}}
     , chartTypeWidget{new TextWidget{this}}
+    , actionConnect{new QAction{"Connect", this}}
+    , actionDisconnect{new QAction{"Disconnect", this}}
+    , actionPortSettings{new QAction{"Port", this}}
+    , actionClear{new QAction{"Clear", this}}
+    , actionSaveImage{new QAction{"Save image", this}}
+    , actionSaveData{new QAction{"Save data", this}}
+    , actionOpenData{new QAction{"Open data", this}}
+    , actionDataSettings{new QAction{"Data", this}}
+    , actionChartType{new QAction{"Chart type", this}}
+    , actionResetZoom{new QAction{"Reset zoom", this}}
+    , actionHideMarker{new QAction{"Hide marker", this}}
+    , actionAppendToPlot{new QAction{"Append to plot", this}}
+    , actionAppendToSpectrum{new QAction{"Append to spectrum", this}}
+    , statusBar{new QStatusBar{this}}
 {
     setMinimumSize(QSize{320, 240});
     resize(QSize{800, 600});
-    actionConnect = new QAction{"Connect", this};
-    actionDisconnect = new QAction{"Disconnect", this};
-    actionPortSettings = new QAction{"Port", this};
-    actionClear = new QAction{"Clear", this};
-    actionSaveImage = new QAction{"Save image", this};
-    actionSaveData = new QAction{"Save data", this};
-    actionOpenData = new QAction{"Open data", this};
-    actionDataSettings = new QAction{"Data", this};
-    actionChartType = new QAction{"Chart type", this};
-    actionResetZoom = new QAction{"Reset zoom", this};
-    actionHideMarker = new QAction{"Hide marker", this};
-    actionAppendToPlot = new QAction{"Append to plot", this};
-    actionAppendToSpectrum = new QAction{"Append to spectrum", this};
 
-    centralWidget = new QWidget{this};
-    verticalLayout = new QVBoxLayout{centralWidget};
+    auto centralWidget{new QWidget{this}};
     setCentralWidget(centralWidget);
 
-    menuBar = new QMenuBar{this};
-    menuFile = new QMenu{"File", menuBar};
-    menuSettings = new QMenu{"Settings", menuBar};
+    auto menuBar{new QMenuBar{this}};
+    auto menuFile{new QMenu{"File", menuBar}};
+    auto menuSettings{new QMenu{"Settings", menuBar}};
     setMenuBar(menuBar);
 
-    statusBar = new QStatusBar{this};
     setStatusBar(statusBar);
 
-    toolBar = new QToolBar{this};
+    auto toolBar{new QToolBar{this}};
     addToolBar(Qt::TopToolBarArea, toolBar);
 
     menuBar->addAction(menuFile->menuAction());
@@ -132,6 +131,7 @@ void MainWindow::serialConnect()
         actionDataSettings->setEnabled(false);
         actionOpenData->setEnabled(false);
         actionSaveData->setEnabled(false);
+        actionSaveImage->setEnabled(false);
     } else {
         QMessageBox::critical(this, "Error", serialTransceiver->errorString());
     }
@@ -146,6 +146,7 @@ void MainWindow::serialDisconnect()
     actionDataSettings->setEnabled(true);
     actionOpenData->setEnabled(true);
     actionSaveData->setEnabled(true);
+    actionSaveImage->setEnabled(true);
 }
 
 void MainWindow::saveImage()

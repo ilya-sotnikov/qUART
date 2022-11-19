@@ -4,25 +4,27 @@
 
 DataSettingsDialog::DataSettingsDialog(QWidget *parent)
     : QDialog{parent}
+    , button_u8{new QRadioButton{"unsigned 8 bit"}}
+    , button_u16{new QRadioButton{"unsigned 16 bit"}}
+    , button_u32{new QRadioButton{"unsigned 32 bit"}}
+    , button_u64{new QRadioButton{"unsigned 64 bit"}}
+    , button_i8{new QRadioButton{"signed 8 bit"}}
+    , button_i16{new QRadioButton{"signed 16 bit"}}
+    , button_i32{new QRadioButton{"signed 32 bit"}}
+    , button_i64{new QRadioButton{"signed 64 bit"}}
+    , button_f32{new QRadioButton{"float 32 bit"}}
+    , button_f64{new QRadioButton{"double 64 bit"}}
+    , buttonGroup{new QButtonGroup{this}}
+
 {
-    layout = new QVBoxLayout{this};
+    auto layout{new QVBoxLayout{this}};
 
-    buttonBox = new QDialogButtonBox{QDialogButtonBox::Cancel | QDialogButtonBox::Ok,
-                                     Qt::Horizontal,
-                                     this};
+    auto buttonBox{
+        new QDialogButtonBox{QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this}};
 
-    buttonsLayout = new QVBoxLayout{};
-    groupBox = new QGroupBox{"Data format", this};
-    button_u8 = new QRadioButton{"unsigned 8 bit"};
-    button_u16 = new QRadioButton{"unsigned 16 bit"};
-    button_u32 = new QRadioButton{"unsigned 32 bit"};
-    button_u64 = new QRadioButton{"unsigned 64 bit"};
-    button_i8 = new QRadioButton{"signed 8 bit"};
-    button_i16 = new QRadioButton{"signed 16 bit"};
-    button_i32 = new QRadioButton{"signed 32 bit"};
-    button_i64 = new QRadioButton{"signed 64 bit"};
-    button_f32 = new QRadioButton{"float 32 bit"};
-    button_f64 = new QRadioButton{"double 64 bit"};
+    auto buttonsLayout{new QVBoxLayout{}};
+    auto groupBox{new QGroupBox{"Data format", this}};
+
     buttonsLayout->addWidget(button_u8);
     buttonsLayout->addWidget(button_u16);
     buttonsLayout->addWidget(button_u32);
@@ -37,7 +39,6 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent)
 
     hideAdditionalDataTypes();
 
-    buttonGroup = new QButtonGroup{groupBox};
     buttonGroup->addButton(button_u8, SerialTransceiver::u8);
     buttonGroup->addButton(button_u16, SerialTransceiver::u16);
     buttonGroup->addButton(button_u32, SerialTransceiver::u32);

@@ -21,10 +21,7 @@ public:
 
 private:
     SerialTransceiver::DataTypes currentDataType{SerialTransceiver::u8};
-    QDialogButtonBox *buttonBox{nullptr};
-    QGroupBox *groupBox{nullptr};
-    QVBoxLayout *layout{nullptr};
-    QVBoxLayout *buttonsLayout{nullptr};
+
     QRadioButton *button_u8{nullptr};
     QRadioButton *button_u16{nullptr};
     QRadioButton *button_u32{nullptr};

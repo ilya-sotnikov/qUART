@@ -15,6 +15,7 @@ PortsInfoDialog::PortsInfoDialog(QWidget *parent)
     scroll->setWidgetResizable(true);
     auto layout{new QVBoxLayout{this}};
     widget->setLayout(layout);
+
     const auto portsInfo{QSerialPortInfo::availablePorts()};
     for (const auto &info : portsInfo) {
         QString infoStr{

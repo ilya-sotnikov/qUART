@@ -44,13 +44,7 @@ private:
     QAction *actionHideMarker{nullptr};
     QAction *actionAppendToPlot{nullptr};
     QAction *actionAppendToSpectrum{nullptr};
-    QWidget *centralWidget{nullptr};
-    QVBoxLayout *verticalLayout{nullptr};
-    QMenuBar *menuBar{nullptr};
-    QMenu *menuFile{nullptr};
-    QMenu *menuSettings{nullptr};
     QStatusBar *statusBar{nullptr};
-    QToolBar *toolBar{nullptr};
 
 private slots:
     void serialConnect();

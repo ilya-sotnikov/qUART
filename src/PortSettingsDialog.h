@@ -40,24 +40,11 @@ private:
     void checkCustomPath(const int index) const;
     void updateSettings();
 
-    QVBoxLayout *layout{nullptr};
-    QDialogButtonBox *buttonBox{nullptr};
-    QGroupBox *selectBox{nullptr};
-    QGridLayout *controlsLayout{nullptr};
-
-    QLabel *portsInfoLabel{nullptr};
-    QPushButton *portsInfoButton{nullptr};
-    QLabel *serialPortLabel{nullptr};
     QComboBox *serialPortBox{nullptr};
-    QLabel *baudRateLabel{nullptr};
     QComboBox *baudRateBox{nullptr};
-    QLabel *dataBitsLabel{nullptr};
     QComboBox *dataBitsBox{nullptr};
-    QLabel *parityLabel{nullptr};
     QComboBox *parityBox{nullptr};
-    QLabel *stopBitsLabel{nullptr};
     QComboBox *stopBitsBox{nullptr};
-    QLabel *flowControlLabel{nullptr};
     QComboBox *flowControlBox{nullptr};
 
 private slots:

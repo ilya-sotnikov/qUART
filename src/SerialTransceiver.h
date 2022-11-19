@@ -6,7 +6,6 @@
 #include <QPointF>
 #include <QSerialPort>
 #include <QTimer>
-#include <qserialport.h>
 
 class SerialTransceiver : public QObject
 {
