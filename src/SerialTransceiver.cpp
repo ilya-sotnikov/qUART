@@ -1,10 +1,13 @@
 #include "SerialTransceiver.h"
 
-// for some reason 0xff is always received twice on my PC
-// can't reproduce on anything else
-// define it if this problem occurs for you too
+// See SerialTransceiver::deserializeByteArray
 // #define BUG_0xff
 
+/**
+ * @brief Construct a new SerialTransceiver object
+ * 
+ * @param parent 
+ */
 SerialTransceiver::SerialTransceiver(QObject *parent)
     : QObject{parent}
     , serialPort{new QSerialPort{this}}
@@ -15,12 +18,24 @@ SerialTransceiver::SerialTransceiver(QObject *parent)
     connect(timer, &QTimer::timeout, this, &SerialTransceiver::timerTimeout);
 }
 
+/**
+ * @brief Destroy the SerialTransceiver object and its data list
+ * 
+ */
 SerialTransceiver::~SerialTransceiver()
 {
     serialClose();
     delete dataList;
 }
 
+/**
+ * @brief Open the serial port and return connection status (bool)
+ * 
+ * It also starts the timer which will overflow every 200 msec to limit the chart update rate.
+ *
+ * @return true 
+ * @return false 
+ */
 bool SerialTransceiver::serialOpen()
 {
     bool isOpen{serialPort->open(QIODevice::ReadWrite)};
@@ -31,6 +46,10 @@ bool SerialTransceiver::serialOpen()
     return isOpen;
 }
 
+/**
+ * @brief Close the serial port, clear all received data and stop the timer if it's active
+ * 
+ */
 void SerialTransceiver::serialClose()
 {
     if (serialPort->isOpen())
@@ -41,6 +60,19 @@ void SerialTransceiver::serialClose()
     bufferArray.clear();
 }
 
+/**
+ * @brief Deserialize byte array according to the current data type
+ * 
+ * On my previous Linux machine (both Arch and Debian) there was a nasty bug.
+ * If a serial port has received 0xff, it always had a duplicate next to it.
+ * I've tried multiple port settings, virtual serial ports, the bug was still there.
+ * Can't reproduce it on Windows but decided to leave a hacky solution.
+ * I don't know if it's a bug in Qt.
+ * If you have this problem, define BUG_0xff at the top of this file.
+ * 
+ * @tparam T 
+ * @param byteArray 
+ */
 template<typename T>
 void SerialTransceiver::deserializeByteArray(QByteArray *byteArray)
 {
@@ -70,6 +102,10 @@ void SerialTransceiver::deserializeByteArray(QByteArray *byteArray)
     }
 }
 
+/**
+ * @brief Receive data according to the current data type
+ * 
+ */
 void SerialTransceiver::receiveData()
 {
     QByteArray byteArray{serialPort->readAll()};
@@ -108,6 +144,13 @@ void SerialTransceiver::receiveData()
     }
 }
 
+/**
+ * @brief Emit the newDataAvailable signal on timerTimeout if there's new data
+ * 
+ * It gives raw pointer to received data, the received side is expected
+ * to plot this data and clear the received data list.
+ * 
+ */
 void SerialTransceiver::timerTimeout()
 {
     if (!dataList->isEmpty()) {
@@ -115,36 +158,93 @@ void SerialTransceiver::timerTimeout()
     }
 }
 
+/**
+ * @brief Set the current data type
+ * 
+ * @param dataType 
+ */
 void SerialTransceiver::setDataType(DataTypes dataType)
 {
     this->dataType = dataType;
 }
 
+/**
+ * @brief Set the current baud rate
+ * 
+ * @param baudRate 
+ * @param directions 
+ * @return true 
+ * @return false 
+ */
 bool SerialTransceiver::setBaudRate(qint32 baudRate, QSerialPort::Directions directions)
 {
     return serialPort->setBaudRate(baudRate, directions);
 }
+
+/**
+ * @brief Set the current port name
+ * 
+ * @param name 
+ */
 void SerialTransceiver::setPortName(const QString &name)
 {
     serialPort->setPortName(name);
 }
-QString SerialTransceiver::errorString() const
-{
-    return serialPort->errorString();
-}
+
+/**
+ * @brief Set the current flow control
+ * 
+ * @param flowControl 
+ * @return true 
+ * @return false 
+ */
 bool SerialTransceiver::setFlowControl(QSerialPort::FlowControl flowControl)
 {
     return serialPort->setFlowControl(flowControl);
 }
+
+/**
+ * @brief Set the current stop bits
+ * 
+ * @param stopBits 
+ * @return true 
+ * @return false 
+ */
 bool SerialTransceiver::setStopBits(QSerialPort::StopBits stopBits)
 {
     return serialPort->setStopBits(stopBits);
 }
+
+/**
+ * @brief Set the current parity
+ * 
+ * @param parity 
+ * @return true 
+ * @return false 
+ */
 bool SerialTransceiver::setParity(QSerialPort::Parity parity)
 {
     return serialPort->setParity(parity);
 }
+
+/**
+ * @brief Set the current data bits
+ * 
+ * @param dataBits 
+ * @return true 
+ * @return false 
+ */
 bool SerialTransceiver::setDataBits(QSerialPort::DataBits dataBits)
 {
     return serialPort->setDataBits(dataBits);
+}
+
+/**
+ * @brief Get the current error string of the serial port
+ * 
+ * @return QString 
+ */
+QString SerialTransceiver::errorString() const
+{
+    return serialPort->errorString();
 }

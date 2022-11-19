@@ -3,6 +3,10 @@
 
 #include <QDialog>
 
+/**
+ * @brief The dialog with information about all available serial ports
+ * 
+ */
 class PortsInfoDialog : public QDialog
 {
     Q_OBJECT

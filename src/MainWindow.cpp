@@ -4,9 +4,14 @@
 #include <QIcon>
 #include <QMessageBox>
 
+/**
+ * @brief Construct a new MainWindow object
+ * 
+ * @param parent 
+ */
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow{parent}
-    , plot{new Plot{this}}
+    , chart{new Chart{this}}
     , portSettingsDialog{new PortSettingsDialog{this}}
     , dataSettingsDialog{new DataSettingsDialog{this}}
     , serialTransceiver{new SerialTransceiver{this}}
@@ -22,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     , actionChartType{new QAction{"Chart type", this}}
     , actionResetZoom{new QAction{"Reset zoom", this}}
     , actionHideMarker{new QAction{"Hide marker", this}}
-    , actionAppendToPlot{new QAction{"Append to plot", this}}
+    , actionAppendToPlot{new QAction{"Append to chart", this}}
     , actionAppendToSpectrum{new QAction{"Append to spectrum", this}}
     , statusBar{new QStatusBar{this}}
 {
@@ -74,46 +79,62 @@ MainWindow::MainWindow(QWidget *parent)
     toolBar->addAction(actionAppendToPlot);
     toolBar->addAction(actionAppendToSpectrum);
 
-    setCentralWidget(plot);
+    setCentralWidget(chart);
 
     actionConnect->setEnabled(true);
     actionDisconnect->setEnabled(false);
     actionPortSettings->setEnabled(true);
 
     statusBar->addPermanentWidget(chartTypeWidget);
-    if (plot->getChartType() == Plot::plot)
-        chartTypeWidget->setText("Chart type: Plot");
-    else if (plot->getChartType() == Plot::spectrum)
+    if (chart->getChartType() == Chart::plot)
+        chartTypeWidget->setText("Chart type: Chart");
+    else if (chart->getChartType() == Chart::spectrum)
         chartTypeWidget->setText("Chart type: Spectrum");
 
-    connect(serialTransceiver, &SerialTransceiver::newDataAvailable, plot, &Plot::addData);
+    connect(serialTransceiver, &SerialTransceiver::newDataAvailable, chart, &Chart::addData);
     connect(actionConnect, &QAction::triggered, this, &MainWindow::serialConnect);
     connect(actionDisconnect, &QAction::triggered, this, &MainWindow::serialDisconnect);
     connect(actionPortSettings, &QAction::triggered, portSettingsDialog, &PortSettingsDialog::show);
     connect(actionDataSettings, &QAction::triggered, dataSettingsDialog, &DataSettingsDialog::show);
     connect(actionSaveImage, &QAction::triggered, this, &MainWindow::saveImage);
     connect(actionClear, &QAction::triggered, this, &MainWindow::clearChart);
-    connect(actionChartType, &QAction::triggered, plot, &Plot::changeType);
+    connect(actionChartType, &QAction::triggered, chart, &Chart::changeType);
     connect(actionChartType, &QAction::triggered, this, &MainWindow::updateDataSettingsDialog);
     connect(actionChartType, &QAction::triggered, this, &MainWindow::statusBarUpdateChartType);
     connect(actionSaveData, &QAction::triggered, this, &MainWindow::saveData);
     connect(actionOpenData, &QAction::triggered, this, &MainWindow::openData);
-    connect(actionResetZoom, &QAction::triggered, plot, &Plot::resetZoom);
-    connect(actionHideMarker, &QAction::triggered, plot, &Plot::hideMarker);
-    connect(plot, &Plot::pointSelected, this, &MainWindow::updateSelectedPoint);
+    connect(actionResetZoom, &QAction::triggered, chart, &Chart::resetZoom);
+    connect(actionHideMarker, &QAction::triggered, chart, &Chart::hideMarker);
+    connect(chart, &Chart::pointSelected, this, &MainWindow::updateSelectedPoint);
     connect(actionAppendToPlot, &QAction::triggered, this, [this] {
-        plot->appendToPlot = !plot->appendToPlot;
+        chart->appendToPlot = !chart->appendToPlot;
     });
     connect(actionAppendToSpectrum, &QAction::triggered, this, [this] {
-        plot->appendToSpectrum = !plot->appendToSpectrum;
+        chart->appendToSpectrum = !chart->appendToSpectrum;
     });
 }
 
+/**
+ * @brief Destroy the MainWindow object
+ * 
+ */
 MainWindow::~MainWindow()
 {
     delete serialTransceiver;
 }
 
+/**
+ * @brief A helper function to create a file dialog with specified parameters
+ * 
+ * This function can be used to create an open dialog or save dialog
+ * with the file extension filter and default file suffix.
+ * Returns the selected file name or empty string if none was selected.
+ * 
+ * @param acceptMode 
+ * @param nameFilter 
+ * @param defaultSuffix 
+ * @return QString 
+ */
 QString MainWindow::createFileDialog(QFileDialog::AcceptMode acceptMode,
                                      QString nameFilter,
                                      QString defaultSuffix)
@@ -128,6 +149,13 @@ QString MainWindow::createFileDialog(QFileDialog::AcceptMode acceptMode,
         return fileDialog.selectedFiles().at(0);
 }
 
+/**
+ * @brief Connect to the serial port with specified parameters from PortSettingsDialog
+ * 
+ * Additionally, it disables several actions which shouldn't be executed while new data is received.
+ * If failed to connect, pop up a message box with an error.
+ * 
+ */
 void MainWindow::serialConnect()
 {
     const auto &serialSettings{portSettingsDialog->getCurrentSettings()};
@@ -152,6 +180,13 @@ void MainWindow::serialConnect()
     }
 }
 
+/**
+ * @brief Disconnect from the serial port
+ * 
+ * Additionally, it reenables several actions which are safe to execute
+ * while the serial port is disconnected.
+ * 
+ */
 void MainWindow::serialDisconnect()
 {
     serialTransceiver->serialClose();
@@ -164,35 +199,55 @@ void MainWindow::serialDisconnect()
     actionSaveImage->setEnabled(true);
 }
 
+/**
+ * @brief Saves the chart to an png image
+ * 
+ */
 void MainWindow::saveImage()
 {
     auto fileName{createFileDialog(QFileDialog::AcceptSave, "Images (*.png)", "png")};
     if (fileName.isEmpty())
         return;
-    QPixmap pixMap{plot->grab()};
+    QPixmap pixMap{chart->grab()};
     pixMap.save(fileName, "PNG");
 }
 
+/**
+ * @brief Clears the chart
+ * 
+ */
 void MainWindow::clearChart()
 {
-    plot->clear();
+    chart->clear();
 }
 
+/**
+ * @brief Saves data from the chart to a text file
+ * 
+ * Saved data depends on the current chart type (chart or spectrum).
+ * 
+ */
 void MainWindow::saveData()
 {
     auto fileName{createFileDialog(QFileDialog::AcceptSave, "Text files (*.txt)", "txt")};
     QFile file(fileName);
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        const auto dataList{plot->getData()};
+        const auto dataList{chart->getData()};
         QTextStream stream(&file);
         for (const auto &data : dataList)
             stream << QString::number(data) << "\n";
     }
 }
 
+/**
+ * @brief Opens text file and plots data from it
+ * 
+ * It reads raw data, so you must choose the correct chart type before opening new data (chart or spectrum).
+ * 
+ */
 void MainWindow::openData()
 {
-    plot->clear();
+    chart->clear();
     auto fileName = createFileDialog(QFileDialog::AcceptOpen, "Text files (*.txt)", "txt");
     QFile file(fileName);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -200,28 +255,45 @@ void MainWindow::openData()
         QTextStream stream(&file);
         while (!stream.atEnd())
             dataList.append(stream.readLine().toDouble());
-        plot->addRawData(&dataList);
+        chart->addRawData(&dataList);
     }
 }
 
+/**
+ * @brief Updates available data types in DataSettingsDialog
+ * 
+ * Available data types depend on the current chart type.
+ * Chart (u8, u16, u32, u64, i8, i16, i32, i64, f32, f64).
+ * Spectrum (u8, u16, u32, u64)
+ * 
+ */
 void MainWindow::updateDataSettingsDialog()
 {
-    auto chartType{plot->getChartType()};
-    if (chartType == Plot::spectrum)
+    auto chartType{chart->getChartType()};
+    if (chartType == Chart::spectrum)
         dataSettingsDialog->hideAdditionalDataTypes();
-    else if (chartType == Plot::plot)
+    else if (chartType == Chart::plot)
         dataSettingsDialog->showAdditionalDataTypes();
 }
 
+/**
+ * @brief Updates the status bar with the current chart type
+ * 
+ */
 void MainWindow::statusBarUpdateChartType()
 {
-    auto chartType{plot->getChartType()};
-    if (chartType == Plot::spectrum)
+    auto chartType{chart->getChartType()};
+    if (chartType == Chart::spectrum)
         chartTypeWidget->setText("Chart type: Spectrum");
-    else if (chartType == Plot::plot)
-        chartTypeWidget->setText("Chart type: Plot");
+    else if (chartType == Chart::plot)
+        chartTypeWidget->setText("Chart type: Chart");
 }
 
+/**
+ * @brief Updates the message in the status bar with the selected point
+ * 
+ * @param point 
+ */
 void MainWindow::updateSelectedPoint(const QPointF point)
 {
     QString msg{"x: "};

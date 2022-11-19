@@ -6,6 +6,11 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+/**
+ * @brief Construct a new PortsInfoDialog object
+ * 
+ * @param parent 
+ */
 PortsInfoDialog::PortsInfoDialog(QWidget *parent)
     : QDialog{parent}
 {

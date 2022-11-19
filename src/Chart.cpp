@@ -1,9 +1,14 @@
-#include "Plot.h"
+#include "Chart.h"
 
 #include <QwtScaleMap>
 #include <QwtText>
 
-Plot::Plot(QWidget *parent)
+/**
+ * @brief Construct a new Plot object
+ * 
+ * @param parent 
+ */
+Chart::Chart(QWidget *parent)
     : QwtPlot{parent}
     , curve{new QwtPlotCurve{}}
     , dataPlot{new QList<qreal>}
@@ -44,54 +49,87 @@ Plot::Plot(QWidget *parent)
     connect(picker, SIGNAL(selected(const QPointF &)), SLOT(updateSelected(const QPointF &)));
 }
 
-Plot::~Plot()
+/**
+ * @brief Destroy the Plot object and delete its data
+ * 
+ */
+Chart::~Chart()
 {
     delete dataPlot;
     delete dataSpectrum;
 }
 
-void Plot::updatePlot()
+/**
+ * @brief Update data on the chart
+ * 
+ */
+void Chart::updateChart()
 {
-    if (chartType == Plot::plot)
+    if (chartType == Chart::plot)
         curve->setRawSamples(dataPlot->constData(), dataPlot->size());
-    else if (chartType == Plot::spectrum)
+    else if (chartType == Chart::spectrum)
         curve->setRawSamples(dataSpectrum->constData(), dataSpectrum->size());
     resetZoom();
 }
 
-void Plot::changeType()
+/**
+ * @brief Change the chart type
+ * 
+ * If the current type is spectrum, it changes type to plot and vice versa.
+ * 
+ */
+void Chart::changeType()
 {
-    if (chartType == Plot::spectrum) {
+    if (chartType == Chart::spectrum) {
         curve->setStyle(QwtPlotCurve::Lines);
-        chartType = Plot::plot;
-    } else if (chartType == Plot::plot) {
+        chartType = Chart::plot;
+    } else if (chartType == Chart::plot) {
         curve->setStyle(QwtPlotCurve::Sticks);
-        chartType = Plot::spectrum;
+        chartType = Chart::spectrum;
     }
-    updatePlot();
+    updateChart();
 }
 
-void Plot::clear()
+/**
+ * @brief Delete all data and update the chart
+ * 
+ */
+void Chart::clear()
 {
     dataPlot->clear();
     dataSpectrum->clear();
-    updatePlot();
+    updateChart();
 }
 
-void Plot::addRawData(QList<qreal> *rawData)
+/**
+ * @brief Add raw data to the chart
+ *
+ * Note that you should choose the corresponding chart type (plot or spectrum).
+ * 
+ * @param rawData 
+ */
+void Chart::addRawData(QList<qreal> *rawData)
 {
     dataPlot->clear();
     dataSpectrum->clear();
-    if (chartType == Plot::plot) {
+    if (chartType == Chart::plot) {
         addData(rawData);
-    } else if (chartType == Plot::spectrum) {
+    } else if (chartType == Chart::spectrum) {
         dataSpectrum->append(*rawData);
-        updatePlot();
+        updateChart();
         rawData->clear();
     }
 }
 
-void Plot::addData(QList<qreal> *receivedData)
+/**
+ * @brief Add data to the chart
+ *
+ * If the current chart type is plot, then plots data.
+ * If it's spectrum, then plot frequency of an each data point.
+ * 
+ * @param receivedData 
+ */
+void Chart::addData(QList<qreal> *receivedData)
 {
     if (appendToPlot)
         dataPlot->append(*receivedData);
@@ -103,20 +141,29 @@ void Plot::addData(QList<qreal> *receivedData)
             dataSpectrum->replace(data, dataSpectrum->at(data) + 1);
         }
     }
-    updatePlot();
+    updateChart();
     receivedData->clear();
 }
 
-void Plot::resetZoom()
+/**
+ * @brief Enable autoscaling and replot
+ * 
+ */
+void Chart::resetZoom()
 {
     setAxisAutoScale(QwtPlot::xBottom);
     setAxisAutoScale(QwtPlot::yLeft);
     replot();
 }
 
-void Plot::updateSelected(const QPointF &point)
+/**
+ * @brief Return the selected data point from its coordinates and show marker at this position
+ * 
+ * @param point 
+ */
+void Chart::updateSelected(const QPointF &point)
 {
-    const auto dataList = (chartType == Plot::plot) ? dataPlot : dataSpectrum;
+    const auto dataList = (chartType == Chart::plot) ? dataPlot : dataSpectrum;
 
     qsizetype x = qRound(point.x());
     if (x < 0 || x >= dataList->size())
@@ -130,17 +177,32 @@ void Plot::updateSelected(const QPointF &point)
     emit pointSelected(selectedPoint);
 }
 
-void Plot::hideMarker()
+/**
+ * @brief Hide the marker
+ * 
+ */
+void Chart::hideMarker()
 {
     marker->hide();
     replot();
 }
-Plot::ChartType Plot::getChartType() const
+
+/**
+ * @brief Get chartType
+ * 
+ * @return Chart::ChartType 
+ */
+Chart::ChartType Chart::getChartType() const
 {
     return chartType;
 }
 
-const QList<qreal> &Plot::getData() const
+/**
+ * @brief Get a data list depending on the current chart type (plot or spectrum)
+ * 
+ * @return const QList<qreal>& 
+ */
+const QList<qreal> &Chart::getData() const
 {
-    return (chartType == Plot::plot) ? *dataPlot : *dataSpectrum;
+    return (chartType == Chart::plot) ? *dataPlot : *dataSpectrum;
 }

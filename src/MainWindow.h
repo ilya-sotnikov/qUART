@@ -7,8 +7,8 @@
 #include <QStatusBar>
 #include <QToolBar>
 
+#include "Chart.h"
 #include "DataSettingsDialog.h"
-#include "Plot.h"
 #include "PortSettingsDialog.h"
 #include "SerialTransceiver.h"
 #include "TextWidget.h"
@@ -22,7 +22,7 @@ public:
     ~MainWindow();
 
 private:
-    Plot *plot{nullptr};
+    Chart *chart{nullptr};
     PortSettingsDialog *portSettingsDialog{nullptr};
     DataSettingsDialog *dataSettingsDialog{nullptr};
     SerialTransceiver *serialTransceiver{nullptr};

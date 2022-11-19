@@ -33,8 +33,8 @@ set(PROJECT_SOURCES
         main.cpp
         MainWindow.h
         MainWindow.cpp
-        Plot.h
-        Plot.cpp
+        Chart.h
+        Chart.cpp
         SerialTransceiver.h
         SerialTransceiver.cpp
         PortSettingsDialog.h

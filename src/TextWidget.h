@@ -4,6 +4,10 @@
 #include <QLabel>
 #include <QWidget>
 
+/**
+ * @brief Text widget to display in the status bar
+ * 
+ */
 class TextWidget : public QWidget
 {
     Q_OBJECT

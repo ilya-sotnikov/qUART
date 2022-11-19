@@ -2,6 +2,11 @@
 
 #include <QSerialPortInfo>
 
+/**
+ * @brief Construct a new PortSettingsDialog object
+ * 
+ * @param parent 
+ */
 PortSettingsDialog::PortSettingsDialog(QWidget *parent)
     : QDialog{parent}
     , portsInfoDialog{new PortsInfoDialog{this}}
@@ -67,6 +72,10 @@ PortSettingsDialog::PortSettingsDialog(QWidget *parent)
     updateSettings();
 }
 
+/**
+ * @brief Fill PortSettingsDialog settings and select the most common ones
+ * 
+ */
 void PortSettingsDialog::fillSettings() const
 {
     serialPortBox->setCurrentIndex(0);
@@ -103,6 +112,12 @@ void PortSettingsDialog::fillSettings() const
     flowControlBox->setCurrentIndex(0);
 }
 
+/**
+ * @brief Enumerate available serial ports
+ * 
+ * Note that if you connect a new serial port you must restart the program.
+ * 
+ */
 void PortSettingsDialog::enumeratePorts() const
 {
     serialPortBox->clear();
@@ -113,6 +128,11 @@ void PortSettingsDialog::enumeratePorts() const
     serialPortBox->addItem("Custom");
 }
 
+/**
+ * @brief Allow to type in a custom serial port name
+ * 
+ * @param index 
+ */
 void PortSettingsDialog::checkCustomPath(const int index) const
 {
     const bool isCustomPath = serialPortBox->itemData(index).isNull();
@@ -121,6 +141,10 @@ void PortSettingsDialog::checkCustomPath(const int index) const
         serialPortBox->clearEditText();
 }
 
+/**
+ * @brief Update the current settings according to the selected
+ * 
+ */
 void PortSettingsDialog::updateSettings()
 {
     currentSettings.name = serialPortBox->currentText();
@@ -131,12 +155,20 @@ void PortSettingsDialog::updateSettings()
     currentSettings.flowControl = dataBitsBox->currentData().value<QSerialPort::FlowControl>();
 }
 
+/**
+ * @brief Update the current settings according to the selected and hide PortSettingsDialog
+ * 
+ */
 void PortSettingsDialog::ok()
 {
     updateSettings();
     hide();
 }
 
+/**
+ * @brief Hide PortSettingsDialog without updating the current settings
+ * 
+ */
 void PortSettingsDialog::cancel()
 {
     hide();

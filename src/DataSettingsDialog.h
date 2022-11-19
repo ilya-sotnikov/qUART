@@ -9,6 +9,10 @@
 #include <QRadioButton>
 #include <QVBoxLayout>
 
+/**
+ * @brief The dialog to select a data type
+ * 
+ */
 class DataSettingsDialog : public QDialog
 {
     Q_OBJECT

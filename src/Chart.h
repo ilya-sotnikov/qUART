@@ -1,5 +1,5 @@
-#ifndef PLOT_H
-#define PLOT_H
+#ifndef CHART_H
+#define CHART_H
 
 #include <QwtPicker>
 #include <QwtPickerClickPointMachine>
@@ -10,13 +10,13 @@
 #include <QwtPlotPanner>
 #include <QwtPlotPicker>
 
-class Plot : public QwtPlot
+class Chart : public QwtPlot
 {
     Q_OBJECT
 public:
-    explicit Plot(QWidget *parent = nullptr);
-    ~Plot();
-    void updatePlot();
+    explicit Chart(QWidget *parent = nullptr);
+    ~Chart();
+    void updateChart();
     void changeType();
     void clear();
     void addRawData(QList<qreal> *rawData);
@@ -24,13 +24,13 @@ public:
 
     enum ChartType { plot, spectrum };
     Q_ENUM(ChartType)
-    Plot::ChartType getChartType() const;
+    Chart::ChartType getChartType() const;
 
     bool appendToPlot{true};
     bool appendToSpectrum{true};
 
 private:
-    Plot::ChartType chartType{Plot::plot};
+    Chart::ChartType chartType{Chart::plot};
     QwtPlotCurve *curve;
     QList<qreal> *dataPlot;
     QList<qreal> *dataSpectrum;
@@ -48,4 +48,4 @@ signals:
     void pointSelected(const QPointF point);
 };
 
-#endif // PLOT_H
+#endif // CHART_H

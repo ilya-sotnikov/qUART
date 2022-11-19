@@ -2,6 +2,11 @@
 
 #include <QButtonGroup>
 
+/**
+ * @brief Construct a new DataSettingsDialog object
+ * 
+ * @param parent 
+ */
 DataSettingsDialog::DataSettingsDialog(QWidget *parent)
     : QDialog{parent}
     , button_u8{new QRadioButton{"unsigned 8 bit"}}
@@ -60,6 +65,11 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent)
     connect(buttonBox, &QDialogButtonBox::rejected, this, &DataSettingsDialog::cancel);
 }
 
+/**
+ * @brief Hide additional data types (i8, i16, i32, i64, f32, f64)
+ * 
+ * This function is needed because a spectrum only supports unsigned int types
+ */
 void DataSettingsDialog::hideAdditionalDataTypes() const
 {
     button_i8->hide();
@@ -71,6 +81,11 @@ void DataSettingsDialog::hideAdditionalDataTypes() const
     button_u8->click();
 }
 
+/**
+ * @brief Show additional data types (i8, i16, i32, i64, f32, f64)
+ * This function is needed because a spectrum only supports unsigned int types.
+ * If the chart is in plot mode, all data types are available. 
+ */
 void DataSettingsDialog::showAdditionalDataTypes() const
 {
     button_i8->show();
@@ -81,12 +96,20 @@ void DataSettingsDialog::showAdditionalDataTypes() const
     button_f64->show();
 }
 
+/**
+ * @brief Get the selected data type and hide DataSettingsDialog
+ * 
+ */
 void DataSettingsDialog::ok()
 {
     currentDataType = static_cast<SerialTransceiver::DataTypes>(buttonGroup->checkedId());
     hide();
 }
 
+/**
+ * @brief Hide DataSettingsDialog without changing the current data type
+ * 
+ */
 void DataSettingsDialog::cancel()
 {
     hide();
