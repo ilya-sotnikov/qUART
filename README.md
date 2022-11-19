@@ -1,6 +1,11 @@
 # qUART
 Real-time graph and spectrum serial plotter written in Qt6 and Qwt
 
+## License
+- qUART is licensed under GPL-3.0
+- Qwt is licensed under Qwt-1.0
+- Material Symbols are licensed under Apache-2.0
+
 ## Screenshots
 | Spectrum | Plot |
 | --- | --- |

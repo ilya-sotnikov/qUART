@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 
 #include <QDebug>
+#include <QIcon>
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -27,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     setMinimumSize(QSize{320, 240});
     resize(QSize{800, 600});
+    setWindowTitle("qUART");
+    setWindowIcon(QIcon{":app.png"});
 
     auto centralWidget{new QWidget{this}};
     setCentralWidget(centralWidget);
@@ -37,6 +40,19 @@ MainWindow::MainWindow(QWidget *parent)
     setMenuBar(menuBar);
 
     setStatusBar(statusBar);
+
+    actionConnect->setIcon(QIcon{":actionConnect.png"});
+    actionDisconnect->setIcon(QIcon{":actionDisconnect.png"});
+    actionClear->setIcon(QIcon{":actionClear.png"});
+    actionChartType->setIcon(QIcon{":actionChartType.png"});
+    actionResetZoom->setIcon(QIcon{":actionResetZoom.png"});
+    actionHideMarker->setIcon(QIcon{":actionHideMarker.png"});
+    actionAppendToPlot->setIcon(QIcon{":actionAppendToPlot.png"});
+    actionAppendToPlot->setCheckable(true);
+    actionAppendToPlot->setChecked(true);
+    actionAppendToSpectrum->setIcon(QIcon{":actionAppendToSpectrum.png"});
+    actionAppendToSpectrum->setCheckable(true);
+    actionAppendToSpectrum->setChecked(true);
 
     auto toolBar{new QToolBar{this}};
     addToolBar(Qt::TopToolBarArea, toolBar);
@@ -58,7 +74,6 @@ MainWindow::MainWindow(QWidget *parent)
     toolBar->addAction(actionAppendToPlot);
     toolBar->addAction(actionAppendToSpectrum);
 
-    setWindowTitle("qUART");
     setCentralWidget(plot);
 
     actionConnect->setEnabled(true);

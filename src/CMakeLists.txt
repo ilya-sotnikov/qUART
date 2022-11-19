@@ -45,6 +45,7 @@ set(PROJECT_SOURCES
         PortsInfoDialog.cpp
         TextWidget.h
         TextWidget.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../icons/icons.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

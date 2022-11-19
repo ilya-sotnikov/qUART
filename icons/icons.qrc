@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>actionConnect.png</file>
+        <file>actionDisconnect.png</file>
+        <file>actionClear.png</file>
+        <file>actionChartType.png</file>
+        <file>actionResetZoom.png</file>
+        <file>actionHideMarker.png</file>
+        <file>actionAppendToPlot.png</file>
+        <file>actionAppendToSpectrum.png</file>
+        <file>app.png</file>
+    </qresource>
+</RCC>
