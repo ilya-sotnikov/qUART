@@ -9,16 +9,6 @@
  */
 DataSettingsDialog::DataSettingsDialog(QWidget *parent)
     : QDialog{parent}
-    , button_u8{new QRadioButton{"unsigned 8 bit"}}
-    , button_u16{new QRadioButton{"unsigned 16 bit"}}
-    , button_u32{new QRadioButton{"unsigned 32 bit"}}
-    , button_u64{new QRadioButton{"unsigned 64 bit"}}
-    , button_i8{new QRadioButton{"signed 8 bit"}}
-    , button_i16{new QRadioButton{"signed 16 bit"}}
-    , button_i32{new QRadioButton{"signed 32 bit"}}
-    , button_i64{new QRadioButton{"signed 64 bit"}}
-    , button_f32{new QRadioButton{"float 32 bit"}}
-    , button_f64{new QRadioButton{"double 64 bit"}}
     , buttonGroup{new QButtonGroup{this}}
 
 {
@@ -29,6 +19,17 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent)
 
     auto buttonsLayout{new QVBoxLayout{}};
     auto groupBox{new QGroupBox{"Data format", this}};
+
+    auto button_u8{new QRadioButton{"unsigned 8 bit"}};
+    auto button_u16{new QRadioButton{"unsigned 16 bit"}};
+    auto button_u32{new QRadioButton{"unsigned 32 bit"}};
+    auto button_u64{new QRadioButton{"unsigned 64 bit"}};
+    auto button_i8{new QRadioButton{"signed 8 bit"}};
+    auto button_i16{new QRadioButton{"signed 16 bit"}};
+    auto button_i32{new QRadioButton{"signed 32 bit"}};
+    auto button_i64{new QRadioButton{"signed 64 bit"}};
+    auto button_f32{new QRadioButton{"float 32 bit"}};
+    auto button_f64{new QRadioButton{"double 64 bit"}};
 
     buttonsLayout->addWidget(button_u8);
     buttonsLayout->addWidget(button_u16);
@@ -42,8 +43,6 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent)
     buttonsLayout->addWidget(button_f64);
     groupBox->setLayout(buttonsLayout);
 
-    hideAdditionalDataTypes();
-
     buttonGroup->addButton(button_u8, SerialTransceiver::u8);
     buttonGroup->addButton(button_u16, SerialTransceiver::u16);
     buttonGroup->addButton(button_u32, SerialTransceiver::u32);
@@ -54,6 +53,7 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent)
     buttonGroup->addButton(button_i64, SerialTransceiver::i64);
     buttonGroup->addButton(button_f32, SerialTransceiver::f32);
     buttonGroup->addButton(button_f64, SerialTransceiver::f64);
+    buttonGroup->button(currentDataType)->click();
 
     layout->addWidget(groupBox, 0, Qt::AlignTop);
     layout->addWidget(buttonBox, 0, Qt::AlignBottom);
@@ -66,43 +66,15 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent)
 }
 
 /**
- * @brief Hide additional data types (i8, i16, i32, i64, f32, f64)
- * 
- * This function is needed because a spectrum only supports unsigned int types
- */
-void DataSettingsDialog::hideAdditionalDataTypes() const
-{
-    button_i8->hide();
-    button_i16->hide();
-    button_i32->hide();
-    button_i64->hide();
-    button_f32->hide();
-    button_f64->hide();
-    button_u8->click();
-}
-
-/**
- * @brief Show additional data types (i8, i16, i32, i64, f32, f64)
- * This function is needed because a spectrum only supports unsigned int types.
- * If the chart is in plot mode, all data types are available. 
- */
-void DataSettingsDialog::showAdditionalDataTypes() const
-{
-    button_i8->show();
-    button_i16->show();
-    button_i32->show();
-    button_i64->show();
-    button_f32->show();
-    button_f64->show();
-}
-
-/**
  * @brief Get the selected data type and hide DataSettingsDialog
  * 
  */
 void DataSettingsDialog::ok()
 {
+    auto previousDataType{currentDataType};
     currentDataType = static_cast<SerialTransceiver::DataTypes>(buttonGroup->checkedId());
+    if (previousDataType != currentDataType)
+        emit dataTypeChanged(currentDataType);
     hide();
 }
 
@@ -112,5 +84,6 @@ void DataSettingsDialog::ok()
  */
 void DataSettingsDialog::cancel()
 {
+    buttonGroup->button(currentDataType)->click();
     hide();
 }

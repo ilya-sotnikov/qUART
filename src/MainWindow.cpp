@@ -87,7 +87,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     statusBar->addPermanentWidget(chartTypeWidget);
     if (chart->getChartType() == Chart::plot)
-        chartTypeWidget->setText("Chart type: Chart");
+        chartTypeWidget->setText("Chart type: Plot");
     else if (chart->getChartType() == Chart::spectrum)
         chartTypeWidget->setText("Chart type: Spectrum");
 
@@ -99,7 +99,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(actionSaveImage, &QAction::triggered, this, &MainWindow::saveImage);
     connect(actionClear, &QAction::triggered, this, &MainWindow::clearChart);
     connect(actionChartType, &QAction::triggered, chart, &Chart::changeType);
-    connect(actionChartType, &QAction::triggered, this, &MainWindow::updateDataSettingsDialog);
     connect(actionChartType, &QAction::triggered, this, &MainWindow::statusBarUpdateChartType);
     connect(actionSaveData, &QAction::triggered, this, &MainWindow::saveData);
     connect(actionOpenData, &QAction::triggered, this, &MainWindow::openData);
@@ -112,6 +111,19 @@ MainWindow::MainWindow(QWidget *parent)
     connect(actionAppendToSpectrum, &QAction::triggered, this, [this] {
         chart->appendToSpectrum = !chart->appendToSpectrum;
     });
+    connect(dataSettingsDialog,
+            &DataSettingsDialog::dataTypeChanged,
+            this,
+            [this](SerialTransceiver::DataTypes dataType) {
+                if (static_cast<int>(dataType)
+                    > static_cast<int>(SerialTransceiver::DataTypes::u64)) {
+                    actionAppendToSpectrum->setChecked(false);
+                    chart->appendToSpectrum = false;
+                    actionAppendToSpectrum->setDisabled(true);
+                } else {
+                    actionAppendToSpectrum->setDisabled(false);
+                }
+            });
 }
 
 /**
@@ -260,23 +272,6 @@ void MainWindow::openData()
 }
 
 /**
- * @brief Updates available data types in DataSettingsDialog
- * 
- * Available data types depend on the current chart type.
- * Chart (u8, u16, u32, u64, i8, i16, i32, i64, f32, f64).
- * Spectrum (u8, u16, u32, u64)
- * 
- */
-void MainWindow::updateDataSettingsDialog()
-{
-    auto chartType{chart->getChartType()};
-    if (chartType == Chart::spectrum)
-        dataSettingsDialog->hideAdditionalDataTypes();
-    else if (chartType == Chart::plot)
-        dataSettingsDialog->showAdditionalDataTypes();
-}
-
-/**
  * @brief Updates the status bar with the current chart type
  * 
  */
@@ -286,7 +281,7 @@ void MainWindow::statusBarUpdateChartType()
     if (chartType == Chart::spectrum)
         chartTypeWidget->setText("Chart type: Spectrum");
     else if (chartType == Chart::plot)
-        chartTypeWidget->setText("Chart type: Chart");
+        chartTypeWidget->setText("Chart type: Plot");
 }
 
 /**

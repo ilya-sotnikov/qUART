@@ -27,6 +27,7 @@ private:
     DataSettingsDialog *dataSettingsDialog{nullptr};
     SerialTransceiver *serialTransceiver{nullptr};
     TextWidget *chartTypeWidget{nullptr};
+
     QString createFileDialog(QFileDialog::AcceptMode acceptMode,
                              QString nameFilter,
                              QString defaultSuffix);
@@ -53,7 +54,6 @@ private slots:
     void clearChart();
     void saveData();
     void openData();
-    void updateDataSettingsDialog();
     void statusBarUpdateChartType();
     void updateSelectedPoint(const QPointF point);
 };

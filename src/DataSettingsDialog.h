@@ -12,6 +12,10 @@
 /**
  * @brief The dialog to select a data type
  * 
+ * Available data types depend on the current chart type.
+ * Chart (u8, u16, u32, u64, i8, i16, i32, i64, f32, f64).
+ * Spectrum (u8, u16, u32, u64)
+ * 
  */
 class DataSettingsDialog : public QDialog
 {
@@ -26,21 +30,14 @@ public:
 private:
     SerialTransceiver::DataTypes currentDataType{SerialTransceiver::u8};
 
-    QRadioButton *button_u8{nullptr};
-    QRadioButton *button_u16{nullptr};
-    QRadioButton *button_u32{nullptr};
-    QRadioButton *button_u64{nullptr};
-    QRadioButton *button_i8{nullptr};
-    QRadioButton *button_i16{nullptr};
-    QRadioButton *button_i32{nullptr};
-    QRadioButton *button_i64{nullptr};
-    QRadioButton *button_f32{nullptr};
-    QRadioButton *button_f64{nullptr};
     QButtonGroup *buttonGroup{nullptr};
 
 private slots:
     void ok();
     void cancel();
+
+signals:
+    void dataTypeChanged(SerialTransceiver::DataTypes dataType);
 };
 
 #endif // DATASETTINGSDIALOG_H
