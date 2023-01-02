@@ -82,6 +82,15 @@ set_target_properties(qUART PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
+if(SANITIZER STREQUAL "ADDR")
+    target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=address)
+    target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=address)
+endif()
+
+if(SANITIZER STREQUAL "UB")
+    target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=undefined)
+    target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=undefined)
+endif()
 
 if(MSVC)
   target_compile_options(${PROJECT_NAME} PRIVATE /W4)
