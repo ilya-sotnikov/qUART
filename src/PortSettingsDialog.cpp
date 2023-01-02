@@ -150,9 +150,9 @@ void PortSettingsDialog::updateSettings()
     currentSettings.name = serialPortBox->currentText();
     currentSettings.baudRate = baudRateBox->currentData().value<QSerialPort::BaudRate>();
     currentSettings.dataBits = dataBitsBox->currentData().value<QSerialPort::DataBits>();
-    currentSettings.parity = dataBitsBox->currentData().value<QSerialPort::Parity>();
-    currentSettings.stopBits = dataBitsBox->currentData().value<QSerialPort::StopBits>();
-    currentSettings.flowControl = dataBitsBox->currentData().value<QSerialPort::FlowControl>();
+    currentSettings.parity = parityBox->currentData().value<QSerialPort::Parity>();
+    currentSettings.stopBits = stopBitsBox->currentData().value<QSerialPort::StopBits>();
+    currentSettings.flowControl = flowControlBox->currentData().value<QSerialPort::FlowControl>();
 }
 
 /**
