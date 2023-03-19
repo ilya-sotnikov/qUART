@@ -12,18 +12,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(QWT_LIB_PATH "")
-set(QWT_INCLUDE "")
-
-if(NOT EXISTS ${QWT_INCLUDE})
-    message(FATAL_ERROR "Set QWT_INCLUDE to location of qwt/include")
-endif()
-
-if(NOT EXISTS ${QWT_LIB_PATH})
-    message(FATAL_ERROR "Set QWT_LIB_PATH to location of qwt/lib")
-endif()
-
-find_library(QWT_LIB qwt HINTS ${QWT_LIB_PATH})
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 #find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 set(QT_VERSION_MAJOR 6)
@@ -31,20 +20,20 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets SerialPort)
 
 set(PROJECT_SOURCES
         main.cpp
-        MainWindow.h
-        MainWindow.cpp
-        Chart.h
-        Chart.cpp
-        SerialTransceiver.h
-        SerialTransceiver.cpp
-        PortSettingsDialog.h
-        PortSettingsDialog.cpp
-        DataSettingsDialog.h
-        DataSettingsDialog.cpp
-        PortsInfoDialog.h
-        PortsInfoDialog.cpp
-        TextWidget.h
-        TextWidget.cpp
+        mainwindow.h
+        mainwindow.cpp
+        chart.h
+        chart.cpp
+        serialtransceiver.h
+        serialtransceiver.cpp
+        portsettingsdialog.h
+        portsettingsdialog.cpp
+        datasettingsdialog.h
+        datasettingsdialog.cpp
+        portsinfodialog.h
+        portsinfodialog.cpp
+        textwidget.h
+        textwidget.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/../icons/icons.qrc
 )
 
@@ -71,8 +60,7 @@ else()
     endif()
 endif()
 
-target_include_directories(qUART PRIVATE "${QWT_INCLUDE}")
-target_link_libraries(qUART PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::SerialPort ${QWT_LIB})
+target_link_libraries(qUART PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::SerialPort)
 
 set_target_properties(qUART PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
@@ -82,21 +70,18 @@ set_target_properties(qUART PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-if(SANITIZER STREQUAL "ADDR")
-    target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=address)
-    target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=address)
-endif()
-
-if(SANITIZER STREQUAL "UB")
-    target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=undefined)
-    target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=undefined)
-endif()
-
 if(MSVC)
-  target_compile_options(${PROJECT_NAME} PRIVATE /W4)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4)
 else()
-  target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
+    set(SANITIZERS "-fsanitize=address,undefined,leak")
+    target_compile_options(${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${SANITIZERS}>")
+    target_link_options(${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${SANITIZERS}>")
 endif()
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ./compile_commands.json ../compile_commands.json)
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(qUART)
