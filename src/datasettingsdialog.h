@@ -1,7 +1,7 @@
 #ifndef DATASETTINGSDIALOG_H
 #define DATASETTINGSDIALOG_H
 
-#include "SerialTransceiver.h"
+#include "serialtransceiver.h"
 
 #include <QDialog>
 #include <QDialogButtonBox>
@@ -17,26 +17,27 @@
  * Spectrum (u8, u16, u32, u64)
  *
  */
-class DataSettingsDialog : public QDialog {
-  Q_OBJECT
+class DataSettingsDialog : public QDialog
+{
+    Q_OBJECT
 
 public:
-  explicit DataSettingsDialog(QWidget *parent = nullptr);
-  SerialTransceiver::DataTypes getCurrentDataType() { return currentDataType; }
-  void hideAdditionalDataTypes() const;
-  void showAdditionalDataTypes() const;
+    explicit DataSettingsDialog(QWidget *parent = nullptr);
+    SerialTransceiver::DataTypes getCurrentDataType() { return currentDataType; }
+    void hideAdditionalDataTypes() const;
+    void showAdditionalDataTypes() const;
 
 private:
-  SerialTransceiver::DataTypes currentDataType{SerialTransceiver::u8};
+    SerialTransceiver::DataTypes currentDataType{ SerialTransceiver::u8 };
 
-  QButtonGroup *buttonGroup{nullptr};
+    QButtonGroup *buttonGroup{ nullptr };
 
 private slots:
-  void ok();
-  void cancel();
+    void ok();
+    void cancel();
 
 signals:
-  void dataTypeChanged(SerialTransceiver::DataTypes dataType);
+    void dataTypeChanged(SerialTransceiver::DataTypes dataType);
 };
 
 #endif // DATASETTINGSDIALOG_H

@@ -1,4 +1,4 @@
-#include "TextWidget.h"
+#include "textwidget.h"
 
 #include <QHBoxLayout>
 
@@ -9,10 +9,11 @@
  * @param text
  */
 TextWidget::TextWidget(QWidget *parent, const QString &text)
-    : QWidget{parent}, label{new QLabel(text, this)} {
-  QHBoxLayout *layout{new QHBoxLayout};
-  layout->addWidget(label);
-  setLayout(layout);
+    : QWidget{ parent }, label{ new QLabel{ text, this } }
+{
+    QHBoxLayout *layout{ new QHBoxLayout };
+    layout->addWidget(label);
+    setLayout(layout);
 }
 
 /**
@@ -20,4 +21,7 @@ TextWidget::TextWidget(QWidget *parent, const QString &text)
  *
  * @param text
  */
-void TextWidget::setText(const QString &text) const { label->setText(text); }
+void TextWidget::setText(const QString &text) const
+{
+    label->setText(text);
+}

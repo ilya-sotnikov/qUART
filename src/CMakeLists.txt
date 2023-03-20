@@ -24,6 +24,8 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         chart.h
         chart.cpp
+        chartdatacontainer.h
+        chartdatacontainer.cpp
         serialtransceiver.h
         serialtransceiver.cpp
         portsettingsdialog.h
@@ -37,32 +39,52 @@ set(PROJECT_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/../icons/icons.qrc
 )
 
+# QCustomPlot
+set(QCUSTOMPLOT_SRC_PATH "$ENV{HOME}/build/qcustomplot")
+
+if(NOT EXISTS ${QCUSTOMPLOT_SRC_PATH})
+    message(FATAL_ERROR "Set QCUSTOMPLOT_SRC_PATH to the location of qcustomplot.cpp and qcustomplot.h")
+endif()
+
+add_library(QCustomPlot STATIC)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui PrintSupport)
+target_include_directories(QCustomPlot PUBLIC ${QCUSTOMPLOT_SRC_PATH})
+target_sources(QCustomPlot PRIVATE
+    ${QCUSTOMPLOT_SRC_PATH}/qcustomplot.cpp
+    ${QCUSTOMPLOT_SRC_PATH}/qcustomplot.h
+)
+target_link_libraries(QCustomPlot PRIVATE
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::PrintSupport
+)
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(qUART
+    qt_add_executable(${PROJECT_NAME}
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
 # Define target properties for Android with Qt 6 as:
-#    set_property(TARGET qUART APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+#    set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
 # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 else()
     if(ANDROID)
-        add_library(qUART SHARED
+        add_library(${PROJECT_NAME} SHARED
             ${PROJECT_SOURCES}
         )
 # Define properties for Android with Qt 5 after find_package() calls as:
 #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
-        add_executable(qUART
+        add_executable(${PROJECT_NAME}
             ${PROJECT_SOURCES}
         )
     endif()
 endif()
 
-target_link_libraries(qUART PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::SerialPort)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::SerialPort  QCustomPlot)
 
-set_target_properties(qUART PROPERTIES
+set_target_properties(${PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -84,5 +106,5 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     ./compile_commands.json ../compile_commands.json)
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(qUART)
+    qt_finalize_executable(${PROJECT_NAME})
 endif()

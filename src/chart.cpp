@@ -1,67 +1,53 @@
-#include "Chart.h"
-
-#include <QwtScaleMap>
-#include <QwtText>
+#include "chart.h"
 
 /**
- * @brief Construct a new Plot object
+ * @brief Construct a new Chart object
  *
  * @param parent
  */
-Chart::Chart(QWidget *parent)
-    : QwtPlot{parent}, curve{new QwtPlotCurve{}}, dataPlot{new QList<qreal>},
-      dataSpectrum{new QList<qreal>}, marker{new QwtPlotMarker{}} {
-  [[maybe_unused]] auto panner{new QwtPlotPanner{canvas()}};
+Chart::Chart(QWidget *parent) : QWidget{ parent }
+{
+    auto layout{ new QHBoxLayout{ this } };
+    layout->addWidget(customPlot);
 
-  auto plotPickerStateMachine{new QwtPickerClickPointMachine{}};
+    customPlot->addGraph();
+    customPlot->replot();
 
-  marker->setLineStyle(QwtPlotMarker::VLine);
-  marker->setLinePen(Qt::black, 0, Qt::SolidLine);
-  marker->hide();
-  marker->attach(this);
-  marker->setValue(0.0, 0.0);
-
-  curve->setStyle(QwtPlotCurve::Lines);
-  curve->setPaintAttribute(QwtPlotCurve::FilterPoints);
-  curve->setPen(Qt::black, 2);
-  curve->attach(this);
-
-  plotPickerStateMachine->setState(QwtPickerMachine::PointSelection);
-  auto picker{new QwtPlotPicker(xBottom, yLeft, QwtPlotPicker::CrossRubberBand,
-                                QwtPlotPicker::AlwaysOn, canvas())};
-  picker->setStateMachine(plotPickerStateMachine);
-
-  auto magnifier{new QwtPlotMagnifier{canvas()}};
-  magnifier->setMouseButton(Qt::MiddleButton);
-
-  setAutoFillBackground(true);
-  QPalette p{palette()};
-  p.setColor(QPalette::Window, "white");
-  setPalette(p);
-
-  connect(picker, SIGNAL(selected(const QPointF &)),
-          SLOT(updateSelected(const QPointF &)));
+    // plotDataContainer.append(QList<qreal>{0});
+    // plotDataContainer.append(QList<qreal>{1, 2, 3, 4, 5});
+    // plotDataContainer.append(QList<qreal>{10, 2});
+    // plotDataContainer.append(QList<qreal>{-2, -5});
+    // spectrumDataContainer.append(QList<qreal>{0});
+    // spectrumDataContainer.append(QList<qreal>{1, 2, 3, 4, 5});
+    // spectrumDataContainer.append(QList<qreal>{10, 2});
+    // spectrumDataContainer.append(QList<qreal>{-2, -5});
 }
 
-/**
- * @brief Destroy the Plot object and delete its data
- *
- */
-Chart::~Chart() {
-  delete dataPlot;
-  delete dataSpectrum;
-}
+// /**
+//  * @brief Destroy the Chart object and delete its data
+//  *
+//  */
+// Chart::~Chart() {
+//   delete dataPlot;
+//   delete dataSpectrum;
+// }
 
 /**
  * @brief Update data on the chart
  *
  */
-void Chart::updateChart() {
-  if (chartType == Chart::plot)
-    curve->setRawSamples(dataPlot->constData(), dataPlot->size());
-  else if (chartType == Chart::spectrum)
-    curve->setRawSamples(dataSpectrum->constData(), dataSpectrum->size());
-  resetZoom();
+void Chart::updateChart()
+{
+    if (chartType == Chart::plot) {
+        customPlot->graph()->setData(plotDataContainer.getKeys(), plotDataContainer.getValues(),
+                                     true);
+    } else if (chartType == Chart::spectrum) {
+        customPlot->graph()->setData(spectrumDataContainer.getKeys(),
+                                     spectrumDataContainer.getValues(), true);
+    }
+    // resetZoom();
+    customPlot->rescaleAxes();
+    customPlot->replot();
 }
 
 /**
@@ -70,25 +56,27 @@ void Chart::updateChart() {
  * If the current type is spectrum, it changes type to plot and vice versa.
  *
  */
-void Chart::changeType() {
-  if (chartType == Chart::spectrum) {
-    curve->setStyle(QwtPlotCurve::Lines);
-    chartType = Chart::plot;
-  } else if (chartType == Chart::plot) {
-    curve->setStyle(QwtPlotCurve::Sticks);
-    chartType = Chart::spectrum;
-  }
-  updateChart();
+void Chart::changeType()
+{
+    if (chartType == Chart::spectrum) {
+        customPlot->graph()->setLineStyle(QCPGraph::lsLine);
+        chartType = Chart::plot;
+    } else if (chartType == Chart::plot) {
+        customPlot->graph()->setLineStyle(QCPGraph::lsImpulse);
+        chartType = Chart::spectrum;
+    }
+    updateChart();
 }
 
 /**
  * @brief Delete all data and update the chart
  *
  */
-void Chart::clear() {
-  dataPlot->clear();
-  dataSpectrum->clear();
-  updateChart();
+void Chart::clear()
+{
+    plotDataContainer.clear();
+    spectrumDataContainer.clear();
+    updateChart();
 }
 
 /**
@@ -98,16 +86,17 @@ void Chart::clear() {
  *
  * @param rawData
  */
-void Chart::addRawData(QList<qreal> *rawData) {
-  dataPlot->clear();
-  dataSpectrum->clear();
-  if (chartType == Chart::plot) {
-    addData(rawData);
-  } else if (chartType == Chart::spectrum) {
-    dataSpectrum->append(*rawData);
-    updateChart();
-    rawData->clear();
-  }
+void Chart::addRawData(QList<qreal> *rawData)
+{
+    // dataPlot->clear();
+    // dataSpectrum->clear();
+    // if (chartType == Chart::plot) {
+    //   addData(rawData);
+    // } else if (chartType == Chart::spectrum) {
+    //   dataSpectrum->append(*rawData);
+    //   updateChart();
+    //   rawData->clear();
+    // }
 }
 
 /**
@@ -118,73 +107,69 @@ void Chart::addRawData(QList<qreal> *rawData) {
  *
  * @param receivedData
  */
-void Chart::addData(QList<qreal> *receivedData) {
-  if (appendToPlot)
-    dataPlot->append(*receivedData);
+void Chart::addData(QList<qreal> *receivedData)
+{
+    if (appendToPlot)
+        plotDataContainer.append(*receivedData);
 
-  if (appendToSpectrum) {
-    for (const auto &data : *receivedData) {
-      if (data >= dataSpectrum->size())
-        dataSpectrum->resize(data + 1);
-      dataSpectrum->replace(data, dataSpectrum->at(data) + 1);
-    }
-  }
-  updateChart();
-  receivedData->clear();
+    if (appendToSpectrum)
+        spectrumDataContainer.append(*receivedData);
+
+    updateChart();
+    receivedData->clear();
 }
 
 /**
  * @brief Enable autoscaling and replot
  *
  */
-void Chart::resetZoom() {
-  setAxisAutoScale(QwtPlot::xBottom);
-  setAxisAutoScale(QwtPlot::yLeft);
-  replot();
+void Chart::resetZoom()
+{
+    // setAxisAutoScale(QwtPlot::xBottom);
+    // setAxisAutoScale(QwtPlot::yLeft);
+    // replot();
 }
 
 /**
- * @brief Return the selected data point from its coordinates and show marker at
- * this position
+ * @brief Return the selected data point from its coordinates and show marker
+ * at this position
  *
  * @param point
  */
-void Chart::updateSelected(const QPointF &point) {
-  const auto dataList = (chartType == Chart::plot) ? dataPlot : dataSpectrum;
-
-  qsizetype x = qRound(point.x());
-  if (x < 0 || x >= dataList->size())
-    return;
-
-  auto selectedPoint{QPointF(x, dataList->at(x))};
-
-  marker->setValue(selectedPoint);
-  marker->show();
-  replot();
-  emit pointSelected(selectedPoint);
+void Chart::updateSelected(const QPointF &point)
+{
+    // const auto dataList = (chartType == Chart::plot) ? dataPlot :
+    // dataSpectrum;
+    //
+    // qsizetype x = qRound(point.x());
+    // if (x < 0 || x >= dataList->size())
+    //   return;
+    //
+    // auto selectedPoint{QPointF(x, dataList->at(x))};
+    //
+    // marker->setValue(selectedPoint);
+    // marker->show();
+    // replot();
+    // emit pointSelected(selectedPoint);
 }
 
 /**
  * @brief Hide the marker
  *
  */
-void Chart::hideMarker() {
-  marker->hide();
-  replot();
+void Chart::hideMarker()
+{
+    // marker->hide();
+    // replot();
 }
 
 /**
- * @brief Get chartType
- *
- * @return Chart::ChartType
- */
-Chart::ChartType Chart::getChartType() const { return chartType; }
-
-/**
- * @brief Get a data list depending on the current chart type (plot or spectrum)
+ * @brief Get a data list depending on the current chart type (plot or
+ * spectrum)
  *
  * @return const QList<qreal>&
  */
-const QList<qreal> &Chart::getData() const {
-  return (chartType == Chart::plot) ? *dataPlot : *dataSpectrum;
+const QList<qreal> &Chart::getData() const
+{
+    // return (chartType == Chart::plot) ? *dataPlot : *dataSpectrum;
 }

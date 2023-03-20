@@ -1,50 +1,47 @@
 #ifndef CHART_H
 #define CHART_H
 
-#include <QwtPicker>
-#include <QwtPickerClickPointMachine>
-#include <QwtPlot>
-#include <QwtPlotCurve>
-#include <QwtPlotMagnifier>
-#include <QwtPlotMarker>
-#include <QwtPlotPanner>
-#include <QwtPlotPicker>
+#include "chartdatacontainer.h"
 
-class Chart : public QwtPlot {
-  Q_OBJECT
+#include "qcustomplot.h"
+
+#include <QWidget>
+
+class Chart : public QWidget
+{
+    Q_OBJECT
 public:
-  explicit Chart(QWidget *parent = nullptr);
-  ~Chart();
-  void updateChart();
-  void changeType();
-  void clear();
-  void addRawData(QList<qreal> *rawData);
-  const QList<qreal> &getData() const;
+    explicit Chart(QWidget *parent = nullptr);
+    // ~Chart();
+    void updateChart();
+    void changeType();
+    void clear();
+    void addRawData(QList<qreal> *rawData);
+    const QList<qreal> &getData() const;
 
-  enum ChartType { plot, spectrum };
-  Q_ENUM(ChartType)
-  Chart::ChartType getChartType() const;
+    enum ChartType { plot, spectrum };
+    Q_ENUM(ChartType)
+    auto getChartType() const { return chartType; };
 
-  bool appendToPlot{true};
-  bool appendToSpectrum{true};
+    bool appendToPlot{ true };
+    bool appendToSpectrum{ true };
 
 private:
-  Chart::ChartType chartType{Chart::plot};
-  QwtPlotCurve *curve;
-  QList<qreal> *dataPlot;
-  QList<qreal> *dataSpectrum;
-  QwtPlotMarker *marker;
+    QCustomPlot *customPlot{ new QCustomPlot{ this } };
+    PlotDataContainer plotDataContainer;
+    SpectrumDataContainer spectrumDataContainer;
+    Chart::ChartType chartType{ Chart::plot };
 
 public slots:
-  void addData(QList<qreal> *receivedData);
-  void resetZoom();
-  void hideMarker();
+    void addData(QList<qreal> *receivedData);
+    void resetZoom();
+    void hideMarker();
 
 private slots:
-  void updateSelected(const QPointF &point);
+    void updateSelected(const QPointF &point);
 
 signals:
-  void pointSelected(const QPointF point);
+    void pointSelected(const QPointF point);
 };
 
 #endif // CHART_H
