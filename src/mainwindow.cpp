@@ -106,7 +106,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(actionOpenData, &QAction::triggered, this, &MainWindow::openData);
     connect(actionResetZoom, &QAction::triggered, chart, &Chart::resetZoom);
     connect(actionHideMarker, &QAction::triggered, chart, &Chart::hideMarker);
-    connect(chart, &Chart::pointSelected, this, &MainWindow::updateSelectedPoint);
+    // connect(chart, &Chart::pointSelected, this, &MainWindow::updateSelectedPoint);
     connect(actionAppendToPlot, &QAction::triggered, this,
             [this] { chart->appendToPlot = !chart->appendToPlot; });
     connect(actionAppendToSpectrum, &QAction::triggered, this,

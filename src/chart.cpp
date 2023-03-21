@@ -11,7 +11,15 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
     layout->addWidget(customPlot);
 
     customPlot->addGraph();
+    customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    // customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    // customPlot->setSelectionRectMode(QCP::srmZoom);
+    customPlot->graph()->setSelectable(QCP::stSingleData);
+    customPlot->setSelectionRectMode(QCP::srmZoom);
     customPlot->replot();
+
+    connect(customPlot->graph(), qOverload<const QCPDataSelection &>(&QCPGraph::selectionChanged),
+            this, &Chart::updateSelectedPoint);
 
     // plotDataContainer.append(QList<qreal>{0});
     // plotDataContainer.append(QList<qreal>{1, 2, 3, 4, 5});
@@ -21,6 +29,10 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
     // spectrumDataContainer.append(QList<qreal>{1, 2, 3, 4, 5});
     // spectrumDataContainer.append(QList<qreal>{10, 2});
     // spectrumDataContainer.append(QList<qreal>{-2, -5});
+}
+void Chart::test(const QCPDataSelection &selection)
+{
+    qDebug() << selection;
 }
 
 // /**
@@ -45,7 +57,6 @@ void Chart::updateChart()
         customPlot->graph()->setData(spectrumDataContainer.getKeys(),
                                      spectrumDataContainer.getValues(), true);
     }
-    // resetZoom();
     customPlot->rescaleAxes();
     customPlot->replot();
 }
@@ -125,9 +136,8 @@ void Chart::addData(QList<qreal> *receivedData)
  */
 void Chart::resetZoom()
 {
-    // setAxisAutoScale(QwtPlot::xBottom);
-    // setAxisAutoScale(QwtPlot::yLeft);
-    // replot();
+    customPlot->rescaleAxes();
+    customPlot->replot();
 }
 
 /**
@@ -136,21 +146,9 @@ void Chart::resetZoom()
  *
  * @param point
  */
-void Chart::updateSelected(const QPointF &point)
+void Chart::updateSelectedPoint(const QCPDataSelection &selection)
 {
-    // const auto dataList = (chartType == Chart::plot) ? dataPlot :
-    // dataSpectrum;
-    //
-    // qsizetype x = qRound(point.x());
-    // if (x < 0 || x >= dataList->size())
-    //   return;
-    //
-    // auto selectedPoint{QPointF(x, dataList->at(x))};
-    //
-    // marker->setValue(selectedPoint);
-    // marker->show();
-    // replot();
-    // emit pointSelected(selectedPoint);
+    qDebug() << selection;
 }
 
 /**

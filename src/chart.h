@@ -10,6 +10,7 @@
 class Chart : public QWidget
 {
     Q_OBJECT
+
 public:
     explicit Chart(QWidget *parent = nullptr);
     // ~Chart();
@@ -36,12 +37,10 @@ public slots:
     void addData(QList<qreal> *receivedData);
     void resetZoom();
     void hideMarker();
+    void test(const QCPDataSelection &selection);
 
 private slots:
-    void updateSelected(const QPointF &point);
-
-signals:
-    void pointSelected(const QPointF point);
+    void updateSelectedPoint(const QCPDataSelection &selection);
 };
 
 #endif // CHART_H
