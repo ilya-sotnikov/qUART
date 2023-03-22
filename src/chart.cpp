@@ -7,32 +7,40 @@
  */
 Chart::Chart(QWidget *parent) : QWidget{ parent }
 {
+    constexpr qreal lineWidth{ 2 };
+    constexpr qreal plotScatterSize{ 10 };
+    constexpr QColor plotSelectionColor{ QColor{ 80, 80, 255 } };
+
     auto layout{ new QHBoxLayout{ this } };
     layout->addWidget(customPlot);
 
-    customPlot->addGraph();
     customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-    // customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-    // customPlot->setSelectionRectMode(QCP::srmZoom);
-    customPlot->graph()->setSelectable(QCP::stSingleData);
     customPlot->setSelectionRectMode(QCP::srmZoom);
+    customPlot->setAntialiasedElements(QCP::aePlottables);
+
+    plot->setSelectable(QCP::stSingleData);
+    plot->setPen(QPen{ QBrush{ Qt::black }, lineWidth });
+    plot->setScatterStyle(
+            QCPScatterStyle{ QCPScatterStyle::ssCross, Qt::transparent, plotScatterSize });
+    plot->selectionDecorator()->setScatterStyle(QCPScatterStyle{
+            QCPScatterStyle::ssCross, QPen{ QBrush{ plotSelectionColor }, lineWidth },
+            QBrush{ plotSelectionColor }, plotScatterSize });
+
+    spectrum->setSelectable(QCP::stSingleData);
+    spectrum->setPen(QPen{ QBrush{ Qt::black }, lineWidth });
+    spectrum->setBrush(QBrush{ Qt::gray });
+    spectrum->setWidth(1);
+
     customPlot->replot();
 
-    connect(customPlot->graph(), qOverload<const QCPDataSelection &>(&QCPGraph::selectionChanged),
-            this, &Chart::updateSelectedPoint);
+    connect(plot, qOverload<const QCPDataSelection &>(&QCPGraph::selectionChanged), this,
+            &Chart::updateSelectedPoint);
+    connect(spectrum, qOverload<const QCPDataSelection &>(&QCPBars::selectionChanged), this,
+            &Chart::updateSelectedPoint);
 
-    // plotDataContainer.append(QList<qreal>{0});
-    // plotDataContainer.append(QList<qreal>{1, 2, 3, 4, 5});
-    // plotDataContainer.append(QList<qreal>{10, 2});
-    // plotDataContainer.append(QList<qreal>{-2, -5});
-    // spectrumDataContainer.append(QList<qreal>{0});
-    // spectrumDataContainer.append(QList<qreal>{1, 2, 3, 4, 5});
-    // spectrumDataContainer.append(QList<qreal>{10, 2});
-    // spectrumDataContainer.append(QList<qreal>{-2, -5});
-}
-void Chart::test(const QCPDataSelection &selection)
-{
-    qDebug() << selection;
+    QList<qreal> testData{ 0, 1, 2, 3, 4, 5, 10, 2, -2, -5 };
+
+    addData(&testData);
 }
 
 // /**
@@ -50,14 +58,16 @@ void Chart::test(const QCPDataSelection &selection)
  */
 void Chart::updateChart()
 {
-    if (chartType == Chart::plot) {
-        customPlot->graph()->setData(plotDataContainer.getKeys(), plotDataContainer.getValues(),
-                                     true);
-    } else if (chartType == Chart::spectrum) {
-        customPlot->graph()->setData(spectrumDataContainer.getKeys(),
-                                     spectrumDataContainer.getValues(), true);
+    if (chartType == ChartType::plot) {
+        plot->setData(plotDataContainer.getKeys(), plotDataContainer.getValues(), true);
+        plot->setVisible(true);
+        spectrum->setVisible(false);
+    } else if (chartType == ChartType::spectrum) {
+        plot->setVisible(false);
+        spectrum->setVisible(true);
+        spectrum->setData(spectrumDataContainer.getKeys(), spectrumDataContainer.getValues(), true);
     }
-    customPlot->rescaleAxes();
+    customPlot->rescaleAxes(true);
     customPlot->replot();
 }
 
@@ -69,13 +79,11 @@ void Chart::updateChart()
  */
 void Chart::changeType()
 {
-    if (chartType == Chart::spectrum) {
-        customPlot->graph()->setLineStyle(QCPGraph::lsLine);
-        chartType = Chart::plot;
-    } else if (chartType == Chart::plot) {
-        customPlot->graph()->setLineStyle(QCPGraph::lsImpulse);
-        chartType = Chart::spectrum;
-    }
+    if (chartType == ChartType::spectrum)
+        chartType = ChartType::plot;
+    else if (chartType == ChartType::plot)
+        chartType = ChartType::spectrum;
+
     updateChart();
 }
 
@@ -131,12 +139,12 @@ void Chart::addData(QList<qreal> *receivedData)
 }
 
 /**
- * @brief Enable autoscaling and replot
+ * @brief Rescale axes and replot
  *
  */
 void Chart::resetZoom()
 {
-    customPlot->rescaleAxes();
+    customPlot->rescaleAxes(true);
     customPlot->replot();
 }
 
@@ -148,17 +156,20 @@ void Chart::resetZoom()
  */
 void Chart::updateSelectedPoint(const QCPDataSelection &selection)
 {
-    qDebug() << selection;
-}
+    if (selection.isEmpty())
+        return;
 
-/**
- * @brief Hide the marker
- *
- */
-void Chart::hideMarker()
-{
-    // marker->hide();
-    // replot();
+    auto selectedPointX{ selection.dataRange().begin() };
+    QPointF selectedPoint{};
+    selectedPoint.setX(selectedPointX);
+
+    if (chartType == ChartType::plot) {
+        selectedPoint.setY(plotDataContainer.getValues().at(selectedPointX));
+    } else if (chartType == ChartType::spectrum) {
+        selectedPoint.setY(spectrumDataContainer.getValues().at(selectedPointX));
+    }
+
+    emit selectedPointChanged(selectedPoint);
 }
 
 /**
@@ -169,5 +180,6 @@ void Chart::hideMarker()
  */
 const QList<qreal> &Chart::getData() const
 {
-    // return (chartType == Chart::plot) ? *dataPlot : *dataSpectrum;
+    return (chartType == ChartType::plot) ? plotDataContainer.getValues()
+                                          : spectrumDataContainer.getValues();
 }

@@ -26,7 +26,6 @@ MainWindow::MainWindow(QWidget *parent)
       actionDataSettings{ new QAction{ "Data", this } },
       actionChartType{ new QAction{ "Chart type", this } },
       actionResetZoom{ new QAction{ "Reset zoom", this } },
-      actionHideMarker{ new QAction{ "Hide marker", this } },
       actionAppendToPlot{ new QAction{ "Append to chart", this } },
       actionAppendToSpectrum{ new QAction{ "Append to spectrum", this } },
       statusBar{ new QStatusBar{ this } }
@@ -48,7 +47,6 @@ MainWindow::MainWindow(QWidget *parent)
     actionClear->setIcon(QIcon{ ":actionClear.png" });
     actionChartType->setIcon(QIcon{ ":actionChartType.png" });
     actionResetZoom->setIcon(QIcon{ ":actionResetZoom.png" });
-    actionHideMarker->setIcon(QIcon{ ":actionHideMarker.png" });
     actionAppendToPlot->setIcon(QIcon{ ":actionAppendToPlot.png" });
     actionAppendToPlot->setCheckable(true);
     actionAppendToPlot->setChecked(true);
@@ -72,7 +70,6 @@ MainWindow::MainWindow(QWidget *parent)
     toolBar->addAction(actionClear);
     toolBar->addAction(actionChartType);
     toolBar->addAction(actionResetZoom);
-    toolBar->addAction(actionHideMarker);
     toolBar->addAction(actionAppendToPlot);
     toolBar->addAction(actionAppendToSpectrum);
 
@@ -88,9 +85,9 @@ MainWindow::MainWindow(QWidget *parent)
     actionPortSettings->setEnabled(true);
 
     statusBar->addPermanentWidget(chartTypeWidget);
-    if (chart->getChartType() == Chart::plot)
+    if (chart->getChartType() == Chart::ChartType::plot)
         chartTypeWidget->setText("Chart type: Plot");
-    else if (chart->getChartType() == Chart::spectrum)
+    else if (chart->getChartType() == Chart::ChartType::spectrum)
         chartTypeWidget->setText("Chart type: Spectrum");
 
     connect(serialTransceiver, &SerialTransceiver::newDataAvailable, chart, &Chart::addData);
@@ -105,8 +102,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(actionSaveData, &QAction::triggered, this, &MainWindow::saveData);
     connect(actionOpenData, &QAction::triggered, this, &MainWindow::openData);
     connect(actionResetZoom, &QAction::triggered, chart, &Chart::resetZoom);
-    connect(actionHideMarker, &QAction::triggered, chart, &Chart::hideMarker);
-    // connect(chart, &Chart::pointSelected, this, &MainWindow::updateSelectedPoint);
+    connect(chart, &Chart::selectedPointChanged, this, &MainWindow::updateSelectedPoint);
     connect(actionAppendToPlot, &QAction::triggered, this,
             [this] { chart->appendToPlot = !chart->appendToPlot; });
     connect(actionAppendToSpectrum, &QAction::triggered, this,
@@ -122,8 +118,6 @@ MainWindow::MainWindow(QWidget *parent)
                     actionAppendToSpectrum->setDisabled(false);
                 }
             });
-
-    serialConnect();
 }
 
 /**
@@ -174,8 +168,7 @@ void MainWindow::serialConnect()
     const auto &serialSettings{ portSettingsDialog->getCurrentSettings() };
     const auto dataType{ dataSettingsDialog->getCurrentDataType() };
     serialTransceiver->setDataType(dataType);
-    // serialTransceiver->setPortName(serialSettings.name);
-    serialTransceiver->setPortName("/dev/pts/3");
+    serialTransceiver->setPortName(serialSettings.name);
     serialTransceiver->setBaudRate(serialSettings.baudRate);
     serialTransceiver->setDataBits(serialSettings.dataBits);
     serialTransceiver->setParity(serialSettings.parity);
@@ -281,9 +274,9 @@ void MainWindow::openData()
 void MainWindow::statusBarUpdateChartType()
 {
     auto chartType{ chart->getChartType() };
-    if (chartType == Chart::spectrum)
+    if (chartType == Chart::ChartType::spectrum)
         chartTypeWidget->setText("Chart type: Spectrum");
-    else if (chartType == Chart::plot)
+    else if (chartType == Chart::ChartType::plot)
         chartTypeWidget->setText("Chart type: Plot");
 }
 

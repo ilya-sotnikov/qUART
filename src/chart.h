@@ -20,7 +20,7 @@ public:
     void addRawData(QList<qreal> *rawData);
     const QList<qreal> &getData() const;
 
-    enum ChartType { plot, spectrum };
+    enum class ChartType { plot, spectrum };
     Q_ENUM(ChartType)
     auto getChartType() const { return chartType; };
 
@@ -29,18 +29,21 @@ public:
 
 private:
     QCustomPlot *customPlot{ new QCustomPlot{ this } };
+    QCPGraph *plot{ customPlot->addGraph() };
+    QCPBars *spectrum{ new QCPBars{ customPlot->xAxis, customPlot->yAxis } };
     PlotDataContainer plotDataContainer;
     SpectrumDataContainer spectrumDataContainer;
-    Chart::ChartType chartType{ Chart::plot };
+    Chart::ChartType chartType{ ChartType::plot };
 
 public slots:
     void addData(QList<qreal> *receivedData);
     void resetZoom();
-    void hideMarker();
-    void test(const QCPDataSelection &selection);
 
 private slots:
     void updateSelectedPoint(const QCPDataSelection &selection);
+
+signals:
+    void selectedPointChanged(const QPointF selectedPoint);
 };
 
 #endif // CHART_H
