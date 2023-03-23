@@ -1,56 +1,53 @@
-#include "PortSettingsDialog.h"
+#include "portsettingsdialog.h"
 
-#include <QSerialPortInfo>
+#include <qboxlayout.h>
+#include <qdialogbuttonbox.h>
+#include <qgroupbox.h>
+#include <qlabel.h>
+#include <qpushbutton.h>
+#include <qserialportinfo.h>
 
 /**
- * @brief Construct a new PortSettingsDialog object
- * 
- * @param parent 
+ * @brief Constructs a new PortSettingsDialog object
+ *
+ * @param parent
  */
-PortSettingsDialog::PortSettingsDialog(QWidget *parent)
-    : QDialog{parent}
-    , portsInfoDialog{new PortsInfoDialog{this}}
-    , serialPortBox{new QComboBox{this}}
-    , baudRateBox{new QComboBox{this}}
-    , dataBitsBox{new QComboBox{this}}
-    , parityBox{new QComboBox{this}}
-    , stopBitsBox{new QComboBox{this}}
-    , flowControlBox{new QComboBox{this}}
+PortSettingsDialog::PortSettingsDialog(QWidget *parent) : QDialog{ parent }
 {
-    auto layout{new QVBoxLayout{this}};
-    auto buttonBox{
-        new QDialogButtonBox{QDialogButtonBox::Cancel | QDialogButtonBox::Ok, Qt::Horizontal, this}};
+    auto layout{ new QVBoxLayout{ this } };
+    auto buttonBox{ new QDialogButtonBox{ QDialogButtonBox::Cancel | QDialogButtonBox::Ok,
+                                          Qt::Horizontal, this } };
 
-    auto selectBox{new QGroupBox{"Serial port configuration", this}};
+    auto selectBox{ new QGroupBox{ "Serial port configuration", this } };
 
-    auto controlsLayout{new QGridLayout{selectBox}};
+    auto controlsLayout{ new QGridLayout{ selectBox } };
 
-    auto portsInfoLabel{new QLabel{"Ports info", selectBox}};
+    auto portsInfoLabel{ new QLabel{ "Ports info", selectBox } };
     controlsLayout->addWidget(portsInfoLabel, 0, 0, 1, 1);
-    auto portsInfoButton{new QPushButton{"Show", selectBox}};
+    auto portsInfoButton{ new QPushButton{ "Show", selectBox } };
     controlsLayout->addWidget(portsInfoButton, 0, 1, 1, 1);
 
-    auto serialPortLabel{new QLabel{"Serial port", selectBox}};
+    auto serialPortLabel{ new QLabel{ "Serial port", selectBox } };
     controlsLayout->addWidget(serialPortLabel, 1, 0, 1, 1);
     controlsLayout->addWidget(serialPortBox, 1, 1, 1, 1);
 
-    auto baudRateLabel{new QLabel{"Baud rate", selectBox}};
+    auto baudRateLabel{ new QLabel{ "Baud rate", selectBox } };
     controlsLayout->addWidget(baudRateLabel, 2, 0, 1, 1);
     controlsLayout->addWidget(baudRateBox, 2, 1, 1, 1);
 
-    auto dataBitsLabel{new QLabel{"Data bits", selectBox}};
+    auto dataBitsLabel{ new QLabel{ "Data bits", selectBox } };
     controlsLayout->addWidget(dataBitsLabel, 3, 0, 1, 1);
     controlsLayout->addWidget(dataBitsBox, 3, 1, 1, 1);
 
-    auto parityLabel{new QLabel{"Parity", selectBox}};
+    auto parityLabel{ new QLabel{ "Parity", selectBox } };
     controlsLayout->addWidget(parityLabel, 4, 0, 1, 1);
     controlsLayout->addWidget(parityBox, 4, 1, 1, 1);
 
-    auto stopBitsLabel{new QLabel{"Stop bits", selectBox}};
+    auto stopBitsLabel{ new QLabel{ "Stop bits", selectBox } };
     controlsLayout->addWidget(stopBitsLabel, 5, 0, 1, 1);
     controlsLayout->addWidget(stopBitsBox, 5, 1, 1, 1);
 
-    auto flowControlLabel{new QLabel{"Flow control", selectBox}};
+    auto flowControlLabel{ new QLabel{ "Flow control", selectBox } };
     controlsLayout->addWidget(flowControlLabel, 6, 0, 1, 1);
     controlsLayout->addWidget(flowControlBox, 6, 1, 1, 1);
 
@@ -63,9 +60,7 @@ PortSettingsDialog::PortSettingsDialog(QWidget *parent)
     connect(portsInfoButton, &QPushButton::pressed, portsInfoDialog, &PortsInfoDialog::show);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &PortSettingsDialog::ok);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &PortSettingsDialog::cancel);
-    connect(serialPortBox,
-            &QComboBox::currentIndexChanged,
-            this,
+    connect(serialPortBox, &QComboBox::currentIndexChanged, this,
             &PortSettingsDialog::checkCustomPath);
     enumeratePorts();
     fillSettings();
@@ -73,8 +68,8 @@ PortSettingsDialog::PortSettingsDialog(QWidget *parent)
 }
 
 /**
- * @brief Fill PortSettingsDialog settings and select the most common ones
- * 
+ * @brief Fills PortSettingsDialog settings and selects the most common ones
+ *
  */
 void PortSettingsDialog::fillSettings() const
 {
@@ -113,15 +108,15 @@ void PortSettingsDialog::fillSettings() const
 }
 
 /**
- * @brief Enumerate available serial ports
- * 
+ * @brief Enumerates available serial ports
+ *
  * Note that if you connect a new serial port you must restart the program.
- * 
+ *
  */
 void PortSettingsDialog::enumeratePorts() const
 {
     serialPortBox->clear();
-    const auto ports = QSerialPortInfo::availablePorts();
+    const auto ports{ QSerialPortInfo::availablePorts() };
     for (const auto &port : ports) {
         serialPortBox->addItem(port.portName(), port.portName());
     }
@@ -129,21 +124,21 @@ void PortSettingsDialog::enumeratePorts() const
 }
 
 /**
- * @brief Allow to type in a custom serial port name
- * 
- * @param index 
+ * @brief Allows to type in a custom serial port name
+ *
+ * @param index
  */
 void PortSettingsDialog::checkCustomPath(const int index) const
 {
-    const bool isCustomPath = serialPortBox->itemData(index).isNull();
+    const auto isCustomPath{ serialPortBox->itemData(index).isNull() };
     serialPortBox->setEditable(isCustomPath);
     if (isCustomPath)
         serialPortBox->clearEditText();
 }
 
 /**
- * @brief Update the current settings according to the selected
- * 
+ * @brief Updates the current settings according to the selected settings
+ *
  */
 void PortSettingsDialog::updateSettings()
 {
@@ -156,8 +151,7 @@ void PortSettingsDialog::updateSettings()
 }
 
 /**
- * @brief Update the current settings according to the selected and hide PortSettingsDialog
- * 
+ * @brief Updates the current settings according to the selected and hides PortSettingsDialog
  */
 void PortSettingsDialog::ok()
 {
@@ -166,8 +160,8 @@ void PortSettingsDialog::ok()
 }
 
 /**
- * @brief Hide PortSettingsDialog without updating the current settings
- * 
+ * @brief Hides PortSettingsDialog without updating the current settings
+ *
  */
 void PortSettingsDialog::cancel()
 {

@@ -1,17 +1,11 @@
 #ifndef PORTSETTINGSDIALOG_H
 #define PORTSETTINGSDIALOG_H
 
-#include "PortsInfoDialog.h"
+#include "portsinfodialog.h"
 
-#include <QComboBox>
-#include <QDialog>
-#include <QDialogButtonBox>
-#include <QGridLayout>
-#include <QGroupBox>
-#include <QLabel>
-#include <QPushButton>
-#include <QSerialPort>
-#include <QVBoxLayout>
+#include <qcombobox.h>
+#include <qdialog.h>
+#include <qserialport.h>
 
 class PortSettingsDialog : public QDialog
 {
@@ -32,7 +26,7 @@ public:
     const auto &getCurrentSettings() const { return currentSettings; };
 
 private:
-    PortsInfoDialog *portsInfoDialog{nullptr};
+    PortsInfoDialog *portsInfoDialog{ new PortsInfoDialog{ this } };
     Settings currentSettings;
 
     void fillSettings() const;
@@ -40,12 +34,12 @@ private:
     void checkCustomPath(const int index) const;
     void updateSettings();
 
-    QComboBox *serialPortBox{nullptr};
-    QComboBox *baudRateBox{nullptr};
-    QComboBox *dataBitsBox{nullptr};
-    QComboBox *parityBox{nullptr};
-    QComboBox *stopBitsBox{nullptr};
-    QComboBox *flowControlBox{nullptr};
+    QComboBox *serialPortBox{ new QComboBox{ this } };
+    QComboBox *baudRateBox{ new QComboBox{ this } };
+    QComboBox *dataBitsBox{ new QComboBox{ this } };
+    QComboBox *parityBox{ new QComboBox{ this } };
+    QComboBox *stopBitsBox{ new QComboBox{ this } };
+    QComboBox *flowControlBox{ new QComboBox{ this } };
 
 private slots:
     void ok();
