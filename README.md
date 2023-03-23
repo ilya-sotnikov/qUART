@@ -1,15 +1,15 @@
 # qUART
-Real-time graph and spectrum (of values, not amplitudes) serial plotter written in Qt6 and Qwt
+Real-time graph and spectrum (of values, not amplitudes) serial plotter written in Qt6 and QCustomPlot
 
 ## Screenshots
-| Spectrum (of values, not amplitudes) | Plot |
+| Spec | Plot |
 | --- | --- |
-| ![spectrum](https://user-images.githubusercontent.com/93074662/205555655-4cb67c9c-0a14-43bb-ba4d-97d756e9d073.png) | ![plot](https://user-images.githubusercontent.com/93074662/205555659-1c2f4fb0-b8cf-4367-a49d-d5a40f20f3fc.png)
+| ![spectrum](https://user-images.githubusercontent.com/93074662/227128175-3b0d050d-e497-48b4-816b-6d40170cd95a.png) | ![plot](https://user-images.githubusercontent.com/93074662/227128129-62a5b807-43c7-4190-8b37-0c0be9ab1119.png)
 
 ## License
 - qUART is licensed under GPL-3.0
 - Qt 6 is licensed under LGPL-3.0
-- Qwt is licensed under Qwt-1.0
+- QCustomPlot is licensed under GPL-3.0
 - Material Symbols are licensed under Apache-2.0
 
 ## Features
@@ -33,14 +33,12 @@ Opening data works the same way. You should select the appropriate chart type. N
 
 ## Build instructions
 You can compile it in all OSs where Qt 6 is available.
-1. Build Qwt 6.2.0 for Qt 6.
-2. Set QWT_LIB_PATH and QWT_INCLUDE in CMakeLists.txt. Example:
-    - set(QWT_LIB_PATH "/usr/local/qwt-6.2.0/lib")
-    - set(QWT_INCLUDE "/usr/local/qwt-6.2.0/include")
-3. Run cmake with -DCMAKE_BUILD_TYPE=Release.
-4. Run make.
+1. Set QCUSTOMPLOT_SRC_PATH in CMakeLists.txt
+2. mkdir build && cd build
+3. cmake -DCMAKE_BUILD_TYPE=Release ../src
+4. cmake --build .
 
 ## Contributing
-Feel free to add features or fix bugs. This project uses the Qt codestyle, you can use the .clang-format file from [here](https://github.com/qt-creator/qt-creator/blob/master/.clang-format).
+Feel free to add features or fix bugs. This project uses the Qt codestyle, you can use the .clang-format file from [here](https://code.qt.io/cgit/qt/qt5.git/tree/_clang-format).
 
-You can also use sanitizers (address or UB). To do so pass -DSANITIZER=ADDR or -DSANITIZER=UB to cmake.
+Debug build uses sanitizers (address, undefined, leak) by default.
