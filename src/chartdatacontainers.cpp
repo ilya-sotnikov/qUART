@@ -1,6 +1,16 @@
-#include "chartdatacontainer.h"
+#include "chartdatacontainers.h"
+#include <qglobal.h>
 
-#include <QDebug>
+void ChartDataContainer::setRawData(const QList<qreal> &rawData)
+{
+    clear();
+
+    values.append(rawData);
+
+    auto rawDataSize{ rawData.size() };
+    for (decltype(rawDataSize) i{ 0 }; i < rawDataSize; ++i)
+        keys.append(i);
+}
 
 void ChartDataContainer::clear()
 {
@@ -47,9 +57,10 @@ void SpectrumDataContainer::append(const QList<qreal> &data)
 
 void PlotDataContainer::append(const QList<qreal> &data)
 {
-    auto i{ keys.size() };
-    for (const auto dataY : data) {
-        keys.append(i++);
-        values.append(dataY);
-    }
+    const auto dataSize{ data.size() };
+    const auto currentDataSize{ keys.size() };
+    for (auto i{ currentDataSize }; i < currentDataSize + dataSize; ++i)
+        keys.append(i);
+
+    values.append(data);
 }

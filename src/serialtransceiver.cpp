@@ -8,24 +8,19 @@
  *
  * @param parent
  */
-SerialTransceiver::SerialTransceiver(QObject *parent)
-    : QObject{ parent },
-      serialPort{ new QSerialPort{ this } },
-      timer{ new QTimer{ this } },
-      dataList{ new QList<qreal> }
+SerialTransceiver::SerialTransceiver(QObject *parent) : QObject{ parent }
 {
     connect(serialPort, &QSerialPort::readyRead, this, &SerialTransceiver::receiveData);
     connect(timer, &QTimer::timeout, this, &SerialTransceiver::timerTimeout);
 }
 
 /**
- * @brief Destroy the SerialTransceiver object and its data list
+ * @brief Destroy the SerialTransceiver object and close the serial port
  *
  */
 SerialTransceiver::~SerialTransceiver()
 {
     serialClose();
-    delete dataList;
 }
 
 /**
@@ -58,7 +53,7 @@ void SerialTransceiver::serialClose()
         serialPort->close();
     if (timer->isActive())
         timer->stop();
-    dataList->clear();
+    dataList.clear();
     bufferArray.clear();
 }
 
@@ -76,7 +71,7 @@ void SerialTransceiver::serialClose()
  * @param byteArray
  */
 template<typename T>
-void SerialTransceiver::deserializeByteArray(QByteArray *byteArray)
+void SerialTransceiver::deserializeByteArray(QByteArray &byteArray)
 {
 #ifdef BUG_0xff
     for (qsizetype i = 0; i < byteArray->size(); ++i) {
@@ -85,22 +80,22 @@ void SerialTransceiver::deserializeByteArray(QByteArray *byteArray)
     }
 #endif
 
-    byteArray->append(bufferArray);
+    byteArray.append(bufferArray);
     bufferArray.clear();
 
-    qsizetype byteArraySize{ byteArray->size() };
+    qsizetype byteArraySize{ byteArray.size() };
     quint8 byteCnt{ static_cast<quint8>(byteArraySize % sizeof(T)) };
 
-    bufferArray = byteArray->last(byteCnt);
-    byteArray->chop(byteCnt);
+    bufferArray = byteArray.last(byteCnt);
+    byteArray.chop(byteCnt);
 
     T data;
-    QDataStream stream{ byteArray, QIODevice::ReadOnly };
-    if (dataType == f32)
+    QDataStream stream{ &byteArray, QIODevice::ReadOnly };
+    if (dataType == DataTypes::f32)
         stream.setFloatingPointPrecision(QDataStream::SinglePrecision);
     while (!stream.atEnd()) {
         stream >> data;
-        dataList->append(data);
+        dataList.append(data);
     }
 }
 
@@ -114,34 +109,34 @@ void SerialTransceiver::receiveData()
 
     switch (dataType) {
     case DataTypes::u8:
-        deserializeByteArray<quint8>(&byteArray);
+        deserializeByteArray<quint8>(byteArray);
         break;
     case DataTypes::u16:
-        deserializeByteArray<quint16>(&byteArray);
+        deserializeByteArray<quint16>(byteArray);
         break;
     case DataTypes::u32:
-        deserializeByteArray<quint32>(&byteArray);
+        deserializeByteArray<quint32>(byteArray);
         break;
     case DataTypes::u64:
-        deserializeByteArray<quint64>(&byteArray);
+        deserializeByteArray<quint64>(byteArray);
         break;
     case DataTypes::i8:
-        deserializeByteArray<qint8>(&byteArray);
+        deserializeByteArray<qint8>(byteArray);
         break;
     case DataTypes::i16:
-        deserializeByteArray<qint16>(&byteArray);
+        deserializeByteArray<qint16>(byteArray);
         break;
     case DataTypes::i32:
-        deserializeByteArray<qint32>(&byteArray);
+        deserializeByteArray<qint32>(byteArray);
         break;
     case DataTypes::i64:
-        deserializeByteArray<qint64>(&byteArray);
+        deserializeByteArray<qint64>(byteArray);
         break;
     case DataTypes::f32:
-        deserializeByteArray<float>(&byteArray);
+        deserializeByteArray<float>(byteArray);
         break;
     case DataTypes::f64:
-        deserializeByteArray<double>(&byteArray);
+        deserializeByteArray<double>(byteArray);
         break;
     }
 }
@@ -155,98 +150,7 @@ void SerialTransceiver::receiveData()
  */
 void SerialTransceiver::timerTimeout()
 {
-    if (!dataList->isEmpty()) {
+    if (!dataList.isEmpty()) {
         emit newDataAvailable(dataList);
     }
-}
-
-/**
- * @brief Set the current data type
- *
- * @param dataType
- */
-void SerialTransceiver::setDataType(DataTypes dataType)
-{
-    this->dataType = dataType;
-}
-
-/**
- * @brief Set the current baud rate
- *
- * @param baudRate
- * @param directions
- * @return true
- * @return false
- */
-bool SerialTransceiver::setBaudRate(qint32 baudRate, QSerialPort::Directions directions)
-{
-    return serialPort->setBaudRate(baudRate, directions);
-}
-
-/**
- * @brief Set the current port name
- *
- * @param name
- */
-void SerialTransceiver::setPortName(const QString &name)
-{
-    serialPort->setPortName(name);
-}
-
-/**
- * @brief Set the current flow control
- *
- * @param flowControl
- * @return true
- * @return false
- */
-bool SerialTransceiver::setFlowControl(QSerialPort::FlowControl flowControl)
-{
-    return serialPort->setFlowControl(flowControl);
-}
-
-/**
- * @brief Set the current stop bits
- *
- * @param stopBits
- * @return true
- * @return false
- */
-bool SerialTransceiver::setStopBits(QSerialPort::StopBits stopBits)
-{
-    return serialPort->setStopBits(stopBits);
-}
-
-/**
- * @brief Set the current parity
- *
- * @param parity
- * @return true
- * @return false
- */
-bool SerialTransceiver::setParity(QSerialPort::Parity parity)
-{
-    return serialPort->setParity(parity);
-}
-
-/**
- * @brief Set the current data bits
- *
- * @param dataBits
- * @return true
- * @return false
- */
-bool SerialTransceiver::setDataBits(QSerialPort::DataBits dataBits)
-{
-    return serialPort->setDataBits(dataBits);
-}
-
-/**
- * @brief Get the current error string of the serial port
- *
- * @return QString
- */
-QString SerialTransceiver::errorString() const
-{
-    return serialPort->errorString();
 }

@@ -24,8 +24,8 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         chart.h
         chart.cpp
-        chartdatacontainer.h
-        chartdatacontainer.cpp
+        chartdatacontainers.h
+        chartdatacontainers.cpp
         serialtransceiver.h
         serialtransceiver.cpp
         portsettingsdialog.h

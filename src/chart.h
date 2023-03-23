@@ -1,11 +1,10 @@
 #ifndef CHART_H
 #define CHART_H
 
-#include "chartdatacontainer.h"
+#include "chartdatacontainers.h"
 
 #include "qcustomplot.h"
-
-#include <QWidget>
+#include <qwidget.h>
 
 class Chart : public QWidget
 {
@@ -13,11 +12,10 @@ class Chart : public QWidget
 
 public:
     explicit Chart(QWidget *parent = nullptr);
-    // ~Chart();
     void updateChart();
     void changeType();
     void clear();
-    void addRawData(QList<qreal> *rawData);
+    void setRawData(QList<qreal> &rawData);
     const QList<qreal> &getData() const;
 
     enum class ChartType { plot, spectrum };
@@ -31,12 +29,12 @@ private:
     QCustomPlot *customPlot{ new QCustomPlot{ this } };
     QCPGraph *plot{ customPlot->addGraph() };
     QCPBars *spectrum{ new QCPBars{ customPlot->xAxis, customPlot->yAxis } };
+    Chart::ChartType chartType{ ChartType::plot };
     PlotDataContainer plotDataContainer;
     SpectrumDataContainer spectrumDataContainer;
-    Chart::ChartType chartType{ ChartType::plot };
 
 public slots:
-    void addData(QList<qreal> *receivedData);
+    void addData(QList<qreal> &receivedData);
     void resetZoom();
 
 private slots:

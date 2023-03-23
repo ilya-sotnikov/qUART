@@ -40,20 +40,11 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
 
     QList<qreal> testData{ 0, 1, 2, 3, 4, 5, 10, 2, -2, -5 };
 
-    addData(&testData);
+    addData(testData);
 }
 
-// /**
-//  * @brief Destroy the Chart object and delete its data
-//  *
-//  */
-// Chart::~Chart() {
-//   delete dataPlot;
-//   delete dataSpectrum;
-// }
-
 /**
- * @brief Update data on the chart
+ * @brief Update data on the chart, rescale axes and replot
  *
  */
 void Chart::updateChart()
@@ -72,7 +63,7 @@ void Chart::updateChart()
 }
 
 /**
- * @brief Change the chart type
+ * @brief Change the chart type and update the chart
  *
  * If the current type is spectrum, it changes type to plot and vice versa.
  *
@@ -99,23 +90,23 @@ void Chart::clear()
 }
 
 /**
- * @brief Add raw data to the chart
+ * @brief Add raw data to the chart, for loading data from a file
  *
  * Note that you should choose the corresponding chart type (plot or spectrum).
  *
  * @param rawData
  */
-void Chart::addRawData(QList<qreal> *rawData)
+void Chart::setRawData(QList<qreal> &rawData)
 {
-    // dataPlot->clear();
-    // dataSpectrum->clear();
-    // if (chartType == Chart::plot) {
-    //   addData(rawData);
-    // } else if (chartType == Chart::spectrum) {
-    //   dataSpectrum->append(*rawData);
-    //   updateChart();
-    //   rawData->clear();
-    // }
+    plotDataContainer.clear();
+    spectrumDataContainer.clear();
+    if (chartType == ChartType::plot) {
+        addData(rawData); // restore the plot and the spectrum
+    } else if (chartType == ChartType::spectrum) {
+        spectrumDataContainer.setRawData(rawData); // impossible to restore the plot
+        updateChart();
+        rawData.clear();
+    }
 }
 
 /**
@@ -126,16 +117,16 @@ void Chart::addRawData(QList<qreal> *rawData)
  *
  * @param receivedData
  */
-void Chart::addData(QList<qreal> *receivedData)
+void Chart::addData(QList<qreal> &receivedData)
 {
     if (appendToPlot)
-        plotDataContainer.append(*receivedData);
+        plotDataContainer.append(receivedData);
 
     if (appendToSpectrum)
-        spectrumDataContainer.append(*receivedData);
+        spectrumDataContainer.append(receivedData);
 
     updateChart();
-    receivedData->clear();
+    receivedData.clear();
 }
 
 /**

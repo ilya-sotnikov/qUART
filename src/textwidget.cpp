@@ -1,6 +1,6 @@
 #include "textwidget.h"
 
-#include <QHBoxLayout>
+#include <qboxlayout.h>
 
 /**
  * @brief Construct a new TextWidget object
@@ -11,17 +11,6 @@
 TextWidget::TextWidget(QWidget *parent, const QString &text)
     : QWidget{ parent }, label{ new QLabel{ text, this } }
 {
-    QHBoxLayout *layout{ new QHBoxLayout };
+    QHBoxLayout *layout{ new QHBoxLayout{ this } };
     layout->addWidget(label);
-    setLayout(layout);
-}
-
-/**
- * @brief Set widget text
- *
- * @param text
- */
-void TextWidget::setText(const QString &text) const
-{
-    label->setText(text);
 }

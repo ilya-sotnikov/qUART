@@ -1,21 +1,18 @@
 #include "portsettingsdialog.h"
 
-#include <QSerialPortInfo>
+#include <qboxlayout.h>
+#include <qdialogbuttonbox.h>
+#include <qgroupbox.h>
+#include <qlabel.h>
+#include <qpushbutton.h>
+#include <qserialportinfo.h>
 
 /**
  * @brief Construct a new PortSettingsDialog object
  *
  * @param parent
  */
-PortSettingsDialog::PortSettingsDialog(QWidget *parent)
-    : QDialog{ parent },
-      portsInfoDialog{ new PortsInfoDialog{ this } },
-      serialPortBox{ new QComboBox{ this } },
-      baudRateBox{ new QComboBox{ this } },
-      dataBitsBox{ new QComboBox{ this } },
-      parityBox{ new QComboBox{ this } },
-      stopBitsBox{ new QComboBox{ this } },
-      flowControlBox{ new QComboBox{ this } }
+PortSettingsDialog::PortSettingsDialog(QWidget *parent) : QDialog{ parent }
 {
     auto layout{ new QVBoxLayout{ this } };
     auto buttonBox{ new QDialogButtonBox{ QDialogButtonBox::Cancel | QDialogButtonBox::Ok,
@@ -119,7 +116,7 @@ void PortSettingsDialog::fillSettings() const
 void PortSettingsDialog::enumeratePorts() const
 {
     serialPortBox->clear();
-    const auto ports = QSerialPortInfo::availablePorts();
+    const auto ports{ QSerialPortInfo::availablePorts() };
     for (const auto &port : ports) {
         serialPortBox->addItem(port.portName(), port.portName());
     }
@@ -133,7 +130,7 @@ void PortSettingsDialog::enumeratePorts() const
  */
 void PortSettingsDialog::checkCustomPath(const int index) const
 {
-    const bool isCustomPath = serialPortBox->itemData(index).isNull();
+    const auto isCustomPath{ serialPortBox->itemData(index).isNull() };
     serialPortBox->setEditable(isCustomPath);
     if (isCustomPath)
         serialPortBox->clearEditText();

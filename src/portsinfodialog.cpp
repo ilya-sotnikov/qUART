@@ -1,10 +1,9 @@
 #include "portsinfodialog.h"
 
-#include <QLabel>
-#include <QScrollArea>
-#include <QSerialPortInfo>
-#include <QVBoxLayout>
-#include <QWidget>
+#include <qboxlayout.h>
+#include <qlabel.h>
+#include <qscrollarea.h>
+#include <qserialportinfo.h>
 
 /**
  * @brief Construct a new PortsInfoDialog object
@@ -17,8 +16,7 @@ PortsInfoDialog::PortsInfoDialog(QWidget *parent) : QDialog{ parent }
     auto widget{ new QWidget{ this } };
     scroll->setWidget(widget);
     scroll->setWidgetResizable(true);
-    auto layout{ new QVBoxLayout{ this } };
-    widget->setLayout(layout);
+    auto layout{ new QVBoxLayout{ widget } };
 
     const auto portsInfo{ QSerialPortInfo::availablePorts() };
     for (const auto &info : portsInfo) {
@@ -37,6 +35,5 @@ PortsInfoDialog::PortsInfoDialog(QWidget *parent) : QDialog{ parent }
 
     auto dialogLayout{ new QVBoxLayout{ this } };
     dialogLayout->addWidget(scroll);
-    setLayout(dialogLayout);
     setWindowTitle("Ports info");
 }

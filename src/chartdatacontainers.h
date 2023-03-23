@@ -1,12 +1,13 @@
 #ifndef CHARTDATACONTAINER_H
 #define CHARTDATACONTAINER_H
 
-#include <QList>
+#include <qlist.h>
 
 class ChartDataContainer
 {
 public:
     virtual void append(const QList<qreal> &data) = 0;
+    void setRawData(const QList<qreal> &rawData);
     void clear();
 
     const auto &getKeys() const { return keys; }
