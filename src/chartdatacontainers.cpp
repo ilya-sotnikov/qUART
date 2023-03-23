@@ -1,6 +1,11 @@
 #include "chartdatacontainers.h"
 #include <qglobal.h>
 
+/**
+ * @brief Sets raw data without any modifications
+ *
+ * @param rawData
+ */
 void ChartDataContainer::setRawData(const QList<qreal> &rawData)
 {
     clear();
@@ -12,18 +17,31 @@ void ChartDataContainer::setRawData(const QList<qreal> &rawData)
         keys.append(i);
 }
 
+/**
+ * @brief Clears keys and values
+ *
+ */
 void ChartDataContainer::clear()
 {
     keys.clear();
     values.clear();
 }
 
+/**
+ * @brief Adds 0 to keys and values to avoid an unnecessary check every time when calling append()
+ *
+ */
 SpectrumDataContainer::SpectrumDataContainer()
 {
     keys.append(0);
     values.append(0);
 }
 
+/**
+ * @brief Appends data to the spectrum data container
+ *
+ * @param data
+ */
 void SpectrumDataContainer::append(const QList<qreal> &data)
 {
     QList<quint64> dataQuint64;
@@ -55,6 +73,11 @@ void SpectrumDataContainer::append(const QList<qreal> &data)
         ++values[dataY];
 }
 
+/**
+ * @brief Appends data to the plot data container
+ *
+ * @param data
+ */
 void PlotDataContainer::append(const QList<qreal> &data)
 {
     const auto dataSize{ data.size() };

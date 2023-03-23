@@ -6,6 +6,9 @@
 #include "qcustomplot.h"
 #include <qwidget.h>
 
+/**
+ * @brief Displays a chart (in plot mode or spectrum mode)
+ */
 class Chart : public QWidget
 {
     Q_OBJECT

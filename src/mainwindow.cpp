@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 
 /**
- * @brief Construct a new MainWindow object
+ * @brief Constructs a new MainWindow object
  *
  * @param parent
  */
@@ -124,8 +124,7 @@ QString MainWindow::createFileDialog(QFileDialog::AcceptMode acceptMode, QString
 }
 
 /**
- * @brief Connect to the serial port with specified parameters from
- * PortSettingsDialog
+ * @brief Connects to the serial port with specified parameters from PortSettingsDialog
  *
  * Additionally, it disables several actions which shouldn't be executed while
  * new data is received. If failed to connect, pop up a message box with an
@@ -157,7 +156,7 @@ void MainWindow::serialConnect()
 }
 
 /**
- * @brief Disconnect from the serial port
+ * @brief Disconnects from the serial port
  *
  * Additionally, it reenables several actions which are safe to execute
  * while the serial port is disconnected.
@@ -209,7 +208,7 @@ void MainWindow::saveData()
 }
 
 /**
- * @brief Opens text file and plots data from it
+ * @brief Opens the text file and plots data from it
  *
  * It reads raw data, so you must choose the correct chart type before opening
  * new data (chart or spectrum).

@@ -6,7 +6,7 @@
 #include <qserialportinfo.h>
 
 /**
- * @brief Construct a new PortsInfoDialog object
+ * @brief Constructs a new PortsInfoDialog object
  *
  * @param parent
  */

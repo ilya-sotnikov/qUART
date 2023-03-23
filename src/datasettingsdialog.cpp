@@ -7,7 +7,7 @@
 #include <qsizepolicy.h>
 
 /**
- * @brief Construct a new DataSettingsDialog object
+ * @brief Constructs a new DataSettingsDialog object
  *
  * @param parent
  */
@@ -57,7 +57,9 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent) : QDialog{ parent }
 }
 
 /**
- * @brief Get the selected data type and hide DataSettingsDialog
+ * @brief Gets the selected data type and hides DataSettingsDialog
+ *
+ * If the selected data type is not unsigned appending data to the spectrum is not possible
  *
  */
 void DataSettingsDialog::ok()
@@ -79,7 +81,7 @@ void DataSettingsDialog::ok()
 }
 
 /**
- * @brief Hide DataSettingsDialog without changing the current data type
+ * @brief Hides DataSettingsDialog without changing the current data type
  *
  */
 void DataSettingsDialog::cancel()
@@ -89,7 +91,7 @@ void DataSettingsDialog::cancel()
 }
 
 /**
- * @brief Hide additional data types (i8, i16, i32, i64, f32, f64)
+ * @brief Hides additional data types (i8, i16, i32, i64, f32, f64)
  *
  * This function is needed because a spectrum only supports unsigned int types
  */
@@ -110,9 +112,11 @@ void DataSettingsDialog::hideAdditionalDataTypes()
 }
 
 /**
- * @brief Show additional data types (i8, i16, i32, i64, f32, f64)
- * This function is needed because a spectrum only supports unsigned int types.
- * If the chart is in plot mode, all data types are available.
+ * @brief Shows additional data types (i8, i16, i32, i64, f32, f64)
+ *
+ * This function is needed because a spectrum only supports unsigned int types
+ * If the chart is in plot mode, all data types are available
+ *
  */
 void DataSettingsDialog::showAdditionalDataTypes() const
 {

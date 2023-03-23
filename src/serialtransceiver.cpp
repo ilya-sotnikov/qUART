@@ -4,7 +4,7 @@
 // #define BUG_0xff
 
 /**
- * @brief Construct a new SerialTransceiver object
+ * @brief Constructs a new SerialTransceiver object
  *
  * @param parent
  */
@@ -15,7 +15,7 @@ SerialTransceiver::SerialTransceiver(QObject *parent) : QObject{ parent }
 }
 
 /**
- * @brief Destroy the SerialTransceiver object and close the serial port
+ * @brief Destroys the SerialTransceiver object and closes the serial port
  *
  */
 SerialTransceiver::~SerialTransceiver()
@@ -24,7 +24,7 @@ SerialTransceiver::~SerialTransceiver()
 }
 
 /**
- * @brief Open the serial port and return connection status (bool)
+ * @brief Opens the serial port and returns connection status (bool)
  *
  * It also starts the timer which will overflow every 200 msec to limit the
  * chart update rate.
@@ -43,8 +43,7 @@ bool SerialTransceiver::serialOpen()
 }
 
 /**
- * @brief Close the serial port, clear all received data and stop the timer if
- * it's active
+ * @brief Closes the serial port, clears all received data and stops the timer if it's active
  *
  */
 void SerialTransceiver::serialClose()
@@ -58,7 +57,7 @@ void SerialTransceiver::serialClose()
 }
 
 /**
- * @brief Deserialize byte array according to the current data type
+ * @brief Deserializes byte array according to the current data type
  *
  * On my previous Linux machine (both Arch and Debian) there was a nasty bug.
  * If a serial port has received 0xff, it always had a duplicate next to it.
@@ -100,7 +99,7 @@ void SerialTransceiver::deserializeByteArray(QByteArray &byteArray)
 }
 
 /**
- * @brief Receive data according to the current data type
+ * @brief Receives data according to the current data type
  *
  */
 void SerialTransceiver::receiveData()
@@ -142,7 +141,7 @@ void SerialTransceiver::receiveData()
 }
 
 /**
- * @brief Emit the newDataAvailable signal on timerTimeout if there's new data
+ * @brief Emits the newDataAvailable signal on timerTimeout if there's new data
  *
  * It gives raw pointer to received data, the received side is expected
  * to plot this data and clear the received data list.

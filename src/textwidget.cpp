@@ -3,7 +3,7 @@
 #include <qboxlayout.h>
 
 /**
- * @brief Construct a new TextWidget object
+ * @brief Constructs a new TextWidget object
  *
  * @param parent
  * @param text

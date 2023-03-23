@@ -4,7 +4,7 @@
 #include <qdialog.h>
 
 /**
- * @brief The dialog with information about all available serial ports
+ * @brief A dialog with information about all available serial ports
  *
  */
 class PortsInfoDialog : public QDialog

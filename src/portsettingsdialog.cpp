@@ -8,7 +8,7 @@
 #include <qserialportinfo.h>
 
 /**
- * @brief Construct a new PortSettingsDialog object
+ * @brief Constructs a new PortSettingsDialog object
  *
  * @param parent
  */
@@ -68,7 +68,7 @@ PortSettingsDialog::PortSettingsDialog(QWidget *parent) : QDialog{ parent }
 }
 
 /**
- * @brief Fill PortSettingsDialog settings and select the most common ones
+ * @brief Fills PortSettingsDialog settings and selects the most common ones
  *
  */
 void PortSettingsDialog::fillSettings() const
@@ -108,7 +108,7 @@ void PortSettingsDialog::fillSettings() const
 }
 
 /**
- * @brief Enumerate available serial ports
+ * @brief Enumerates available serial ports
  *
  * Note that if you connect a new serial port you must restart the program.
  *
@@ -124,7 +124,7 @@ void PortSettingsDialog::enumeratePorts() const
 }
 
 /**
- * @brief Allow to type in a custom serial port name
+ * @brief Allows to type in a custom serial port name
  *
  * @param index
  */
@@ -137,7 +137,7 @@ void PortSettingsDialog::checkCustomPath(const int index) const
 }
 
 /**
- * @brief Update the current settings according to the selected
+ * @brief Updates the current settings according to the selected settings
  *
  */
 void PortSettingsDialog::updateSettings()
@@ -151,9 +151,7 @@ void PortSettingsDialog::updateSettings()
 }
 
 /**
- * @brief Update the current settings according to the selected and hide
- * PortSettingsDialog
- *
+ * @brief Updates the current settings according to the selected and hides PortSettingsDialog
  */
 void PortSettingsDialog::ok()
 {
@@ -162,7 +160,7 @@ void PortSettingsDialog::ok()
 }
 
 /**
- * @brief Hide PortSettingsDialog without updating the current settings
+ * @brief Hides PortSettingsDialog without updating the current settings
  *
  */
 void PortSettingsDialog::cancel()

@@ -3,6 +3,9 @@
 
 #include <qlist.h>
 
+/**
+ * @brief An abstract data container for plot and spectrum
+ */
 class ChartDataContainer
 {
 public:
@@ -18,12 +21,18 @@ protected:
     QList<qreal> values;
 };
 
+/**
+ * @brief A data container for a plot
+ */
 class PlotDataContainer : public ChartDataContainer
 {
 public:
     virtual void append(const QList<qreal> &data) override;
 };
 
+/**
+ * @brief A data container for a spectrum
+ */
 class SpectrumDataContainer : public ChartDataContainer
 {
 public:

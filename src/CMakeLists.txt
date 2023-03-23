@@ -40,7 +40,7 @@ set(PROJECT_SOURCES
 )
 
 # QCustomPlot
-set(QCUSTOMPLOT_SRC_PATH "$ENV{HOME}/build/qcustomplot")
+set(QCUSTOMPLOT_SRC_PATH "")
 
 if(NOT EXISTS ${QCUSTOMPLOT_SRC_PATH})
     message(FATAL_ERROR "Set QCUSTOMPLOT_SRC_PATH to the location of qcustomplot.cpp and qcustomplot.h")

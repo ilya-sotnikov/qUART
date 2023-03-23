@@ -37,14 +37,10 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
             &Chart::updateSelectedPoint);
     connect(spectrum, qOverload<const QCPDataSelection &>(&QCPBars::selectionChanged), this,
             &Chart::updateSelectedPoint);
-
-    QList<qreal> testData{ 0, 1, 2, 3, 4, 5, 10, 2, -2, -5 };
-
-    addData(testData);
 }
 
 /**
- * @brief Update data on the chart, rescale axes and replot
+ * @brief Updates the data on the chart, rescales axes and replots
  *
  */
 void Chart::updateChart()
@@ -63,7 +59,7 @@ void Chart::updateChart()
 }
 
 /**
- * @brief Change the chart type and update the chart
+ * @brief Changes the chart type and updates the chart
  *
  * If the current type is spectrum, it changes type to plot and vice versa.
  *
@@ -79,7 +75,7 @@ void Chart::changeType()
 }
 
 /**
- * @brief Delete all data and update the chart
+ * @brief Deletes all data and updates the chart
  *
  */
 void Chart::clear()
@@ -90,7 +86,7 @@ void Chart::clear()
 }
 
 /**
- * @brief Add raw data to the chart, for loading data from a file
+ * @brief Sets raw data to the chart, useful for loading data from a file
  *
  * Note that you should choose the corresponding chart type (plot or spectrum).
  *
@@ -110,7 +106,7 @@ void Chart::setRawData(QList<qreal> &rawData)
 }
 
 /**
- * @brief Add data to the chart
+ * @brief Adds data to the chart
  *
  * If the current chart type is plot, then plots data.
  * If it's spectrum, then plot frequency of an each data point.
@@ -130,7 +126,7 @@ void Chart::addData(QList<qreal> &receivedData)
 }
 
 /**
- * @brief Rescale axes and replot
+ * @brief Rescales axes and replots
  *
  */
 void Chart::resetZoom()
@@ -140,10 +136,9 @@ void Chart::resetZoom()
 }
 
 /**
- * @brief Return the selected data point from its coordinates and show marker
- * at this position
+ * @brief Returns the selected data point from its coordinates
  *
- * @param point
+ * @param selection
  */
 void Chart::updateSelectedPoint(const QCPDataSelection &selection)
 {
@@ -164,8 +159,7 @@ void Chart::updateSelectedPoint(const QCPDataSelection &selection)
 }
 
 /**
- * @brief Get a data list depending on the current chart type (plot or
- * spectrum)
+ * @brief Returns a data list depending on the current chart type (plot or spectrum)
  *
  * @return const QList<qreal>&
  */
