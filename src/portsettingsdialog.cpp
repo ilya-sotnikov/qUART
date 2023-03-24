@@ -6,6 +6,7 @@
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qserialportinfo.h>
+#include <qsettings.h>
 
 /**
  * @brief Constructs a new PortSettingsDialog object
@@ -64,16 +65,16 @@ PortSettingsDialog::PortSettingsDialog(QWidget *parent) : QDialog{ parent }
             &PortSettingsDialog::checkCustomPath);
     enumeratePorts();
     fillSettings();
+    loadSettings();
     updateSettings();
 }
 
 /**
- * @brief Fills PortSettingsDialog settings and selects the most common ones
+ * @brief Fills PortSettingsDialog settings
  *
  */
 void PortSettingsDialog::fillSettings() const
 {
-    serialPortBox->setCurrentIndex(0);
     baudRateBox->addItem(QStringLiteral("1200"), QSerialPort::Baud1200);
     baudRateBox->addItem(QStringLiteral("2400"), QSerialPort::Baud2400);
     baudRateBox->addItem(QStringLiteral("4800"), QSerialPort::Baud4800);
@@ -82,29 +83,27 @@ void PortSettingsDialog::fillSettings() const
     baudRateBox->addItem(QStringLiteral("38400"), QSerialPort::Baud38400);
     baudRateBox->addItem(QStringLiteral("57600"), QSerialPort::Baud57600);
     baudRateBox->addItem(QStringLiteral("115200"), QSerialPort::Baud115200);
-    baudRateBox->setCurrentIndex(3);
+
     dataBitsBox->addItem(QStringLiteral("5"), QSerialPort::Data5);
     dataBitsBox->addItem(QStringLiteral("6"), QSerialPort::Data6);
     dataBitsBox->addItem(QStringLiteral("7"), QSerialPort::Data7);
     dataBitsBox->addItem(QStringLiteral("8"), QSerialPort::Data8);
-    dataBitsBox->setCurrentIndex(3);
+
     parityBox->addItem(QStringLiteral("None"), QSerialPort::NoParity);
     parityBox->addItem(QStringLiteral("Even"), QSerialPort::EvenParity);
     parityBox->addItem(QStringLiteral("Odd"), QSerialPort::OddParity);
     parityBox->addItem(QStringLiteral("Mark"), QSerialPort::MarkParity);
     parityBox->addItem(QStringLiteral("Space"), QSerialPort::SpaceParity);
-    parityBox->setCurrentIndex(0);
 
     stopBitsBox->addItem(QStringLiteral("1"), QSerialPort::OneStop);
 #ifdef Q_OS_WIN
     stopBitsBox->addItem(QStringLiteral("1.5"), QSerialPort::OneAndHalfStop);
 #endif
     stopBitsBox->addItem(QStringLiteral("2"), QSerialPort::TwoStop);
-    stopBitsBox->setCurrentIndex(0);
+
     flowControlBox->addItem(QStringLiteral("None"), QSerialPort::NoFlowControl);
     flowControlBox->addItem(QStringLiteral("RTS/CTS"), QSerialPort::HardwareControl);
     flowControlBox->addItem(QStringLiteral("XON/XOFF"), QSerialPort::SoftwareControl);
-    flowControlBox->setCurrentIndex(0);
 }
 
 /**
@@ -142,20 +141,90 @@ void PortSettingsDialog::checkCustomPath(const int index) const
  */
 void PortSettingsDialog::updateSettings()
 {
-    currentSettings.name = serialPortBox->currentText();
-    currentSettings.baudRate = baudRateBox->currentData().value<QSerialPort::BaudRate>();
-    currentSettings.dataBits = dataBitsBox->currentData().value<QSerialPort::DataBits>();
-    currentSettings.parity = parityBox->currentData().value<QSerialPort::Parity>();
-    currentSettings.stopBits = stopBitsBox->currentData().value<QSerialPort::StopBits>();
-    currentSettings.flowControl = flowControlBox->currentData().value<QSerialPort::FlowControl>();
+    settings.name = serialPortBox->currentText();
+    settings.baudRate = baudRateBox->currentData().value<QSerialPort::BaudRate>();
+    settings.dataBits = dataBitsBox->currentData().value<QSerialPort::DataBits>();
+    settings.parity = parityBox->currentData().value<QSerialPort::Parity>();
+    settings.stopBits = stopBitsBox->currentData().value<QSerialPort::StopBits>();
+    settings.flowControl = flowControlBox->currentData().value<QSerialPort::FlowControl>();
 }
 
 /**
- * @brief Updates the current settings according to the selected and hides PortSettingsDialog
+ * @brief Updates the combo box current index according to the data
+ *
+ */
+template<typename T>
+void PortSettingsDialog::updateIndex(QComboBox *comboBox, T data)
+{
+    auto index{ comboBox->findData(data) };
+    if (index != -1)
+        comboBox->setCurrentIndex(index);
+}
+
+/**
+ * @brief Loads settings from a file and checks the correct boxes
+ *
+ */
+void PortSettingsDialog::loadSettings()
+{
+    QSettings settingsFile;
+
+    settingsFile.beginGroup("port");
+
+    settings.name = settingsFile.value("name", "").toString();
+    settings.baudRate =
+            static_cast<QSerialPort::BaudRate>(settingsFile.value("baudRate", "9600").toInt());
+    settings.dataBits =
+            static_cast<QSerialPort::DataBits>(settingsFile.value("dataBits", "8").toInt());
+    settings.parity = static_cast<QSerialPort::Parity>(settingsFile.value("parity", "0").toInt());
+    settings.stopBits =
+            static_cast<QSerialPort::StopBits>(settingsFile.value("stopBits", "1").toInt());
+    settings.flowControl =
+            static_cast<QSerialPort::FlowControl>(settingsFile.value("flowControl", "0").toInt());
+
+    auto portNameIndex{ serialPortBox->findData(settings.name) };
+    if (portNameIndex == -1) {
+        serialPortBox->setEditable(true);
+        serialPortBox->setEditText(settings.name);
+    } else {
+        serialPortBox->setCurrentIndex(portNameIndex);
+    }
+
+    settingsFile.endGroup();
+
+    updateIndex(baudRateBox, settings.baudRate);
+    updateIndex(dataBitsBox, settings.dataBits);
+    updateIndex(parityBox, settings.parity);
+    updateIndex(stopBitsBox, settings.stopBits);
+    updateIndex(flowControlBox, settings.flowControl);
+}
+
+/**
+ * @brief Saves serial port settings to a file
+ *
+ */
+void PortSettingsDialog::saveSettings()
+{
+    QSettings settingsFile;
+
+    settingsFile.beginGroup("port");
+    settingsFile.setValue("name", settings.name);
+    settingsFile.setValue("baudRate", settings.baudRate);
+    settingsFile.setValue("dataBits", settings.dataBits);
+    settingsFile.setValue("parity", settings.parity);
+    settingsFile.setValue("stopBits", settings.stopBits);
+    settingsFile.setValue("flowControl", settings.flowControl);
+    settingsFile.endGroup();
+}
+
+/**
+ * @brief Updates the current settings, saves them to a file and hides PortSettingsDialog
+ *
  */
 void PortSettingsDialog::ok()
 {
     updateSettings();
+    saveSettings();
     hide();
 }
 

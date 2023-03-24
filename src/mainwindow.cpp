@@ -133,7 +133,7 @@ QString MainWindow::createFileDialog(QFileDialog::AcceptMode acceptMode, QString
  */
 void MainWindow::serialConnect()
 {
-    const auto &serialSettings{ portSettingsDialog->getCurrentSettings() };
+    const auto &serialSettings{ portSettingsDialog->getSettings() };
     const auto dataType{ dataSettingsDialog->getCurrentDataType() };
     serialTransceiver->setDataType(dataType);
     serialTransceiver->setPortName(serialSettings.name);
