@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.24)
 
 project(qUART VERSION 0.1 LANGUAGES CXX)
 
@@ -40,24 +40,10 @@ set(PROJECT_SOURCES
 )
 
 # QCustomPlot
-set(QCUSTOMPLOT_SRC_PATH "")
+set(QCUSTOMPLOT_SRC_DIR "")
 
-if(NOT EXISTS ${QCUSTOMPLOT_SRC_PATH})
-    message(FATAL_ERROR "Set QCUSTOMPLOT_SRC_PATH to the location of qcustomplot.cpp and qcustomplot.h")
-endif()
-
-add_library(QCustomPlot STATIC)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui PrintSupport)
-target_include_directories(QCustomPlot PUBLIC ${QCUSTOMPLOT_SRC_PATH})
-target_sources(QCustomPlot PRIVATE
-    ${QCUSTOMPLOT_SRC_PATH}/qcustomplot.cpp
-    ${QCUSTOMPLOT_SRC_PATH}/qcustomplot.h
-)
-target_link_libraries(QCustomPlot PRIVATE
-    Qt${QT_VERSION_MAJOR}::Core
-    Qt${QT_VERSION_MAJOR}::Gui
-    Qt${QT_VERSION_MAJOR}::PrintSupport
-)
+set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../lib)
+add_subdirectory(${LIB_DIR} ${LIB_DIR}/build)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${PROJECT_NAME}
