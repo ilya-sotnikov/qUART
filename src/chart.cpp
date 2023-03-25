@@ -15,7 +15,7 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
     layout->addWidget(customPlot);
 
     customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-    customPlot->setSelectionRectMode(QCP::srmZoom);
+    // customPlot->setSelectionRectMode(QCP::srmZoom);
     customPlot->setAntialiasedElements(QCP::aePlottables);
 
     plot->setSelectable(QCP::stSingleData);
@@ -37,6 +37,9 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
             &Chart::updateSelectedPoint);
     connect(spectrum, qOverload<const QCPDataSelection &>(&QCPBars::selectionChanged), this,
             &Chart::updateSelectedPoint);
+
+    connect(customPlot, &QCustomPlot::mouseRelease, this, [this]() { autoScaleAxes = false; });
+    connect(customPlot, &QCustomPlot::mouseWheel, this, [this]() { autoScaleAxes = false; });
 }
 
 /**
@@ -45,16 +48,22 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
  */
 void Chart::updateChart()
 {
+    auto plotData{ chartDataContainer.getPlot(showLastPoints) };
+    auto spectrumData{ chartDataContainer.getSpectrum(showLastPoints) };
+
     if (chartType == ChartType::plot) {
-        plot->setData(plotDataContainer.getKeys(), plotDataContainer.getValues(), true);
+        plot->setData(plotData.keys, plotData.values, true);
         plot->setVisible(true);
         spectrum->setVisible(false);
     } else if (chartType == ChartType::spectrum) {
+        spectrum->setData(spectrumData.keys, spectrumData.values, true);
         plot->setVisible(false);
         spectrum->setVisible(true);
-        spectrum->setData(spectrumDataContainer.getKeys(), spectrumDataContainer.getValues(), true);
     }
-    customPlot->rescaleAxes(true);
+
+    if (autoScaleAxes)
+        customPlot->rescaleAxes(true);
+
     customPlot->replot();
 }
 
@@ -66,6 +75,8 @@ void Chart::updateChart()
  */
 void Chart::changeType()
 {
+    autoScaleAxes = true;
+
     if (chartType == ChartType::spectrum)
         chartType = ChartType::plot;
     else if (chartType == ChartType::plot)
@@ -80,8 +91,7 @@ void Chart::changeType()
  */
 void Chart::clear()
 {
-    plotDataContainer.clear();
-    spectrumDataContainer.clear();
+    chartDataContainer.clear();
     updateChart();
 }
 
@@ -94,12 +104,11 @@ void Chart::clear()
  */
 void Chart::setRawData(QList<qreal> &rawData)
 {
-    plotDataContainer.clear();
-    spectrumDataContainer.clear();
+    chartDataContainer.clear();
     if (chartType == ChartType::plot) {
         addData(rawData); // restore the plot and the spectrum
     } else if (chartType == ChartType::spectrum) {
-        spectrumDataContainer.setRawData(rawData); // impossible to restore the plot
+        chartDataContainer.setRawSpectrumData(rawData); // impossible to restore the plot
         updateChart();
         rawData.clear();
     }
@@ -115,11 +124,7 @@ void Chart::setRawData(QList<qreal> &rawData)
  */
 void Chart::addData(QList<qreal> &receivedData)
 {
-    if (appendToPlot)
-        plotDataContainer.append(receivedData);
-
-    if (appendToSpectrum)
-        spectrumDataContainer.append(receivedData);
+    chartDataContainer.append(receivedData, appendToPlot, appendToSpectrum);
 
     updateChart();
     receivedData.clear();
@@ -131,6 +136,7 @@ void Chart::addData(QList<qreal> &receivedData)
  */
 void Chart::resetZoom()
 {
+    autoScaleAxes = true;
     customPlot->rescaleAxes(true);
     customPlot->replot();
 }
@@ -145,14 +151,18 @@ void Chart::updateSelectedPoint(const QCPDataSelection &selection)
     if (selection.isEmpty())
         return;
 
-    auto selectedPointX{ selection.dataRange().begin() };
+    auto chartX{ selection.dataRange().begin() };
     QPointF selectedPoint{};
-    selectedPoint.setX(selectedPointX);
+    selectedPoint.setX(chartX);
 
     if (chartType == ChartType::plot) {
-        selectedPoint.setY(plotDataContainer.getValues().at(selectedPointX));
+        auto plotData{ chartDataContainer.getPlot(showLastPoints) };
+        selectedPoint.setX(plotData.keys.at(chartX));
+        selectedPoint.setY(plotData.values.at(chartX));
     } else if (chartType == ChartType::spectrum) {
-        selectedPoint.setY(spectrumDataContainer.getValues().at(selectedPointX));
+        auto spectrumData{ chartDataContainer.getSpectrum(showLastPoints) };
+        selectedPoint.setX(spectrumData.keys.at(chartX));
+        selectedPoint.setY(spectrumData.values.at(chartX));
     }
 
     emit selectedPointChanged(selectedPoint);
@@ -165,6 +175,6 @@ void Chart::updateSelectedPoint(const QCPDataSelection &selection)
  */
 const QList<qreal> &Chart::getData() const
 {
-    return (chartType == ChartType::plot) ? plotDataContainer.getValues()
-                                          : spectrumDataContainer.getValues();
+    return (chartType == ChartType::plot) ? chartDataContainer.getPlot().values
+                                          : chartDataContainer.getSpectrum().values;
 }

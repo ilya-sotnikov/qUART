@@ -1,7 +1,7 @@
 #ifndef CHART_H
 #define CHART_H
 
-#include "chartdatacontainers.h"
+#include "chartdatacontainer.h"
 
 #include "qcustomplot.h"
 #include <qwidget.h>
@@ -15,15 +15,15 @@ class Chart : public QWidget
 
 public:
     explicit Chart(QWidget *parent = nullptr);
+
+    enum class ChartType { plot, spectrum };
+    Q_ENUM(ChartType)
+    auto getChartType() const { return chartType; };
     void updateChart();
     void changeType();
     void clear();
     void setRawData(QList<qreal> &rawData);
     const QList<qreal> &getData() const;
-
-    enum class ChartType { plot, spectrum };
-    Q_ENUM(ChartType)
-    auto getChartType() const { return chartType; };
 
     bool appendToPlot{ true };
     bool appendToSpectrum{ true };
@@ -33,12 +33,14 @@ private:
     QCPGraph *plot{ customPlot->addGraph() };
     QCPBars *spectrum{ new QCPBars{ customPlot->xAxis, customPlot->yAxis } };
     Chart::ChartType chartType{ ChartType::plot };
-    PlotDataContainer plotDataContainer;
-    SpectrumDataContainer spectrumDataContainer;
+    ChartDataContainer chartDataContainer;
+    qsizetype showLastPoints{ -1 };
+    bool autoScaleAxes{ true };
 
 public slots:
-    void addData(QList<qreal> &receivedData);
     void resetZoom();
+    void addData(QList<qreal> &receivedData);
+    void setShowLastPoints(qsizetype n) { showLastPoints = n; }
 
 private slots:
     void updateSelectedPoint(const QCPDataSelection &selection);
