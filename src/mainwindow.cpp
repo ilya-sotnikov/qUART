@@ -50,10 +50,25 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
     toolBar->addAction(actionAppendToPlot);
     toolBar->addAction(actionAppendToSpectrum);
 
-    auto windowLayout{ new QHBoxLayout{} };
-    windowLayout->addWidget(chart);
+    auto sidePanel{ new QGroupBox };
+    sidePanel->setTitle("Side panel");
 
-    auto window{ new QWidget{} };
+    auto sidePanelLayout{ new QVBoxLayout };
+
+    auto lastPointsLabel{ new QLabel{ "Show last N points:" } };
+    sidePanelLayout->addWidget(lastPointsLabel, 0);
+
+    auto lastPointsLineEdit{ new QLineEdit };
+    sidePanelLayout->addWidget(lastPointsLineEdit, 1);
+
+    sidePanelLayout->addStretch();
+    sidePanel->setLayout(sidePanelLayout);
+
+    auto windowLayout{ new QHBoxLayout };
+    windowLayout->addWidget(sidePanel, 0);
+    windowLayout->addWidget(chart, 1);
+
+    auto window{ new QWidget };
     window->setLayout(windowLayout);
     setCentralWidget(window);
 
@@ -96,6 +111,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
                     actionAppendToSpectrum->setDisabled(true);
                 }
             });
+
+    connect(lastPointsLineEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
+        bool ok;
+        auto n{ text.toLongLong(&ok, 0) };
+
+        if (ok)
+            chart->setShowLastPoints(n);
+        else
+            chart->setShowLastPoints(-1);
+
+        chart->updateChart();
+    });
 }
 
 /**
