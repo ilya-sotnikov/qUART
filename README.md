@@ -17,6 +17,7 @@ Real-time graph and spectrum (of values, not amplitudes) serial plotter written 
 - configure the port (baud rate, data bits, parity, stop bits, flow control)
 - save and restore serial port configuration
 - data representation as a spectrum and/or a plot
+- show the last n points
 - turn off appending to the plot or the spectrum if not needed
 - data types
     - u8, u16, u32, u64 (spectrum)
