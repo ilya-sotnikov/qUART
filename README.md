@@ -35,10 +35,12 @@ Opening data works the same way. You should select the appropriate chart type. N
 
 ## Build instructions
 You can compile it in all OSs where Qt 6 is available.
-1. Set QCUSTOMPLOT_SRC_PATH in CMakeLists.txt
-2. mkdir build && cd build
-3. cmake -DCMAKE_BUILD_TYPE=Release ../src
-4. cmake --build .
+If you have already downloaded QCustomPlot you can set QCUSTOMPLOT_SRC_PATH in CMakeLists.txt, otherwise it will download it automatically.
+1. git clone https://github.com/ilya-sotnikov/qUART
+2. cd qUART
+3. mkdir build && cd build
+4. cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build .
+5. cmake --install .
 
 ## Contributing
 Feel free to add features or fix bugs. This project uses the Qt codestyle, you can use the .clang-format file from [here](https://code.qt.io/cgit/qt/qt5.git/tree/_clang-format).
