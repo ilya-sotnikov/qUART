@@ -258,19 +258,16 @@ void MainWindow::openData()
 }
 
 /**
- * @brief Updates the status bar and DataSettingsDialog
+ * @brief Updates the status bar
  *
  */
 void MainWindow::chartTypeChanged()
 {
     const auto chartType{ chart->getChartType() };
-    if (chartType == Chart::ChartType::plot) {
+    if (chartType == Chart::ChartType::plot)
         chartTypeWidget->setText("Chart type: Plot");
-        dataSettingsDialog->showAdditionalDataTypes();
-    } else if (chartType == Chart::ChartType::spectrum) {
+    else if (chartType == Chart::ChartType::spectrum)
         chartTypeWidget->setText("Chart type: Spectrum");
-        dataSettingsDialog->hideAdditionalDataTypes();
-    }
 }
 
 /**

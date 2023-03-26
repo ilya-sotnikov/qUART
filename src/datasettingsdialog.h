@@ -24,9 +24,6 @@ public:
 
     auto getCurrentDataType() const { return currentDataType; }
 
-    void hideAdditionalDataTypes(); // can't be const because of the hack with hide() and show()
-    void showAdditionalDataTypes() const;
-
 private:
     SerialTransceiver::DataTypes currentDataType{ SerialTransceiver::DataTypes::u8 };
     QButtonGroup *buttonGroup{ new QButtonGroup{ this } };
