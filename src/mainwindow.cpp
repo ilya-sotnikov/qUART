@@ -69,6 +69,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
     sidePanelLayout->addWidget(sendSignedCheckBox);
     sendSignedCheckBox->setEnabled(false);
 
+    auto sendStringLabel{ new QLabel{ "Send a string:" } };
+    sidePanelLayout->addWidget(sendStringLabel);
+    sendStringLineEdit->setToolTip("Enter to send");
+    sendStringLineEdit->setEnabled(false);
+    sidePanelLayout->addWidget(sendStringLineEdit);
+    sidePanelLayout->addWidget(sendStringNewlineCheckBox);
+    sendStringNewlineCheckBox->setEnabled(false);
+
     sidePanelLayout->addStretch();
     sidePanel->setLayout(sidePanelLayout);
 
@@ -138,6 +146,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
         bool isSigned{ sendSignedCheckBox->isChecked() };
         serialTransceiver->writeNumber(numString, isSigned);
     });
+
+    connect(sendStringLineEdit, &QLineEdit::returnPressed, this, [this]() {
+        auto string{ sendStringLineEdit->text() };
+        bool appendNewline{ sendStringNewlineCheckBox->isChecked() };
+        serialTransceiver->writeString(string, appendNewline);
+    });
 }
 
 /**
@@ -194,6 +208,8 @@ void MainWindow::serialConnect()
         actionSaveImage->setEnabled(false);
         sendNumLineEdit->setEnabled(true);
         sendSignedCheckBox->setEnabled(true);
+        sendStringLineEdit->setEnabled(true);
+        sendStringNewlineCheckBox->setEnabled(true);
     } else {
         QMessageBox::critical(this, "Error", serialTransceiver->errorString());
     }
@@ -218,6 +234,8 @@ void MainWindow::serialDisconnect()
     actionSaveImage->setEnabled(true);
     sendNumLineEdit->setEnabled(false);
     sendSignedCheckBox->setEnabled(false);
+    sendStringLineEdit->setEnabled(false);
+    sendStringNewlineCheckBox->setEnabled(false);
 }
 
 /**

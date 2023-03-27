@@ -38,8 +38,10 @@ private:
     QAction *actionResetZoom{ new QAction{ "Reset zoom", this } };
     QAction *actionAppendToPlot{ new QAction{ "Append to chart", this } };
     QAction *actionAppendToSpectrum{ new QAction{ "Append to spectrum", this } };
-    QLineEdit *sendNumLineEdit{ new QLineEdit };
+    QLineEdit *sendNumLineEdit{ new QLineEdit{ this } };
     QCheckBox *sendSignedCheckBox{ new QCheckBox{ "Signed" } };
+    QLineEdit *sendStringLineEdit{ new QLineEdit{ this } };
+    QCheckBox *sendStringNewlineCheckBox{ new QCheckBox{ "Newline" } };
 
     QString createFileDialog(QFileDialog::AcceptMode acceptMode, QString nameFilter,
                              QString defaultSuffix);

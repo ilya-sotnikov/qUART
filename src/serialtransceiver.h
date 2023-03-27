@@ -34,6 +34,7 @@ public:
     };
 
     qint64 writeNumber(const QString &numString, bool isSigned);
+    qint64 writeString(const QString &string, bool appendNewline);
 
 private:
     QSerialPort *serialPort{ new QSerialPort{ this } };

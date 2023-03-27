@@ -219,3 +219,13 @@ qint64 SerialTransceiver::writeNumber(const QString &numString, bool isSigned)
         return 0;
     }
 }
+
+qint64 SerialTransceiver::writeString(const QString &string, bool appendNewline)
+{
+    auto byteArray{ string.toUtf8() };
+
+    if (appendNewline)
+        byteArray.append('\n');
+
+    return serialPort->write(byteArray);
+}
