@@ -1,5 +1,13 @@
 #include "serialtransceiver.h"
 
+#include <type_traits>
+
+template<typename T, typename U>
+static constexpr auto CanTypeFitValue(const U value);
+
+template<typename T>
+static void writeSmallestToByteArray(QByteArray &byteArray, T num);
+
 // See SerialTransceiver::deserializeByteArray
 // #define BUG_0xff
 
@@ -89,11 +97,11 @@ void SerialTransceiver::deserializeByteArray(QByteArray &byteArray)
     byteArray.chop(byteCnt);
 
     T data;
-    QDataStream stream{ &byteArray, QIODevice::ReadOnly };
+    QDataStream dataStream{ &byteArray, QIODevice::ReadOnly };
     if (dataType == DataTypes::f32)
-        stream.setFloatingPointPrecision(QDataStream::SinglePrecision);
-    while (!stream.atEnd()) {
-        stream >> data;
+        dataStream.setFloatingPointPrecision(QDataStream::SinglePrecision);
+    while (!dataStream.atEnd()) {
+        dataStream >> data;
         dataList.append(data);
     }
 }
@@ -151,5 +159,63 @@ void SerialTransceiver::timerTimeout()
 {
     if (!dataList.isEmpty()) {
         emit newDataAvailable(dataList);
+    }
+}
+
+template<typename T, typename U>
+static constexpr auto CanTypeFitValue(const U value)
+{
+    return ((value > static_cast<U>(0)) == (static_cast<T>(value) > static_cast<T>(0)))
+            && (static_cast<U>(static_cast<T>(value)) == value);
+}
+
+template<typename T>
+static void writeSmallestToByteArray(QByteArray &byteArray, T num)
+{
+    auto dataStream{ QDataStream{ &byteArray, QIODeviceBase::WriteOnly } };
+    dataStream.setByteOrder(QDataStream::LittleEndian);
+
+    if (std::is_signed_v<T>) {
+        if (CanTypeFitValue<qint8>(num))
+            dataStream << static_cast<qint8>(num);
+        else if (CanTypeFitValue<qint16>(num))
+            dataStream << static_cast<qint16>(num);
+        else if (CanTypeFitValue<qint32>(num))
+            dataStream << static_cast<qint32>(num);
+        else
+            dataStream << num;
+    } else {
+        if (CanTypeFitValue<quint8>(num))
+            dataStream << static_cast<quint8>(num);
+        else if (CanTypeFitValue<quint16>(num))
+            dataStream << static_cast<quint16>(num);
+        else if (CanTypeFitValue<quint32>(num))
+            dataStream << static_cast<quint32>(num);
+        else
+            dataStream << num;
+    }
+}
+
+qint64 SerialTransceiver::writeNumber(const QString &numString, bool isSigned)
+{
+    QByteArray byteArray;
+    qint64 numSigned;
+    quint64 numUnsigned;
+    bool ok;
+
+    if (isSigned)
+        numSigned = numString.toLongLong(&ok, 0);
+    else
+        numUnsigned = numString.toULongLong(&ok, 0);
+
+    if (ok) {
+        if (isSigned)
+            writeSmallestToByteArray(byteArray, numSigned);
+        else
+            writeSmallestToByteArray(byteArray, numUnsigned);
+
+        return serialPort->write(byteArray);
+    } else {
+        return 0;
     }
 }

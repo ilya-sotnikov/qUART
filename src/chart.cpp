@@ -125,7 +125,6 @@ void Chart::setRawData(QList<qreal> &rawData)
 void Chart::addData(QList<qreal> &receivedData)
 {
     chartDataContainer.append(receivedData, appendToPlot, appendToSpectrum);
-
     updateChart();
     receivedData.clear();
 }
