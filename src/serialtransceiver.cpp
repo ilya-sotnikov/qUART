@@ -19,7 +19,6 @@ static void writeSmallestToByteArray(QByteArray &byteArray, T num);
 SerialTransceiver::SerialTransceiver(QObject *parent) : QObject{ parent }
 {
     connect(serialPort, &QSerialPort::readyRead, this, &SerialTransceiver::receiveData);
-    connect(timer, &QTimer::timeout, this, &SerialTransceiver::timerTimeout);
 }
 
 /**
@@ -45,7 +44,6 @@ bool SerialTransceiver::serialOpen()
     bool isOpen{ serialPort->open(QIODevice::ReadWrite) };
     if (isOpen) {
         serialPort->clear();
-        timer->start(200);
     }
     return isOpen;
 }
@@ -58,8 +56,6 @@ void SerialTransceiver::serialClose()
 {
     if (serialPort->isOpen())
         serialPort->close();
-    if (timer->isActive())
-        timer->stop();
     dataList.clear();
     bufferArray.clear();
 }
@@ -146,17 +142,7 @@ void SerialTransceiver::receiveData()
         deserializeByteArray<double>(byteArray);
         break;
     }
-}
 
-/**
- * @brief Emits the newDataAvailable signal on timerTimeout if there's new data
- *
- * It gives raw pointer to received data, the received side is expected
- * to plot this data and clear the received data list.
- *
- */
-void SerialTransceiver::timerTimeout()
-{
     if (!dataList.isEmpty()) {
         emit newDataAvailable(dataList);
     }

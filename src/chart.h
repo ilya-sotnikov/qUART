@@ -24,6 +24,9 @@ public:
     void clear();
     void setRawData(QList<qreal> &rawData);
     const QList<qreal> &getData() const;
+    void setUpdateInterval(int msec);
+    auto getUpdateInterval() const { return updateInterval; };
+    void requestUpdate() { needsUpdate = true; }
 
     bool appendToPlot{ true };
     bool appendToSpectrum{ true };
@@ -34,8 +37,11 @@ private:
     QCPBars *spectrum{ new QCPBars{ customPlot->xAxis, customPlot->yAxis } };
     Chart::ChartType chartType{ ChartType::plot };
     ChartDataContainer chartDataContainer;
+    QTimer *timer{ new QTimer{ this } };
     qsizetype showLastPoints{ -1 };
     bool autoScaleAxes{ true };
+    int updateInterval{ 33 };
+    bool needsUpdate{ false };
 
 public slots:
     void resetZoom();
