@@ -33,6 +33,8 @@ public:
         return serialPort->setBaudRate(baudRate, directions);
     };
 
+    qint64 writeNumber(const QString &numString, bool isSigned);
+
 private:
     QSerialPort *serialPort{ new QSerialPort{ this } };
     QTimer *timer{ new QTimer{ this } };

@@ -56,10 +56,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
     auto sidePanelLayout{ new QVBoxLayout };
 
     auto lastPointsLabel{ new QLabel{ "Show last N points:" } };
-    sidePanelLayout->addWidget(lastPointsLabel, 0);
-
+    sidePanelLayout->addWidget(lastPointsLabel);
     auto lastPointsLineEdit{ new QLineEdit };
-    sidePanelLayout->addWidget(lastPointsLineEdit, 1);
+    lastPointsLineEdit->setToolTip("Empty means show all data");
+    sidePanelLayout->addWidget(lastPointsLineEdit);
+
+    auto sendNumLabel{ new QLabel{ "Send a number:" } };
+    sidePanelLayout->addWidget(sendNumLabel);
+    sendNumLineEdit->setToolTip("0x__ for hex, 0b__ for binary, Enter to send");
+    sendNumLineEdit->setEnabled(false);
+    sidePanelLayout->addWidget(sendNumLineEdit);
+    sidePanelLayout->addWidget(sendSignedCheckBox);
+    sendSignedCheckBox->setEnabled(false);
 
     sidePanelLayout->addStretch();
     sidePanel->setLayout(sidePanelLayout);
@@ -123,6 +131,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
 
         chart->updateChart();
     });
+
+    connect(sendNumLineEdit, &QLineEdit::returnPressed, this, [this]() {
+        auto numString{ sendNumLineEdit->text() };
+        bool isSigned{ sendSignedCheckBox->isChecked() };
+        serialTransceiver->writeNumber(numString, isSigned);
+    });
 }
 
 /**
@@ -177,6 +191,8 @@ void MainWindow::serialConnect()
         actionOpenData->setEnabled(false);
         actionSaveData->setEnabled(false);
         actionSaveImage->setEnabled(false);
+        sendNumLineEdit->setEnabled(true);
+        sendSignedCheckBox->setEnabled(true);
     } else {
         QMessageBox::critical(this, "Error", serialTransceiver->errorString());
     }
@@ -199,6 +215,8 @@ void MainWindow::serialDisconnect()
     actionOpenData->setEnabled(true);
     actionSaveData->setEnabled(true);
     actionSaveImage->setEnabled(true);
+    sendNumLineEdit->setEnabled(false);
+    sendSignedCheckBox->setEnabled(false);
 }
 
 /**

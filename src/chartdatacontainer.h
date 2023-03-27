@@ -31,7 +31,6 @@ public:
     const SpectrumData &getSpectrum(qsizetype n);
 
 private:
-    void spectrumAppendZero();
     void appendPlot(const QList<qreal> &data, QList<qreal> &keys, QList<qreal> &values);
     void appendSpectrum(const QList<qreal> &data, QList<qreal> &keys, QList<qreal> &values);
 
