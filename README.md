@@ -29,6 +29,7 @@ Real-time graph and spectrum (of values, not amplitudes) serial plotter written 
 - save and open data
 - clear the chart
 - save the chart as an image
+- set a custom chart update interval
 
 ## Saving and opening data
 You can save or open data as plain text, it's just numbers separated by new lines. The representation of data depends on the current chart type. If it's a plot, then data is saved as a sequence. If it's a spectrum, then data is saved as frequency of every value.
