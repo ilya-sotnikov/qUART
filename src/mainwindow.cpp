@@ -118,6 +118,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
                     chart->appendToSpectrum = false;
                     actionAppendToSpectrum->setDisabled(true);
                 }
+                chart->clear();
             });
 
     connect(lastPointsLineEdit, &QLineEdit::textChanged, this, [this](const QString &text) {

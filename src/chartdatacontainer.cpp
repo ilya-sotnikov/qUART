@@ -60,7 +60,7 @@ const ChartDataContainer::SpectrumData &ChartDataContainer::getSpectrum(qsizetyp
     const auto size{ plotData.keys.size() };
 
     if (n > size || n < 0)
-        n = size;
+        return spectrumData;
 
     appendSpectrum(getPlot(n).values, spectrumDataLast.keys, spectrumDataLast.values);
 

@@ -7,8 +7,8 @@
  */
 Chart::Chart(QWidget *parent) : QWidget{ parent }
 {
-    constexpr qreal lineWidth{ 2 };
-    constexpr qreal plotScatterSize{ 10 };
+    constexpr qreal lineWidth{ 1 };
+    constexpr qreal plotScatterSize{ 20 };
     constexpr QColor plotSelectionColor{ QColor{ 80, 80, 255 } };
 
     auto layout{ new QHBoxLayout{ this } };
@@ -49,7 +49,11 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
 void Chart::updateChart()
 {
     auto plotData{ chartDataContainer.getPlot(showLastPoints) };
-    auto spectrumData{ chartDataContainer.getSpectrum(showLastPoints) };
+
+    // Needed because we recreate the last N points from the plotData internally
+    ChartDataContainer::SpectrumData spectrumData;
+    if (appendToSpectrum)
+        spectrumData = chartDataContainer.getSpectrum(showLastPoints);
 
     if (chartType == ChartType::plot) {
         plot->setData(plotData.keys, plotData.values, true);
