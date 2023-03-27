@@ -15,6 +15,7 @@ Real-time graph and spectrum (of values, not amplitudes) serial plotter written 
 ## Features
 - show all available ports (name, location, manufacturer, serial number, vendor and product identifiers)
 - configure the port (baud rate, data bits, parity, stop bits, flow control)
+- write a number to the serial port (can be signed or unsigned, in hex, binary or decimal, 8, 16, 32, 64 bit)
 - save and restore serial port configuration
 - data representation as a spectrum and/or a plot
 - show the last n points
