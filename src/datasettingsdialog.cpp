@@ -22,6 +22,18 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent) : QDialog{ parent }
     auto buttonsLayout{ new QVBoxLayout{} };
     auto groupBox{ new QGroupBox{ "Data format", this } };
 
+    auto button_u8{ new QRadioButton{ "unsigned 8 bit" } };
+    auto button_u16{ new QRadioButton{ "unsigned 16 bit" } };
+    auto button_u32{ new QRadioButton{ "unsigned 32 bit" } };
+    auto button_u64{ new QRadioButton{ "unsigned 64 bit" } };
+    auto button_i8{ new QRadioButton{ "signed 8 bit" } };
+    auto button_i16{ new QRadioButton{ "signed 16 bit" } };
+    auto button_i32{ new QRadioButton{ "signed 32 bit" } };
+    auto button_i64{ new QRadioButton{ "signed 64 bit" } };
+    auto button_f32{ new QRadioButton{ "float 32 bit" } };
+    auto button_f64{ new QRadioButton{ "double 64 bit" } };
+    auto button_ascii{ new QRadioButton{ "ASCII" } };
+
     buttonsLayout->addWidget(button_u8);
     buttonsLayout->addWidget(button_u16);
     buttonsLayout->addWidget(button_u32);
@@ -32,6 +44,7 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent) : QDialog{ parent }
     buttonsLayout->addWidget(button_i64);
     buttonsLayout->addWidget(button_f32);
     buttonsLayout->addWidget(button_f64);
+    buttonsLayout->addWidget(button_ascii);
     groupBox->setLayout(buttonsLayout);
 
     buttonGroup->addButton(button_u8, static_cast<int>(SerialTransceiver::DataTypes::u8));
@@ -44,6 +57,7 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent) : QDialog{ parent }
     buttonGroup->addButton(button_i64, static_cast<int>(SerialTransceiver::DataTypes::i64));
     buttonGroup->addButton(button_f32, static_cast<int>(SerialTransceiver::DataTypes::f32));
     buttonGroup->addButton(button_f64, static_cast<int>(SerialTransceiver::DataTypes::f64));
+    buttonGroup->addButton(button_ascii, static_cast<int>(SerialTransceiver::DataTypes::ascii));
     buttonGroup->button(static_cast<int>(currentDataType))->click();
 
     layout->addWidget(groupBox, 0, Qt::AlignTop);
