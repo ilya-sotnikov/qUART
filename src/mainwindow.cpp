@@ -61,6 +61,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
     lastPointsLineEdit->setToolTip("Empty means show all data");
     sidePanelLayout->addWidget(lastPointsLineEdit);
 
+    auto updateIntervalLabel{ new QLabel{ "Update interval (ms):" } };
+    sidePanelLayout->addWidget(updateIntervalLabel);
+    sidePanelLayout->addWidget(updateIntervalLineEdit);
+
     auto sendNumLabel{ new QLabel{ "Send a number:" } };
     sidePanelLayout->addWidget(sendNumLabel);
     sendNumLineEdit->setToolTip("0x__ for hex, 0b__ for binary, Enter to send");
@@ -138,7 +142,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
         else
             chart->setShowLastPoints(-1);
 
-        chart->updateChart();
+        chart->requestUpdate();
     });
 
     connect(sendNumLineEdit, &QLineEdit::returnPressed, this, [this]() {
@@ -151,6 +155,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
         auto string{ sendStringLineEdit->text() };
         bool appendNewline{ sendStringNewlineCheckBox->isChecked() };
         serialTransceiver->writeString(string, appendNewline);
+    });
+
+    connect(updateIntervalLineEdit, &QLineEdit::textChanged, this, [this]() {
+        bool ok;
+        auto ms{ updateIntervalLineEdit->text().toInt(&ok) };
+        if (ok)
+            chart->setUpdateInterval(ms);
     });
 }
 

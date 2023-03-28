@@ -33,6 +33,9 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
 
     customPlot->replot();
 
+    timer->setInterval(updateInterval);
+    timer->start();
+
     connect(plot, qOverload<const QCPDataSelection &>(&QCPGraph::selectionChanged), this,
             &Chart::updateSelectedPoint);
     connect(spectrum, qOverload<const QCPDataSelection &>(&QCPBars::selectionChanged), this,
@@ -40,6 +43,13 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
 
     connect(customPlot, &QCustomPlot::mouseRelease, this, [this]() { autoScaleAxes = false; });
     connect(customPlot, &QCustomPlot::mouseWheel, this, [this]() { autoScaleAxes = false; });
+
+    connect(timer, &QTimer::timeout, this, [this]() {
+        if (needsUpdate) {
+            needsUpdate = false;
+            updateChart();
+        }
+    });
 }
 
 /**
@@ -86,7 +96,7 @@ void Chart::changeType()
     else if (chartType == ChartType::plot)
         chartType = ChartType::spectrum;
 
-    updateChart();
+    needsUpdate = true;
 }
 
 /**
@@ -96,7 +106,7 @@ void Chart::changeType()
 void Chart::clear()
 {
     chartDataContainer.clear();
-    updateChart();
+    needsUpdate = true;
 }
 
 /**
@@ -113,9 +123,9 @@ void Chart::setRawData(QList<qreal> &rawData)
         addData(rawData); // restore the plot and the spectrum
     } else if (chartType == ChartType::spectrum) {
         chartDataContainer.setRawSpectrumData(rawData); // impossible to restore the plot
-        updateChart();
         rawData.clear();
     }
+    needsUpdate = true;
 }
 
 /**
@@ -129,7 +139,7 @@ void Chart::setRawData(QList<qreal> &rawData)
 void Chart::addData(QList<qreal> &receivedData)
 {
     chartDataContainer.append(receivedData, appendToPlot, appendToSpectrum);
-    updateChart();
+    needsUpdate = true;
     receivedData.clear();
 }
 
@@ -180,4 +190,11 @@ const QList<qreal> &Chart::getData() const
 {
     return (chartType == ChartType::plot) ? chartDataContainer.getPlot().values
                                           : chartDataContainer.getSpectrum().values;
+}
+
+void Chart::setUpdateInterval(int msec)
+{
+    timer->stop();
+    timer->setInterval(msec);
+    timer->start();
 }

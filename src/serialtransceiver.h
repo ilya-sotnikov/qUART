@@ -38,7 +38,6 @@ public:
 
 private:
     QSerialPort *serialPort{ new QSerialPort{ this } };
-    QTimer *timer{ new QTimer{ this } };
     QList<qreal> dataList{};
     QByteArray bufferArray;
     DataTypes dataType{ DataTypes::u8 };
@@ -48,7 +47,6 @@ private:
 
 private slots:
     void receiveData();
-    void timerTimeout();
 
 signals:
     void newDataAvailable(QList<qreal> &dataList);

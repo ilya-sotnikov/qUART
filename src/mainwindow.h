@@ -42,6 +42,8 @@ private:
     QCheckBox *sendSignedCheckBox{ new QCheckBox{ "Signed" } };
     QLineEdit *sendStringLineEdit{ new QLineEdit{ this } };
     QCheckBox *sendStringNewlineCheckBox{ new QCheckBox{ "Newline" } };
+    QLineEdit *updateIntervalLineEdit{ new QLineEdit{ QString::number(chart->getUpdateInterval()),
+                                                      this } };
 
     QString createFileDialog(QFileDialog::AcceptMode acceptMode, QString nameFilter,
                              QString defaultSuffix);
