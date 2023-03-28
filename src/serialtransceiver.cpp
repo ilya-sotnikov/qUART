@@ -95,6 +95,7 @@ void SerialTransceiver::deserializeByteArray(QByteArray &byteArray)
 
     T data;
     QDataStream dataStream{ &byteArray, QIODevice::ReadOnly };
+    dataStream.setByteOrder(byteOrder);
     if (dataType == DataTypes::f32)
         dataStream.setFloatingPointPrecision(QDataStream::SinglePrecision);
     while (!dataStream.atEnd()) {
@@ -181,10 +182,10 @@ static constexpr auto CanTypeFitValue(const U value)
 }
 
 template<typename T>
-static void writeSmallestToByteArray(QByteArray &byteArray, T num)
+static void writeSmallestToByteArray(QByteArray &byteArray, T num, QDataStream::ByteOrder byteOrder)
 {
     auto dataStream{ QDataStream{ &byteArray, QIODeviceBase::WriteOnly } };
-    dataStream.setByteOrder(QDataStream::LittleEndian);
+    dataStream.setByteOrder(byteOrder);
 
     if (std::is_signed_v<T>) {
         if (CanTypeFitValue<qint8>(num))
@@ -221,9 +222,9 @@ qint64 SerialTransceiver::writeNumber(const QString &numString, bool isSigned)
 
     if (ok) {
         if (isSigned)
-            writeSmallestToByteArray(byteArray, numSigned);
+            writeSmallestToByteArray(byteArray, numSigned, byteOrder);
         else
-            writeSmallestToByteArray(byteArray, numUnsigned);
+            writeSmallestToByteArray(byteArray, numUnsigned, byteOrder);
 
         return serialPort->write(byteArray);
     } else {
