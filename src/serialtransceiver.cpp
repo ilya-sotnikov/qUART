@@ -1,5 +1,6 @@
 #include "serialtransceiver.h"
 
+#include <qregularexpression.h>
 #include <type_traits>
 
 template<typename T, typename U>
@@ -141,11 +142,35 @@ void SerialTransceiver::receiveData()
     case DataTypes::f64:
         deserializeByteArray<double>(byteArray);
         break;
+    case DataTypes::ascii: {
+        auto containsSeparator{ false };
+
+        byteArray.prepend(bufferArray);
+        bufferArray.clear();
+
+        for (auto byte : byteArray) {
+            if (QChar::isSpace(byte))
+                containsSeparator = true;
+        }
+        if (!containsSeparator)
+            bufferArray.prepend(byteArray);
+        else {
+            double num;
+            bool ok;
+            auto stringList{ QString{ byteArray }.split(QRegularExpression{ "\\s+" },
+                                                        Qt::SkipEmptyParts) };
+            for (auto str : stringList) {
+                num = str.toDouble(&ok);
+                if (ok)
+                    dataList.append(num);
+            }
+        }
+        break;
+    }
     }
 
-    if (!dataList.isEmpty()) {
+    if (!dataList.isEmpty())
         emit newDataAvailable(dataList);
-    }
 }
 
 template<typename T, typename U>

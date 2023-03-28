@@ -2,7 +2,6 @@
 #define SERIALTRANSCEIVER_H
 
 #include <qserialport.h>
-#include <qtimer.h>
 
 class SerialTransceiver : public QObject
 {
@@ -14,11 +13,10 @@ public:
     bool serialOpen();
     void serialClose();
 
-    enum class DataTypes { u8, u16, u32, u64, i8, i16, i32, i64, f32, f64 };
+    enum class DataTypes { u8, u16, u32, u64, i8, i16, i32, i64, f32, f64, ascii };
     Q_ENUM(DataTypes)
 
     auto errorString() const { return serialPort->errorString(); };
-    auto setDataType(DataTypes dataType) { this->dataType = dataType; };
     auto setPortName(const QString &name) { serialPort->setPortName(name); };
     auto setDataBits(QSerialPort::DataBits dataBits) { return serialPort->setDataBits(dataBits); };
     auto setParity(QSerialPort::Parity parity) { return serialPort->setParity(parity); };
@@ -32,13 +30,19 @@ public:
     {
         return serialPort->setBaudRate(baudRate, directions);
     };
+    auto setDataType(DataTypes dataType)
+    {
+        dataList.clear();
+        bufferArray.clear();
+        this->dataType = dataType;
+    };
 
     qint64 writeNumber(const QString &numString, bool isSigned);
     qint64 writeString(const QString &string, bool appendNewline);
 
 private:
     QSerialPort *serialPort{ new QSerialPort{ this } };
-    QList<qreal> dataList{};
+    QList<qreal> dataList;
     QByteArray bufferArray;
     DataTypes dataType{ DataTypes::u8 };
 
