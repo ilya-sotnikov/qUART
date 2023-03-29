@@ -63,8 +63,8 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent) : QDialog{ parent }
     auto byteOrderButtonsLayout{ new QVBoxLayout{} };
     auto byteOrderGroupBox{ new QGroupBox{ "Byte order (for numeric)", this } };
 
-    auto buttonLittleEndian{ new QRadioButton{ "little endian" } };
-    auto buttonBigEndian{ new QRadioButton{ "big endian" } };
+    auto buttonLittleEndian{ new QRadioButton{ "little-endian" } };
+    auto buttonBigEndian{ new QRadioButton{ "big-endian" } };
 
     byteOrderButtonsLayout->addWidget(buttonLittleEndian);
     byteOrderButtonsLayout->addWidget(buttonBigEndian);
