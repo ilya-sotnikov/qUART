@@ -22,8 +22,7 @@ Real-time graph and spectrum (of values, not amplitudes) serial plotter written 
 - show the last n points
 - turn off appending to the plot or the spectrum if not needed
 - data types
-    - u8, u16, u32, u64 (spectrum)
-    - u8, u16, u32, u64, i8, i16, i32, i64, f32, f64, ASCII (plot)
+    - u8, u16, u32, u64, i8, i16, i32, i64, f32, f64, ASCII
 - change the byte order (little-endian, big-endian)
 - select any value on the chart
 - zoom, navigate
@@ -32,11 +31,6 @@ Real-time graph and spectrum (of values, not amplitudes) serial plotter written 
 - clear the chart
 - save the chart as an image
 - set a custom chart update interval
-
-## Saving and opening data
-You can save or open data as plain text, it's just numbers separated by new lines. The representation of data depends on the current chart type. If it's a plot, then data is saved as a sequence. If it's a spectrum, then data is saved as frequency of every value.
-
-Opening data works the same way. You should select the appropriate chart type. Note that this program can make a spectrum from a sequence of points (plot), the opposite is impossible.
 
 ## Build instructions
 You can compile it in all OSs where Qt 6 is available.
