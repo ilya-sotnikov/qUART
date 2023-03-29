@@ -24,6 +24,7 @@ Real-time graph and spectrum (of values, not amplitudes) serial plotter written 
 - data types
     - u8, u16, u32, u64 (spectrum)
     - u8, u16, u32, u64, i8, i16, i32, i64, f32, f64, ASCII (plot)
+- change the byte order (little-endian, big-endian)
 - select any value on the chart
 - zoom, navigate
 - save and open data

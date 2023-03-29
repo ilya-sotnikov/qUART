@@ -22,11 +22,14 @@ class DataSettingsDialog : public QDialog
 public:
     explicit DataSettingsDialog(QWidget *parent = nullptr);
 
-    auto getCurrentDataType() const { return currentDataType; }
+    auto getDataType() const { return dataType; }
+    auto getByteOrder() const { return byteOrder; }
 
 private:
-    SerialTransceiver::DataTypes currentDataType{ SerialTransceiver::DataTypes::u8 };
-    QButtonGroup *buttonGroup{ new QButtonGroup{ this } };
+    SerialTransceiver::DataTypes dataType{ SerialTransceiver::DataTypes::u8 };
+    QDataStream::ByteOrder byteOrder{ QDataStream::LittleEndian };
+    QButtonGroup *dataTypeButtonGroup{ new QButtonGroup{ this } };
+    QButtonGroup *byteOrderButtonGroup{ new QButtonGroup{ this } };
 
 private slots:
     void ok();

@@ -30,12 +30,18 @@ public:
     {
         return serialPort->setBaudRate(baudRate, directions);
     };
-    auto setDataType(DataTypes dataType)
+    void setDataType(DataTypes dataType)
     {
         dataList.clear();
         bufferArray.clear();
         this->dataType = dataType;
-    };
+    }
+    void setByteOrder(QDataStream::ByteOrder byteOrder)
+    {
+        dataList.clear();
+        bufferArray.clear();
+        this->byteOrder = byteOrder;
+    }
 
     qint64 writeNumber(const QString &numString, bool isSigned);
     qint64 writeString(const QString &string, bool appendNewline);
@@ -45,6 +51,7 @@ private:
     QList<qreal> dataList;
     QByteArray bufferArray;
     DataTypes dataType{ DataTypes::u8 };
+    QDataStream::ByteOrder byteOrder{ QDataStream::LittleEndian };
 
     template<typename T>
     void deserializeByteArray(QByteArray &byteArray);
