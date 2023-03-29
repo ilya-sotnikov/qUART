@@ -89,8 +89,6 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent) : QDialog{ parent }
 /**
  * @brief Gets the selected data type and hides DataSettingsDialog
  *
- * If the selected data type is not unsigned appending data to the spectrum is not possible
- *
  */
 void DataSettingsDialog::ok()
 {
