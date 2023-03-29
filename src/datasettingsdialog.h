@@ -34,9 +34,6 @@ private:
 private slots:
     void ok();
     void cancel();
-
-signals:
-    void dataTypeChanged(bool isUnsigned);
 };
 
 #endif // DATASETTINGSDIALOG_H

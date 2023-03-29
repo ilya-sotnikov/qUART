@@ -29,7 +29,7 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
     spectrum->setSelectable(QCP::stSingleData);
     spectrum->setPen(QPen{ QBrush{ Qt::black }, lineWidth });
     spectrum->setBrush(QBrush{ Qt::gray });
-    spectrum->setWidth(1);
+    spectrum->setWidth(0.1);
 
     customPlot->replot();
 
@@ -110,25 +110,6 @@ void Chart::clear()
 }
 
 /**
- * @brief Sets raw data to the chart, useful for loading data from a file
- *
- * Note that you should choose the corresponding chart type (plot or spectrum).
- *
- * @param rawData
- */
-void Chart::setRawData(QList<qreal> &rawData)
-{
-    chartDataContainer.clear();
-    if (chartType == ChartType::plot) {
-        addData(rawData); // restore the plot and the spectrum
-    } else if (chartType == ChartType::spectrum) {
-        chartDataContainer.setRawSpectrumData(rawData); // impossible to restore the plot
-        rawData.clear();
-    }
-    needsUpdate = true;
-}
-
-/**
  * @brief Adds data to the chart
  *
  * If the current chart type is plot, then plots data.
@@ -179,17 +160,6 @@ void Chart::updateSelectedPoint(const QCPDataSelection &selection)
     }
 
     emit selectedPointChanged(selectedPoint);
-}
-
-/**
- * @brief Returns a data list depending on the current chart type (plot or spectrum)
- *
- * @return const QList<qreal>&
- */
-const QList<qreal> &Chart::getData() const
-{
-    return (chartType == ChartType::plot) ? chartDataContainer.getPlot().values
-                                          : chartDataContainer.getSpectrum().values;
 }
 
 void Chart::setUpdateInterval(int msec)

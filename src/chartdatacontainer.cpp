@@ -1,35 +1,28 @@
 #include "chartdatacontainer.h"
 
 /**
- * @brief Sets raw spectrum data without any modifications
- *
- * @param rawData
- */
-void ChartDataContainer::setRawSpectrumData(const QList<qreal> &rawData)
-{
-    clear();
-
-    spectrumData.values.append(rawData);
-
-    auto rawDataSize{ rawData.size() };
-    for (decltype(rawDataSize) i{ 0 }; i < rawDataSize; ++i)
-        spectrumData.keys.append(i);
-}
-
-/**
  * @brief Clears all data
  *
  */
 void ChartDataContainer::clear()
 {
     plotData.keys.clear();
+    plotData.keys.squeeze();
     plotData.values.clear();
+    plotData.values.squeeze();
     plotDataLast.keys.clear();
+    plotDataLast.keys.squeeze();
     plotDataLast.values.clear();
+    plotDataLast.values.squeeze();
     spectrumData.keys.clear();
+    spectrumData.keys.squeeze();
     spectrumData.values.clear();
-    spectrumData.keys.clear();
-    spectrumData.values.clear();
+    spectrumData.values.squeeze();
+    spectrumDataLast.keys.clear();
+    spectrumDataLast.keys.squeeze();
+    spectrumDataLast.values.clear();
+    spectrumDataLast.values.squeeze();
+    spectrumMap.clear();
 }
 
 /**
@@ -92,31 +85,11 @@ void ChartDataContainer::append(const QList<qreal> &data, bool appendToPlot, boo
 void ChartDataContainer::appendSpectrum(const QList<qreal> &data, QList<qreal> &keys,
                                         QList<qreal> &values)
 {
-    QList<quint64> dataQuint64;
-    quint64 maxData{ 0 };
-    for (auto x : data) {
-        if (x >= 0) {
-            if (x > maxData)
-                maxData = x;
-            dataQuint64.append(static_cast<quint64>(x));
-        }
-    }
+    for (auto x : data)
+        spectrumMap.insert(x, spectrumMap.value(x, 0) + 1);
 
-    auto spectrumSize{ static_cast<quint64>(values.size()) };
-
-    if (maxData >= spectrumSize) {
-        auto sizeToFill{ maxData - spectrumSize + 1 };
-        QList<qreal> tempY;
-
-        for (auto i{ spectrumSize }; i < spectrumSize + sizeToFill; ++i)
-            keys.append(i);
-
-        tempY.fill(0, sizeToFill);
-        values.append(tempY);
-    }
-
-    for (const quint64 dataY : dataQuint64)
-        ++values[dataY];
+    keys = spectrumMap.keys();
+    values = spectrumMap.values();
 }
 
 /**
