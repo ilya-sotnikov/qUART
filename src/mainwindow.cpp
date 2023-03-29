@@ -65,6 +65,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
     sidePanelLayout->addWidget(updateIntervalLabel);
     sidePanelLayout->addWidget(updateIntervalLineEdit);
 
+    auto logScaleLabel{ new QLabel{ "Log scale:" } };
+    sidePanelLayout->addWidget(logScaleLabel);
+    sidePanelLayout->addWidget(logScalePlotCheckBox);
+    sidePanelLayout->addWidget(logScaleSpectrumCheckBox);
+
     auto sendNumLabel{ new QLabel{ "Send a number:" } };
     sidePanelLayout->addWidget(sendNumLabel);
     sendNumLineEdit->setToolTip("0x__ for hex, 0b__ for binary, Enter to send");
@@ -80,6 +85,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
     sidePanelLayout->addWidget(sendStringLineEdit);
     sidePanelLayout->addWidget(sendStringNewlineCheckBox);
     sendStringNewlineCheckBox->setEnabled(false);
+    sendStringNewlineCheckBox->setCheckState(Qt::Checked);
 
     sidePanelLayout->addStretch();
     sidePanel->setLayout(sidePanelLayout);
@@ -162,6 +168,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
         auto ms{ updateIntervalLineEdit->text().toInt(&ok) };
         if (ok)
             chart->setUpdateInterval(ms);
+    });
+
+    connect(logScalePlotCheckBox, &QCheckBox::stateChanged, this, [this](int state) {
+        if (state == Qt::Checked)
+            chart->setPlotLogarithmic(true);
+        else
+            chart->setPlotLogarithmic(false);
+    });
+
+    connect(logScaleSpectrumCheckBox, &QCheckBox::stateChanged, this, [this](int state) {
+        if (state == Qt::Checked)
+            chart->setSpectrumLogarithmic(true);
+        else
+            chart->setSpectrumLogarithmic(false);
     });
 }
 
