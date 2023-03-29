@@ -27,6 +27,7 @@ Real-time graph and spectrum (of values, not amplitudes) serial plotter written 
 - change the byte order (little-endian, big-endian)
 - select any value on the chart
 - zoom, navigate
+- toggle between log and linear scale
 - save and open data
 - clear the chart
 - save the chart as an image

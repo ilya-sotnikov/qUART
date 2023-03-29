@@ -44,6 +44,8 @@ private:
     QCheckBox *sendStringNewlineCheckBox{ new QCheckBox{ "Newline" } };
     QLineEdit *updateIntervalLineEdit{ new QLineEdit{ QString::number(chart->getUpdateInterval()),
                                                       this } };
+    QCheckBox *logScalePlotCheckBox{ new QCheckBox{ "Plot" } };
+    QCheckBox *logScaleSpectrumCheckBox{ new QCheckBox{ "Spectrum" } };
 
     QString createFileDialog(QFileDialog::AcceptMode acceptMode, QString nameFilter,
                              QString defaultSuffix);
