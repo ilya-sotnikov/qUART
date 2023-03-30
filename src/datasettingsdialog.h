@@ -10,10 +10,6 @@
 /**
  * @brief The dialog to select a data type
  *
- * Available data types depend on the current chart type.
- * Chart (u8, u16, u32, u64, i8, i16, i32, i64, f32, f64).
- * Spectrum (u8, u16, u32, u64)
- *
  */
 class DataSettingsDialog : public QDialog
 {
@@ -34,9 +30,6 @@ private:
 private slots:
     void ok();
     void cancel();
-
-signals:
-    void dataTypeChanged(bool isUnsigned);
 };
 
 #endif // DATASETTINGSDIALOG_H

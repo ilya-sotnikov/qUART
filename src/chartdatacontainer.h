@@ -2,6 +2,7 @@
 #define CHARTDATACONTAINER_H
 
 #include <qlist.h>
+#include <qmap.h>
 
 /**
  * @brief A data container for a plot and a spectrum
@@ -10,7 +11,6 @@ class ChartDataContainer
 {
 public:
     void append(const QList<qreal> &data, bool appendToPlot, bool appendToSpectrum);
-    void setRawSpectrumData(const QList<qreal> &rawData);
     void clear();
 
     struct PlotData
@@ -38,6 +38,7 @@ private:
     PlotData plotDataLast;
     SpectrumData spectrumData;
     SpectrumData spectrumDataLast;
+    QMap<qreal, qreal> spectrumMap;
 };
 
 #endif // CHARTDATACONTAINER_H

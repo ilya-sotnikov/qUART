@@ -89,24 +89,10 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent) : QDialog{ parent }
 /**
  * @brief Gets the selected data type and hides DataSettingsDialog
  *
- * If the selected data type is not unsigned appending data to the spectrum is not possible
- *
  */
 void DataSettingsDialog::ok()
 {
-    auto previousDataType{ dataType };
-    bool isUnsigned{ false };
     dataType = static_cast<SerialTransceiver::DataTypes>(dataTypeButtonGroup->checkedId());
-
-    if (previousDataType != dataType) {
-        if (dataTypeButtonGroup->checkedId() > static_cast<int>(SerialTransceiver::DataTypes::u64))
-            isUnsigned = false;
-        else
-            isUnsigned = true;
-
-        emit dataTypeChanged(isUnsigned);
-    }
-
     byteOrder = static_cast<QDataStream::ByteOrder>(byteOrderButtonGroup->checkedId());
 
     hide();

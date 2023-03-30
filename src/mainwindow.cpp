@@ -127,17 +127,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
     connect(actionDataSettings, &QAction::triggered, dataSettingsDialog, &DataSettingsDialog::show);
 
     connect(chart, &Chart::selectedPointChanged, this, &MainWindow::updateSelectedPoint);
-    connect(dataSettingsDialog, &DataSettingsDialog::dataTypeChanged, this,
-            [this](bool isUnsigned) {
-                if (isUnsigned) {
-                    actionAppendToSpectrum->setDisabled(false);
-                } else {
-                    actionAppendToSpectrum->setChecked(false);
-                    chart->appendToSpectrum = false;
-                    actionAppendToSpectrum->setDisabled(true);
-                }
-                chart->clear();
-            });
 
     connect(lastPointsLineEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
         bool ok;
@@ -323,7 +312,7 @@ void MainWindow::openData()
         QTextStream stream(&file);
         while (!stream.atEnd())
             dataList.append(stream.readLine().toDouble());
-        chart->setRawData(dataList);
+        chart->addData(dataList);
     }
 }
 
