@@ -92,6 +92,13 @@ void ChartDataContainer::appendSpectrum(const QList<qreal> &data, QList<qreal> &
     values = spectrumMap.values();
 }
 
+void ChartDataContainer::setRawSpectrumData(const QMap<qreal, qreal> rawData)
+{
+    spectrumMap = rawData;
+    spectrumData.keys = spectrumMap.keys();
+    spectrumData.values = spectrumMap.values();
+}
+
 /**
  * @brief Appends data to the plot data container
  *

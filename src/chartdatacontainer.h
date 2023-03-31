@@ -11,6 +11,7 @@ class ChartDataContainer
 {
 public:
     void append(const QList<qreal> &data, bool appendToPlot, bool appendToSpectrum);
+    void setRawSpectrumData(const QMap<qreal, qreal> rawData);
     void clear();
 
     struct PlotData
@@ -27,6 +28,7 @@ public:
 
     const auto &getPlot() const { return plotData; }
     const auto &getSpectrum() const { return spectrumData; }
+    const auto &getSpectrumMap() const { return spectrumMap; }
     const PlotData &getPlot(qsizetype n);
     const SpectrumData &getSpectrum(qsizetype n);
 

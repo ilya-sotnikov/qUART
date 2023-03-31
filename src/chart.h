@@ -19,11 +19,12 @@ public:
     enum class ChartType { plot, spectrum };
     Q_ENUM(ChartType)
     auto getChartType() const { return chartType; };
-    const QList<qreal> &getData() const { return chartDataContainer.getPlot().values; }
+    const auto &getPlotData() const { return chartDataContainer.getPlot().values; }
+    const auto &getSpectrumData() const { return chartDataContainer.getSpectrumMap(); }
     void updateChart();
     void changeType();
     void clear();
-    void setRawData(QList<qreal> &rawData);
+    void setRawSpectrumData(QMap<qreal, qreal> &rawData);
     void setUpdateInterval(int msec);
     auto getUpdateInterval() const { return updateInterval; };
     void requestUpdate() { needsUpdate = true; }

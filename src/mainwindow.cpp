@@ -36,8 +36,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
 
     menuBar->addAction(menuFile->menuAction());
     menuBar->addAction(menuSettings->menuAction());
-    menuFile->addAction(actionSaveData);
-    menuFile->addAction(actionOpenData);
+    menuFile->addAction(actionSavePlot);
+    menuFile->addAction(actionOpenPlot);
+    menuFile->addAction(actionSaveSpectrum);
+    menuFile->addAction(actionOpenSpectrum);
     menuFile->addAction(actionSaveImage);
     menuSettings->addAction(actionPortSettings);
     menuSettings->addAction(actionDataSettings);
@@ -120,8 +122,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
     connect(actionAppendToSpectrum, &QAction::triggered, this,
             [this] { chart->appendToSpectrum = !chart->appendToSpectrum; });
 
-    connect(actionSaveData, &QAction::triggered, this, &MainWindow::saveData);
-    connect(actionOpenData, &QAction::triggered, this, &MainWindow::openData);
+    connect(actionSavePlot, &QAction::triggered, this, &MainWindow::savePlotData);
+    connect(actionOpenPlot, &QAction::triggered, this, &MainWindow::openPlotData);
+    connect(actionSaveSpectrum, &QAction::triggered, this, &MainWindow::saveSpectrumData);
+    connect(actionOpenSpectrum, &QAction::triggered, this, &MainWindow::openSpectrumData);
     connect(actionSaveImage, &QAction::triggered, this, &MainWindow::saveImage);
     connect(actionPortSettings, &QAction::triggered, portSettingsDialog, &PortSettingsDialog::show);
     connect(actionDataSettings, &QAction::triggered, dataSettingsDialog, &DataSettingsDialog::show);
@@ -225,8 +229,10 @@ void MainWindow::serialConnect()
         actionDisconnect->setEnabled(true);
         actionPortSettings->setEnabled(false);
         actionDataSettings->setEnabled(false);
-        actionOpenData->setEnabled(false);
-        actionSaveData->setEnabled(false);
+        actionOpenPlot->setEnabled(false);
+        actionSavePlot->setEnabled(false);
+        actionOpenSpectrum->setEnabled(false);
+        actionSaveSpectrum->setEnabled(false);
         actionSaveImage->setEnabled(false);
         sendNumLineEdit->setEnabled(true);
         sendSignedCheckBox->setEnabled(true);
@@ -251,8 +257,10 @@ void MainWindow::serialDisconnect()
     actionDisconnect->setEnabled(false);
     actionPortSettings->setEnabled(true);
     actionDataSettings->setEnabled(true);
-    actionOpenData->setEnabled(true);
-    actionSaveData->setEnabled(true);
+    actionOpenPlot->setEnabled(true);
+    actionSavePlot->setEnabled(true);
+    actionOpenSpectrum->setEnabled(true);
+    actionSaveSpectrum->setEnabled(true);
     actionSaveImage->setEnabled(true);
     sendNumLineEdit->setEnabled(false);
     sendSignedCheckBox->setEnabled(false);
@@ -279,28 +287,40 @@ void MainWindow::saveImage()
  * Saved data depends on the current chart type (chart or spectrum).
  *
  */
-void MainWindow::saveData()
+void MainWindow::savePlotData()
 {
     auto fileName{ createFileDialog(QFileDialog::AcceptSave, "Text files (*.txt)", "txt") };
     if (fileName.isEmpty())
         return;
     QFile file{ fileName };
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        const auto dataList{ chart->getData() };
+        const auto dataList{ chart->getPlotData() };
         QTextStream stream(&file);
-        for (const auto &data : dataList)
+        for (auto data : dataList)
             stream << QString::number(data) << "\n";
+    }
+}
+
+void MainWindow::saveSpectrumData()
+{
+    auto fileName{ createFileDialog(QFileDialog::AcceptSave, "Text files (*.txt)", "txt") };
+    if (fileName.isEmpty())
+        return;
+    QFile file{ fileName };
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        const auto dataList{ chart->getSpectrumData() };
+        QTextStream stream(&file);
+        auto dataEnd{ dataList.cend() };
+        for (auto it{ dataList.cbegin() }; it != dataEnd; ++it)
+            stream << QString::number(it.key()) << " " << QString::number(it.value()) << "\n";
     }
 }
 
 /**
  * @brief Opens the text file and plots data from it
  *
- * It reads raw data, so you must choose the correct chart type before opening
- * new data (chart or spectrum).
- *
  */
-void MainWindow::openData()
+void MainWindow::openPlotData()
 {
     auto fileName{ createFileDialog(QFileDialog::AcceptOpen, "Text files (*.txt)", "txt") };
     if (fileName.isEmpty())
@@ -313,6 +333,39 @@ void MainWindow::openData()
         while (!stream.atEnd())
             dataList.append(stream.readLine().toDouble());
         chart->addData(dataList);
+    }
+}
+
+void MainWindow::openSpectrumData()
+{
+    auto fileName{ createFileDialog(QFileDialog::AcceptOpen, "Text files (*.txt)", "txt") };
+    if (fileName.isEmpty())
+        return;
+    QFile file{ fileName };
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        chart->clear();
+        QMap<qreal, qreal> data;
+        QTextStream stream(&file);
+        QStringList xy;
+        qreal x;
+        qreal y;
+        bool ok;
+        while (!stream.atEnd()) {
+            xy = stream.readLine().split(QRegularExpression{ "\\s+" }, Qt::SkipEmptyParts);
+            if (xy.empty())
+                continue;
+
+            x = xy.at(0).toDouble(&ok);
+            if (!ok)
+                continue;
+
+            y = xy.at(1).toDouble(&ok);
+            if (!ok)
+                continue;
+
+            data.insert(x, y);
+        }
+        chart->setRawSpectrumData(data);
     }
 }
 

@@ -30,9 +30,11 @@ private:
     QAction *actionDisconnect{ new QAction{ "Disconnect", this } };
     QAction *actionPortSettings{ new QAction{ "Port", this } };
     QAction *actionClear{ new QAction{ "Clear", this } };
-    QAction *actionSaveImage{ new QAction{ "Save image", this } };
-    QAction *actionSaveData{ new QAction{ "Save data", this } };
-    QAction *actionOpenData{ new QAction{ "Open data", this } };
+    QAction *actionSaveImage{ new QAction{ "Save Image", this } };
+    QAction *actionSavePlot{ new QAction{ "Save Plot", this } };
+    QAction *actionOpenPlot{ new QAction{ "Open Plot", this } };
+    QAction *actionSaveSpectrum{ new QAction{ "Save Spectrum", this } };
+    QAction *actionOpenSpectrum{ new QAction{ "Open Spectrum", this } };
     QAction *actionDataSettings{ new QAction{ "Data", this } };
     QAction *actionChartType{ new QAction{ "Chart type", this } };
     QAction *actionResetZoom{ new QAction{ "Reset zoom", this } };
@@ -54,8 +56,10 @@ private slots:
     void serialConnect();
     void serialDisconnect();
     void saveImage();
-    void saveData();
-    void openData();
+    void savePlotData();
+    void openPlotData();
+    void saveSpectrumData();
+    void openSpectrumData();
     void chartTypeChanged();
     void updateSelectedPoint(const QPointF point);
 };
