@@ -22,7 +22,7 @@ public:
     auto getByteOrder() const { return byteOrder; }
 
 private:
-    SerialTransceiver::DataTypes dataType{ SerialTransceiver::DataTypes::u8 };
+    SerialTransceiver::DataTypes dataType{ SerialTransceiver::DataTypes::ascii };
     QDataStream::ByteOrder byteOrder{ QDataStream::LittleEndian };
     QButtonGroup *dataTypeButtonGroup{ new QButtonGroup{ this } };
     QButtonGroup *byteOrderButtonGroup{ new QButtonGroup{ this } };

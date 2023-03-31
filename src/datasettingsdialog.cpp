@@ -4,6 +4,7 @@
 #include <qboxlayout.h>
 #include <qdialogbuttonbox.h>
 #include <qgroupbox.h>
+#include <qsettings.h>
 
 /**
  * @brief Constructs a new DataSettingsDialog object
@@ -18,9 +19,19 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent) : QDialog{ parent }
     auto buttonBox{ new QDialogButtonBox{ QDialogButtonBox::Cancel | QDialogButtonBox::Ok,
                                           Qt::Horizontal, this } };
 
+    QSettings settingsFile;
+    settingsFile.beginGroup("data");
+    dataType = settingsFile.value("type", static_cast<int>(SerialTransceiver::DataTypes::ascii))
+                       .value<SerialTransceiver::DataTypes>();
+
+    byteOrder = settingsFile.value("byteOrder", QDataStream::LittleEndian)
+                        .value<QDataStream::ByteOrder>();
+    settingsFile.endGroup();
+
     auto dataFormatButtonsLayout{ new QVBoxLayout{} };
     auto dataFormatGroupBox{ new QGroupBox{ "Data format", this } };
 
+    auto button_ascii{ new QRadioButton{ "ASCII" } };
     auto button_u8{ new QRadioButton{ "unsigned 8 bit" } };
     auto button_u16{ new QRadioButton{ "unsigned 16 bit" } };
     auto button_u32{ new QRadioButton{ "unsigned 32 bit" } };
@@ -31,8 +42,8 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent) : QDialog{ parent }
     auto button_i64{ new QRadioButton{ "signed 64 bit" } };
     auto button_f32{ new QRadioButton{ "float 32 bit" } };
     auto button_f64{ new QRadioButton{ "double 64 bit" } };
-    auto button_ascii{ new QRadioButton{ "ASCII" } };
 
+    dataFormatButtonsLayout->addWidget(button_ascii);
     dataFormatButtonsLayout->addWidget(button_u8);
     dataFormatButtonsLayout->addWidget(button_u16);
     dataFormatButtonsLayout->addWidget(button_u32);
@@ -43,9 +54,10 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent) : QDialog{ parent }
     dataFormatButtonsLayout->addWidget(button_i64);
     dataFormatButtonsLayout->addWidget(button_f32);
     dataFormatButtonsLayout->addWidget(button_f64);
-    dataFormatButtonsLayout->addWidget(button_ascii);
     dataFormatGroupBox->setLayout(dataFormatButtonsLayout);
 
+    dataTypeButtonGroup->addButton(button_ascii,
+                                   static_cast<int>(SerialTransceiver::DataTypes::ascii));
     dataTypeButtonGroup->addButton(button_u8, static_cast<int>(SerialTransceiver::DataTypes::u8));
     dataTypeButtonGroup->addButton(button_u16, static_cast<int>(SerialTransceiver::DataTypes::u16));
     dataTypeButtonGroup->addButton(button_u32, static_cast<int>(SerialTransceiver::DataTypes::u32));
@@ -56,8 +68,6 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent) : QDialog{ parent }
     dataTypeButtonGroup->addButton(button_i64, static_cast<int>(SerialTransceiver::DataTypes::i64));
     dataTypeButtonGroup->addButton(button_f32, static_cast<int>(SerialTransceiver::DataTypes::f32));
     dataTypeButtonGroup->addButton(button_f64, static_cast<int>(SerialTransceiver::DataTypes::f64));
-    dataTypeButtonGroup->addButton(button_ascii,
-                                   static_cast<int>(SerialTransceiver::DataTypes::ascii));
     dataTypeButtonGroup->button(static_cast<int>(dataType))->click();
 
     auto byteOrderButtonsLayout{ new QVBoxLayout{} };
@@ -92,8 +102,15 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent) : QDialog{ parent }
  */
 void DataSettingsDialog::ok()
 {
+    QSettings settingsFile;
+
     dataType = static_cast<SerialTransceiver::DataTypes>(dataTypeButtonGroup->checkedId());
     byteOrder = static_cast<QDataStream::ByteOrder>(byteOrderButtonGroup->checkedId());
+
+    settingsFile.beginGroup("data");
+    settingsFile.setValue("type", static_cast<int>(dataType));
+    settingsFile.setValue("byteOrder", byteOrder);
+    settingsFile.endGroup();
 
     hide();
 }
