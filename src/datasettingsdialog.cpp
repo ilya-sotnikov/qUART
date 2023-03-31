@@ -21,11 +21,11 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent) : QDialog{ parent }
 
     QSettings settingsFile;
     settingsFile.beginGroup("data");
-    dataType = settingsFile.value("type", static_cast<int>(SerialTransceiver::DataTypes::ascii))
-                       .value<SerialTransceiver::DataTypes>();
-
-    byteOrder = settingsFile.value("byteOrder", QDataStream::LittleEndian)
-                        .value<QDataStream::ByteOrder>();
+    dataType = static_cast<SerialTransceiver::DataTypes>(
+            settingsFile.value("type", static_cast<int>(SerialTransceiver::DataTypes::ascii))
+                    .toInt());
+    byteOrder = static_cast<QDataStream::ByteOrder>(
+            settingsFile.value("byteOrder", QDataStream::LittleEndian).toInt());
     settingsFile.endGroup();
 
     auto dataFormatButtonsLayout{ new QVBoxLayout{} };
