@@ -13,7 +13,7 @@ public:
     bool serialOpen();
     void serialClose();
 
-    enum class DataTypes { u8, u16, u32, u64, i8, i16, i32, i64, f32, f64, ascii };
+    enum class DataTypes { ascii, u8, u16, u32, u64, i8, i16, i32, i64, f32, f64 };
     Q_ENUM(DataTypes)
 
     auto errorString() const { return serialPort->errorString(); };
@@ -50,7 +50,7 @@ private:
     QSerialPort *serialPort{ new QSerialPort{ this } };
     QList<qreal> dataList;
     QByteArray bufferArray;
-    DataTypes dataType{ DataTypes::u8 };
+    DataTypes dataType{ DataTypes::ascii };
     QDataStream::ByteOrder byteOrder{ QDataStream::LittleEndian };
 
     template<typename T>
