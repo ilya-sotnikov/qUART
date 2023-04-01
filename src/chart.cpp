@@ -124,6 +124,13 @@ void Chart::addData(QList<qreal> &receivedData)
     receivedData.clear();
 }
 
+void Chart::setRawSpectrumData(QMap<qreal, qreal> &rawData)
+{
+    clear();
+    chartDataContainer.setRawSpectrumData(rawData);
+    needsUpdate = true;
+}
+
 /**
  * @brief Rescales axes and replots
  *

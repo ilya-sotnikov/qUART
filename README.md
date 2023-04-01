@@ -18,7 +18,7 @@ Real-time graph and spectrum (of values, not amplitudes) serial plotter written 
 - write a number to the serial port (can be signed or unsigned, in hex, binary or decimal, 8, 16, 32, 64 bit)
 - write a string to the serial port (with or without a newline)
 - save and restore settings
-- data representation as a spectrum and/or a plot
+- data representation as a plot/spectrum
 - show the last n points
 - turn off appending to the plot or the spectrum if not needed
 - data types
@@ -27,7 +27,7 @@ Real-time graph and spectrum (of values, not amplitudes) serial plotter written 
 - select any value on the chart
 - zoom, navigate
 - toggle between log and linear scale
-- save and open data
+- save and open plot/spectrum data
 - clear the chart
 - save the chart as an image
 - set a custom chart update interval
