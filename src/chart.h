@@ -28,21 +28,15 @@ public:
     void setUpdateInterval(int msec);
     auto getUpdateInterval() const { return updateInterval; };
     void requestUpdate() { needsUpdate = true; }
-    void setPlotLogarithmic(bool log)
+    void setLogarithmic(bool log)
     {
-        if (log)
-            plot->valueAxis()->setScaleType(QCPAxis::stLogarithmic);
-        else
-            plot->valueAxis()->setScaleType(QCPAxis::stLinear);
-
-        needsUpdate = true;
-    };
-    void setSpectrumLogarithmic(bool log)
-    {
-        if (log)
-            spectrum->valueAxis()->setScaleType(QCPAxis::stLogarithmic);
-        else
-            spectrum->valueAxis()->setScaleType(QCPAxis::stLinear);
+        if (log) {
+            customPlot->yAxis->setScaleType(QCPAxis::stLogarithmic);
+            customPlot->yAxis->setTicker(QSharedPointer<QCPAxisTickerLog>{ new QCPAxisTickerLog });
+        } else {
+            customPlot->yAxis->setScaleType(QCPAxis::stLinear);
+            customPlot->yAxis->setTicker(QSharedPointer<QCPAxisTicker>{ new QCPAxisTicker });
+        }
 
         needsUpdate = true;
     };

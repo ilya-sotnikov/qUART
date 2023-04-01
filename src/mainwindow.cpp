@@ -67,10 +67,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
     sidePanelLayout->addWidget(updateIntervalLabel);
     sidePanelLayout->addWidget(updateIntervalLineEdit);
 
-    auto logScaleLabel{ new QLabel{ "Log scale:" } };
-    sidePanelLayout->addWidget(logScaleLabel);
-    sidePanelLayout->addWidget(logScalePlotCheckBox);
-    sidePanelLayout->addWidget(logScaleSpectrumCheckBox);
+    sidePanelLayout->addWidget(logScaleCheckBox);
 
     auto sendNumLabel{ new QLabel{ "Send a number:" } };
     sidePanelLayout->addWidget(sendNumLabel);
@@ -163,18 +160,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
             chart->setUpdateInterval(ms);
     });
 
-    connect(logScalePlotCheckBox, &QCheckBox::stateChanged, this, [this](int state) {
+    connect(logScaleCheckBox, &QCheckBox::stateChanged, this, [this](int state) {
         if (state == Qt::Checked)
-            chart->setPlotLogarithmic(true);
+            chart->setLogarithmic(true);
         else
-            chart->setPlotLogarithmic(false);
-    });
-
-    connect(logScaleSpectrumCheckBox, &QCheckBox::stateChanged, this, [this](int state) {
-        if (state == Qt::Checked)
-            chart->setSpectrumLogarithmic(true);
-        else
-            chart->setSpectrumLogarithmic(false);
+            chart->setLogarithmic(false);
     });
 }
 
