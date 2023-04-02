@@ -69,6 +69,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
 
     sidePanelLayout->addWidget(logScaleCheckBox);
 
+    auto autoscaleLabel{ new QLabel{ "Autoscale:" } };
+    sidePanelLayout->addWidget(autoscaleLabel);
+    auto autoscaleLayout{ new QHBoxLayout{} };
+    autoscaleLayout->addWidget(autoscaleCheckboxX);
+    autoscaleCheckboxX->setChecked(chart->getAutoScaleX());
+    autoscaleCheckboxY->setChecked(chart->getAutoScaleY());
+    autoscaleLayout->addWidget(autoscaleCheckboxY);
+    sidePanelLayout->addLayout(autoscaleLayout);
+
     auto sendNumLabel{ new QLabel{ "Send a number:" } };
     sidePanelLayout->addWidget(sendNumLabel);
     sendNumLineEdit->setToolTip("0x__ for hex, 0b__ for binary, Enter to send");
@@ -165,6 +174,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
             chart->setLogarithmic(true);
         else
             chart->setLogarithmic(false);
+    });
+
+    connect(autoscaleCheckboxX, &QCheckBox::stateChanged, this,
+            [this](int state) { chart->setAutoscaleX(state); });
+
+    connect(autoscaleCheckboxY, &QCheckBox::stateChanged, this,
+            [this](int state) { chart->setAutoscaleY(state); });
+
+    connect(chart, &Chart::autoscaleChanged, this, [this](bool x, bool y) {
+        autoscaleCheckboxX->setChecked(x);
+        autoscaleCheckboxY->setChecked(y);
     });
 }
 

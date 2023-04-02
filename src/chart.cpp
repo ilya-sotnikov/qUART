@@ -40,9 +40,6 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
     connect(graph, qOverload<const QCPDataSelection &>(&QCPGraph::selectionChanged), this,
             &Chart::updateSelectedPoint);
 
-    connect(customPlot, &QCustomPlot::mouseRelease, this, [this]() { autoScaleAxes = false; });
-    connect(customPlot, &QCustomPlot::mouseWheel, this, [this]() { autoScaleAxes = false; });
-
     connect(timer, &QTimer::timeout, this, [this]() {
         if (needsUpdate) {
             needsUpdate = false;
@@ -69,8 +66,15 @@ void Chart::updateChart()
     else if (chartType == ChartType::spectrum)
         graph->setData(spectrumData.keys, spectrumData.values, true);
 
-    if (autoScaleAxes)
-        customPlot->rescaleAxes(true);
+    if (autoscaleX)
+        graph->keyAxis()->rescale(true);
+
+    if (autoscaleY)
+        graph->valueAxis()->rescale(true);
+
+    auto selection{ graph->selection() };
+    if (!selection.isEmpty())
+        updateSelectedPoint(selection);
 
     customPlot->replot();
 }
@@ -83,7 +87,7 @@ void Chart::updateChart()
  */
 void Chart::changeType()
 {
-    autoScaleAxes = true;
+    setAutoscale(true, true);
 
     if (chartType == ChartType::spectrum) {
         chartType = ChartType::plot;
@@ -96,6 +100,8 @@ void Chart::changeType()
         graph->keyAxis()->setTickLengthIn(0);
         graph->keyAxis()->setSubTickLengthIn(0);
     }
+
+    customPlot->deselectAll();
 
     needsUpdate = true;
 }
@@ -121,8 +127,8 @@ void Chart::clear()
 void Chart::addData(QList<qreal> &receivedData)
 {
     chartDataContainer.append(receivedData, appendToPlot, appendToSpectrum);
-    needsUpdate = true;
     receivedData.clear();
+    needsUpdate = true;
 }
 
 void Chart::setRawSpectrumData(QMap<qreal, qreal> &rawData)
@@ -138,7 +144,7 @@ void Chart::setRawSpectrumData(QMap<qreal, qreal> &rawData)
  */
 void Chart::resetZoom()
 {
-    autoScaleAxes = true;
+    setAutoscale(true, true);
     customPlot->rescaleAxes(true);
     customPlot->replot();
 }
@@ -172,6 +178,8 @@ void Chart::updateSelectedPoint(const QCPDataSelection &selection)
 
 void Chart::setUpdateInterval(int msec)
 {
+    customPlot->deselectAll();
+
     timer->stop();
     timer->setInterval(msec);
     timer->start();

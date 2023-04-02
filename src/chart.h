@@ -41,6 +41,33 @@ public:
 
         needsUpdate = true;
     };
+    void setAutoscale(bool x, bool y)
+    {
+        setAutoscaleX(x);
+        setAutoscaleY(y);
+    };
+    void setAutoscaleX(bool x)
+    {
+        auto prevAutoScaleX{ autoscaleX };
+        autoscaleX = x;
+
+        needsUpdate = true;
+
+        if ((prevAutoScaleX != autoscaleX))
+            emit autoscaleChanged(autoscaleX, autoscaleY);
+    }
+    void setAutoscaleY(bool y)
+    {
+        auto prevAutoScaleY{ autoscaleY };
+        autoscaleY = y;
+
+        needsUpdate = true;
+
+        if ((prevAutoScaleY != autoscaleY))
+            emit autoscaleChanged(autoscaleX, autoscaleY);
+    }
+    bool getAutoScaleX() { return autoscaleX; };
+    bool getAutoScaleY() { return autoscaleY; };
 
     bool appendToPlot{ true };
     bool appendToSpectrum{ true };
@@ -52,7 +79,8 @@ private:
     ChartDataContainer chartDataContainer;
     QTimer *timer{ new QTimer{ this } };
     qsizetype showLastPoints{ -1 };
-    bool autoScaleAxes{ true };
+    bool autoscaleX{ true };
+    bool autoscaleY{ true };
     int updateInterval{ 33 };
     bool needsUpdate{ false };
     int defaultTickLength{ graph->keyAxis()->tickLengthIn() };
@@ -68,6 +96,7 @@ private slots:
 
 signals:
     void selectedPointChanged(const QPointF selectedPoint);
+    void autoscaleChanged(bool x, bool y);
 };
 
 #endif // CHART_H
