@@ -2,6 +2,7 @@
 #define CHART_H
 
 #include "chartdatacontainer.h"
+#include "customgraph.h"
 
 #include "qcustomplot.h"
 #include <qwidget.h>
@@ -46,8 +47,7 @@ public:
 
 private:
     QCustomPlot *customPlot{ new QCustomPlot{ this } };
-    QCPGraph *plot{ customPlot->addGraph() };
-    QCPBars *spectrum{ new QCPBars{ customPlot->xAxis, customPlot->yAxis } };
+    CustomGraph *graph{ new CustomGraph{ customPlot->xAxis, customPlot->yAxis } };
     Chart::ChartType chartType{ ChartType::plot };
     ChartDataContainer chartDataContainer;
     QTimer *timer{ new QTimer{ this } };
@@ -55,6 +55,8 @@ private:
     bool autoScaleAxes{ true };
     int updateInterval{ 33 };
     bool needsUpdate{ false };
+    int defaultTickLength{ graph->keyAxis()->tickLengthIn() };
+    int defaultSubTickLength{ graph->keyAxis()->subTickLengthIn() };
 
 public slots:
     void resetZoom();

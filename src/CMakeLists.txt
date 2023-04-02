@@ -7,6 +7,8 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         chart.h
         chart.cpp
+        customgraph.h
+        customgraph.cpp
         chartdatacontainer.h
         chartdatacontainer.cpp
         serialtransceiver.h

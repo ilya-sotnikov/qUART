@@ -8,7 +8,7 @@
 Chart::Chart(QWidget *parent) : QWidget{ parent }
 {
     constexpr qreal lineWidth{ 1 };
-    constexpr qreal plotScatterSize{ 20 };
+    constexpr qreal plotScatterSize{ 10 };
     constexpr QColor plotSelectionColor{ QColor{ 80, 80, 255 } };
 
     auto layout{ new QHBoxLayout{ this } };
@@ -16,29 +16,28 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
 
     customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     // customPlot->setSelectionRectMode(QCP::srmZoom);
+    customPlot->setSelectionTolerance(20);
     customPlot->setAntialiasedElements(QCP::aePlottables);
 
-    plot->setSelectable(QCP::stSingleData);
-    plot->setPen(QPen{ QBrush{ Qt::black }, lineWidth });
-    plot->setScatterStyle(
+    graph->setSelectable(QCP::stSingleData);
+    graph->setPen(QPen{ QBrush{ Qt::black }, lineWidth });
+    graph->setScatterStyle(
             QCPScatterStyle{ QCPScatterStyle::ssCross, Qt::transparent, plotScatterSize });
-    plot->selectionDecorator()->setScatterStyle(QCPScatterStyle{
-            QCPScatterStyle::ssCross, QPen{ QBrush{ plotSelectionColor }, lineWidth },
+    graph->selectionDecorator()->setScatterStyle(QCPScatterStyle{
+            QCPScatterStyle::ssCross, QPen{ QBrush{ plotSelectionColor }, lineWidth + 1 },
             QBrush{ plotSelectionColor }, plotScatterSize });
 
-    spectrum->setSelectable(QCP::stSingleData);
-    spectrum->setPen(QPen{ QBrush{ Qt::black }, lineWidth });
-    spectrum->setBrush(QBrush{ Qt::gray });
-    spectrum->setWidth(0.1);
+    // spectrum->setSelectable(QCP::stSingleData);
+    // spectrum->setPen(QPen{ QBrush{ Qt::black }, lineWidth });
+    // spectrum->setBrush(QBrush{ Qt::gray });
+    // spectrum->setWidth(0.5);
 
     customPlot->replot();
 
     timer->setInterval(updateInterval);
     timer->start();
 
-    connect(plot, qOverload<const QCPDataSelection &>(&QCPGraph::selectionChanged), this,
-            &Chart::updateSelectedPoint);
-    connect(spectrum, qOverload<const QCPDataSelection &>(&QCPBars::selectionChanged), this,
+    connect(graph, qOverload<const QCPDataSelection &>(&QCPGraph::selectionChanged), this,
             &Chart::updateSelectedPoint);
 
     connect(customPlot, &QCustomPlot::mouseRelease, this, [this]() { autoScaleAxes = false; });
@@ -65,15 +64,10 @@ void Chart::updateChart()
     if (appendToSpectrum)
         spectrumData = chartDataContainer.getSpectrum(showLastPoints);
 
-    if (chartType == ChartType::plot) {
-        plot->setData(plotData.keys, plotData.values, true);
-        plot->setVisible(true);
-        spectrum->setVisible(false);
-    } else if (chartType == ChartType::spectrum) {
-        spectrum->setData(spectrumData.keys, spectrumData.values, true);
-        plot->setVisible(false);
-        spectrum->setVisible(true);
-    }
+    if (chartType == ChartType::plot)
+        graph->setData(plotData.keys, plotData.values, true);
+    else if (chartType == ChartType::spectrum)
+        graph->setData(spectrumData.keys, spectrumData.values, true);
 
     if (autoScaleAxes)
         customPlot->rescaleAxes(true);
@@ -91,10 +85,17 @@ void Chart::changeType()
 {
     autoScaleAxes = true;
 
-    if (chartType == ChartType::spectrum)
+    if (chartType == ChartType::spectrum) {
         chartType = ChartType::plot;
-    else if (chartType == ChartType::plot)
+        graph->setLineStyle(QCPGraph::lsLine);
+        graph->keyAxis()->setTickLengthIn(defaultTickLength);
+        graph->keyAxis()->setSubTickLengthIn(defaultSubTickLength);
+    } else if (chartType == ChartType::plot) {
         chartType = ChartType::spectrum;
+        graph->setLineStyle(QCPGraph::lsImpulse);
+        graph->keyAxis()->setTickLengthIn(0);
+        graph->keyAxis()->setSubTickLengthIn(0);
+    }
 
     needsUpdate = true;
 }
