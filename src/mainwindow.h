@@ -47,6 +47,8 @@ private:
     QLineEdit *updateIntervalLineEdit{ new QLineEdit{ QString::number(chart->getUpdateInterval()),
                                                       this } };
     QCheckBox *logScaleCheckBox{ new QCheckBox{ "Log scale" } };
+    QCheckBox *autoscaleCheckboxX{ new QCheckBox{ "X" } };
+    QCheckBox *autoscaleCheckboxY{ new QCheckBox{ "Y" } };
 
     QString createFileDialog(QFileDialog::AcceptMode acceptMode, QString nameFilter,
                              QString defaultSuffix);
