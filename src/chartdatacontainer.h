@@ -1,8 +1,8 @@
 #ifndef CHARTDATACONTAINER_H
 #define CHARTDATACONTAINER_H
 
+#include "qcustomplot.h"
 #include <qlist.h>
-#include <qmap.h>
 
 /**
  * @brief A data container for a plot and a spectrum
@@ -11,36 +11,39 @@ class ChartDataContainer
 {
 public:
     void append(const QList<qreal> &data, bool appendToPlot, bool appendToSpectrum);
-    void setRawSpectrumData(const QMap<qreal, qreal> rawData);
+    void setRawSpectrumData(const QCPGraphDataContainer &rawData);
     void clear();
-
-    struct PlotData
-    {
-        QList<qreal> keys;
-        QList<qreal> values;
-    };
-
-    struct SpectrumData
-    {
-        QList<qreal> keys;
-        QList<qreal> values;
-    };
 
     const auto &getPlot() const { return plotData; }
     const auto &getSpectrum() const { return spectrumData; }
-    const auto &getSpectrumMap() const { return spectrumMap; }
-    const PlotData &getPlot(qsizetype n);
-    const SpectrumData &getSpectrum(qsizetype n);
+    auto getLastPointsCount() const { return lastPointsCount; };
+    auto setLastPointsCount(qsizetype n) { lastPointsCount = n; };
+    const QSharedPointer<QCPGraphDataContainer> &getPlotLast() const
+    {
+        return (lastPointsCount < 0) ? plotData : plotDataLast;
+    };
+    const QSharedPointer<QCPGraphDataContainer> &getSpectrumLast() const
+    {
+        return (lastPointsCount < 0) ? spectrumData : spectrumDataLast;
+    };
 
 private:
-    void appendPlot(const QList<qreal> &data, QList<qreal> &keys, QList<qreal> &values);
-    void appendSpectrum(const QList<qreal> &data, QList<qreal> &keys, QList<qreal> &values);
+    void appendPlot(const QList<qreal> &data);
+    void appendSpectrum(const QList<qreal> &data);
 
-    PlotData plotData;
-    PlotData plotDataLast;
-    SpectrumData spectrumData;
-    SpectrumData spectrumDataLast;
-    QMap<qreal, qreal> spectrumMap;
+    qsizetype lastPointsCount{ -1 };
+    QSharedPointer<QCPGraphDataContainer> plotData{
+        QSharedPointer<QCPGraphDataContainer>::create()
+    };
+    QSharedPointer<QCPGraphDataContainer> plotDataLast{
+        QSharedPointer<QCPGraphDataContainer>::create()
+    };
+    QSharedPointer<QCPGraphDataContainer> spectrumData{
+        QSharedPointer<QCPGraphDataContainer>::create()
+    };
+    QSharedPointer<QCPGraphDataContainer> spectrumDataLast{
+        QSharedPointer<QCPGraphDataContainer>::create()
+    };
 };
 
 #endif // CHARTDATACONTAINER_H

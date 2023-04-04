@@ -1,64 +1,18 @@
 #include "chartdatacontainer.h"
 
+#include <algorithm>
+
 /**
  * @brief Clears all data
  *
  */
 void ChartDataContainer::clear()
 {
-    plotData.keys.clear();
-    plotData.keys.squeeze();
-    plotData.values.clear();
-    plotData.values.squeeze();
-    plotDataLast.keys.clear();
-    plotDataLast.keys.squeeze();
-    plotDataLast.values.clear();
-    plotDataLast.values.squeeze();
-    spectrumData.keys.clear();
-    spectrumData.keys.squeeze();
-    spectrumData.values.clear();
-    spectrumData.values.squeeze();
-    spectrumDataLast.keys.clear();
-    spectrumDataLast.keys.squeeze();
-    spectrumDataLast.values.clear();
-    spectrumDataLast.values.squeeze();
-    spectrumMap.clear();
+    plotData->clear();
+    plotDataLast->clear();
+    spectrumData->clear();
+    spectrumDataLast->clear();
 }
-
-/**
- * @brief Returns the last n points from the plot data
- *
- */
-const ChartDataContainer::PlotData &ChartDataContainer::getPlot(qsizetype n)
-{
-    const auto size{ plotData.keys.size() };
-
-    if (n > size || n < 0)
-        return plotData;
-
-    plotDataLast = { plotData.keys.sliced(size - n), plotData.values.sliced(size - n) };
-
-    return plotDataLast;
-};
-
-/**
- * @brief Returns the last n points from the spectrum data
- *
- */
-const ChartDataContainer::SpectrumData &ChartDataContainer::getSpectrum(qsizetype n)
-{
-    spectrumDataLast.keys.clear();
-    spectrumDataLast.values.clear();
-
-    const auto size{ plotData.keys.size() };
-
-    if (n > size || n < 0)
-        return spectrumData;
-
-    appendSpectrum(getPlot(n).values, spectrumDataLast.keys, spectrumDataLast.values);
-
-    return spectrumDataLast;
-};
 
 /**
  * @brief Appends data to the plot and spectrum
@@ -70,9 +24,9 @@ const ChartDataContainer::SpectrumData &ChartDataContainer::getSpectrum(qsizetyp
 void ChartDataContainer::append(const QList<qreal> &data, bool appendToPlot, bool appendToSpectrum)
 {
     if (appendToPlot)
-        appendPlot(data, plotData.keys, plotData.values);
+        appendPlot(data);
     if (appendToSpectrum)
-        appendSpectrum(data, spectrumData.keys, spectrumData.values);
+        appendSpectrum(data);
 }
 
 /**
@@ -82,21 +36,38 @@ void ChartDataContainer::append(const QList<qreal> &data, bool appendToPlot, boo
  * @param keys Append to these keys
  * @param values Append to these values
  */
-void ChartDataContainer::appendSpectrum(const QList<qreal> &data, QList<qreal> &keys,
-                                        QList<qreal> &values)
+void ChartDataContainer::appendSpectrum(const QList<qreal> &data)
 {
-    for (auto x : data)
-        spectrumMap.insert(x, spectrumMap.value(x, 0) + 1);
+    for (auto x : data) {
+        auto it{ std::lower_bound(spectrumData->begin(), spectrumData->end(),
+                                  QCPGraphData::fromSortKey(x), qcpLessThanSortKey<QCPGraphData>) };
+        if ((it != spectrumData->end()) && (it->mainKey() == x))
+            ++it->value;
+        else
+            spectrumData->add(QCPGraphData{ x, 1 });
+    }
 
-    keys = spectrumMap.keys();
-    values = spectrumMap.values();
+    if (lastPointsCount <= 0)
+        return;
+
+    spectrumDataLast->clear();
+
+    for (auto point : *plotDataLast) {
+        auto value{ point.mainValue() };
+        auto it{ std::lower_bound(spectrumDataLast->begin(), spectrumDataLast->end(),
+                                  QCPGraphData::fromSortKey(value),
+                                  qcpLessThanSortKey<QCPGraphData>) };
+        if ((it != spectrumDataLast->end()) && (it->mainKey() == value))
+            ++it->value;
+        else
+            spectrumDataLast->add(QCPGraphData{ value, 1 });
+    }
 }
 
-void ChartDataContainer::setRawSpectrumData(const QMap<qreal, qreal> rawData)
+void ChartDataContainer::setRawSpectrumData(const QCPGraphDataContainer &rawData)
 {
-    spectrumMap = rawData;
-    spectrumData.keys = spectrumMap.keys();
-    spectrumData.values = spectrumMap.values();
+    clear();
+    spectrumData->set(rawData);
 }
 
 /**
@@ -106,13 +77,27 @@ void ChartDataContainer::setRawSpectrumData(const QMap<qreal, qreal> rawData)
  * @param keys Append to these keys
  * @param values Append to these values
  */
-void ChartDataContainer::appendPlot(const QList<qreal> &data, QList<qreal> &keys,
-                                    QList<qreal> &values)
+void ChartDataContainer::appendPlot(const QList<qreal> &data)
 {
     const auto dataSize{ data.size() };
-    const auto currentDataSize{ keys.size() };
-    for (auto i{ currentDataSize }; i < currentDataSize + dataSize; ++i)
-        keys.append(i);
+    const auto currentDataSize{ plotData->size() };
+    for (qsizetype i{ 0 }; i < dataSize; ++i) {
+        auto key{ static_cast<double>(i + currentDataSize) };
+        auto value{ data.at(i) };
+        plotData->add(QCPGraphData{ key, value });
+        plotDataLast->add(QCPGraphData{ key, value });
+    }
 
-    values.append(data);
+    if (lastPointsCount <= 0)
+        return;
+
+    qsizetype deleteCnt{ plotDataLast->size() - lastPointsCount };
+    if (deleteCnt > 0) {
+        auto it{ plotDataLast->begin() };
+        while (deleteCnt > 0) {
+            plotDataLast->remove(it->sortKey());
+            ++it;
+            --deleteCnt;
+        }
+    }
 }

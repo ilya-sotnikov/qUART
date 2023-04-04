@@ -20,12 +20,12 @@ public:
     enum class ChartType { plot, spectrum };
     Q_ENUM(ChartType)
     auto getChartType() const { return chartType; };
-    const auto &getPlotData() const { return chartDataContainer.getPlot().values; }
-    const auto &getSpectrumData() const { return chartDataContainer.getSpectrumMap(); }
+    auto getPlotData() const { return chartDataContainer.getPlot(); }
+    auto getSpectrumData() const { return chartDataContainer.getSpectrum(); }
     void updateChart();
     void changeType();
     void clear();
-    void setRawSpectrumData(QMap<qreal, qreal> &rawData);
+    void setRawSpectrumData(const QCPGraphDataContainer &rawData);
     void setUpdateInterval(int msec);
     auto getUpdateInterval() const { return updateInterval; };
     void requestUpdate() { needsUpdate = true; }
@@ -78,7 +78,6 @@ private:
     Chart::ChartType chartType{ ChartType::plot };
     ChartDataContainer chartDataContainer;
     QTimer *timer{ new QTimer{ this } };
-    qsizetype showLastPoints{ -1 };
     bool autoscaleX{ true };
     bool autoscaleY{ true };
     int updateInterval{ 33 };
@@ -89,7 +88,7 @@ private:
 public slots:
     void resetZoom();
     void addData(QList<qreal> &receivedData);
-    void setShowLastPoints(qsizetype n) { showLastPoints = n; }
+    void setShowLastPoints(qsizetype n) { chartDataContainer.setLastPointsCount(n); }
 
 private slots:
     void updateSelectedPoint(const QCPDataSelection &selection);
