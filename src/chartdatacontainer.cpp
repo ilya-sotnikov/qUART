@@ -93,10 +93,9 @@ void ChartDataContainer::appendPlot(const QList<qreal> &data)
 
     qsizetype deleteCnt{ plotDataLast->size() - lastPointsCount };
     if (deleteCnt > 0) {
-        auto it{ plotDataLast->begin() };
         while (deleteCnt > 0) {
+            auto it{ plotDataLast->begin() };
             plotDataLast->remove(it->sortKey());
-            ++it;
             --deleteCnt;
         }
     }
