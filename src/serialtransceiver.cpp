@@ -34,9 +34,6 @@ SerialTransceiver::~SerialTransceiver()
 /**
  * @brief Opens the serial port and returns connection status (bool)
  *
- * It also starts the timer which will overflow every 200 msec to limit the
- * chart update rate.
- *
  * @return true
  * @return false
  */
@@ -50,14 +47,13 @@ bool SerialTransceiver::serialOpen()
 }
 
 /**
- * @brief Closes the serial port, clears all received data and stops the timer if it's active
+ * @brief Closes the serial port
  *
  */
 void SerialTransceiver::serialClose()
 {
     if (serialPort->isOpen())
         serialPort->close();
-    dataList.clear();
     bufferArray.clear();
 }
 
@@ -75,7 +71,7 @@ void SerialTransceiver::serialClose()
  * @param byteArray
  */
 template<typename T>
-void SerialTransceiver::deserializeByteArray(QByteArray &byteArray)
+void SerialTransceiver::deserializeByteArray(QByteArray &byteArray, QList<qreal> &dataList)
 {
 #ifdef BUG_0xff
     for (qsizetype i = 0; i < byteArray->size(); ++i) {
@@ -112,36 +108,38 @@ void SerialTransceiver::receiveData()
 {
     QByteArray byteArray{ serialPort->readAll() };
 
+    QList<qreal> dataList;
+
     switch (dataType) {
     case DataTypes::u8:
-        deserializeByteArray<quint8>(byteArray);
+        deserializeByteArray<quint8>(byteArray, dataList);
         break;
     case DataTypes::u16:
-        deserializeByteArray<quint16>(byteArray);
+        deserializeByteArray<quint16>(byteArray, dataList);
         break;
     case DataTypes::u32:
-        deserializeByteArray<quint32>(byteArray);
+        deserializeByteArray<quint32>(byteArray, dataList);
         break;
     case DataTypes::u64:
-        deserializeByteArray<quint64>(byteArray);
+        deserializeByteArray<quint64>(byteArray, dataList);
         break;
     case DataTypes::i8:
-        deserializeByteArray<qint8>(byteArray);
+        deserializeByteArray<qint8>(byteArray, dataList);
         break;
     case DataTypes::i16:
-        deserializeByteArray<qint16>(byteArray);
+        deserializeByteArray<qint16>(byteArray, dataList);
         break;
     case DataTypes::i32:
-        deserializeByteArray<qint32>(byteArray);
+        deserializeByteArray<qint32>(byteArray, dataList);
         break;
     case DataTypes::i64:
-        deserializeByteArray<qint64>(byteArray);
+        deserializeByteArray<qint64>(byteArray, dataList);
         break;
     case DataTypes::f32:
-        deserializeByteArray<float>(byteArray);
+        deserializeByteArray<float>(byteArray, dataList);
         break;
     case DataTypes::f64:
-        deserializeByteArray<double>(byteArray);
+        deserializeByteArray<double>(byteArray, dataList);
         break;
     case DataTypes::ascii: {
         auto containsSeparator{ false };
@@ -170,8 +168,10 @@ void SerialTransceiver::receiveData()
     }
     }
 
-    if (!dataList.isEmpty())
-        emit newDataAvailable(dataList);
+    if (!dataList.isEmpty()) {
+        auto dataShared{ QSharedPointer<QList<qreal>>::create(dataList) };
+        emit newDataAvailable(dataShared);
+    }
 }
 
 template<typename T, typename U>

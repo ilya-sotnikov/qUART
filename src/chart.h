@@ -87,7 +87,7 @@ private:
 
 public slots:
     void resetZoom();
-    void addData(QList<qreal> &receivedData);
+    void addData(QSharedPointer<QList<qreal>> receivedData);
     void setShowLastPoints(qsizetype n) { chartDataContainer.setLastPointsCount(n); }
 
 private slots:
