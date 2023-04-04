@@ -306,8 +306,8 @@ void MainWindow::savePlotData()
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         const auto dataList{ chart->getPlotData() };
         QTextStream stream(&file);
-        for (auto data : dataList)
-            stream << QString::number(data) << "\n";
+        // for (auto data : dataList)
+        //     stream << QString::number(data) << "\n";
     }
 }
 
@@ -320,9 +320,10 @@ void MainWindow::saveSpectrumData()
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         const auto dataList{ chart->getSpectrumData() };
         QTextStream stream(&file);
-        auto dataEnd{ dataList.cend() };
-        for (auto it{ dataList.cbegin() }; it != dataEnd; ++it)
-            stream << QString::number(it.key()) << " " << QString::number(it.value()) << "\n";
+        auto dataEnd{ dataList->constEnd() };
+        for (auto it{ dataList->constBegin() }; it != dataEnd; ++it)
+            stream << QString::number(it->mainKey()) << " " << QString::number(it->mainValue())
+                   << "\n";
     }
 }
 
@@ -354,7 +355,7 @@ void MainWindow::openSpectrumData()
     QFile file{ fileName };
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         chart->clear();
-        QMap<qreal, qreal> data;
+        QCPGraphDataContainer data;
         QTextStream stream(&file);
         QStringList xy;
         qreal x;
@@ -365,6 +366,9 @@ void MainWindow::openSpectrumData()
             if (xy.empty())
                 continue;
 
+            if (xy.size() < 2)
+                continue;
+
             x = xy.at(0).toDouble(&ok);
             if (!ok)
                 continue;
@@ -373,7 +377,7 @@ void MainWindow::openSpectrumData()
             if (!ok)
                 continue;
 
-            data.insert(x, y);
+            data.add(QCPGraphData{ x, y });
         }
         chart->setRawSpectrumData(data);
     }

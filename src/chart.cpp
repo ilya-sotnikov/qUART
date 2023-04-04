@@ -54,17 +54,10 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
  */
 void Chart::updateChart()
 {
-    auto plotData{ chartDataContainer.getPlot(showLastPoints) };
-
-    // Needed because we recreate the last N points from the plotData internally
-    ChartDataContainer::SpectrumData spectrumData;
-    if (appendToSpectrum)
-        spectrumData = chartDataContainer.getSpectrum(showLastPoints);
-
     if (chartType == ChartType::plot)
-        graph->setData(plotData.keys, plotData.values, true);
+        graph->setData(chartDataContainer.getPlotLast());
     else if (chartType == ChartType::spectrum)
-        graph->setData(spectrumData.keys, spectrumData.values, true);
+        graph->setData(chartDataContainer.getSpectrumLast());
 
     if (autoscaleX)
         graph->keyAxis()->rescale(true);
@@ -131,9 +124,8 @@ void Chart::addData(QList<qreal> &receivedData)
     needsUpdate = true;
 }
 
-void Chart::setRawSpectrumData(QMap<qreal, qreal> &rawData)
+void Chart::setRawSpectrumData(const QCPGraphDataContainer &rawData)
 {
-    clear();
     chartDataContainer.setRawSpectrumData(rawData);
     needsUpdate = true;
 }
@@ -163,15 +155,14 @@ void Chart::updateSelectedPoint(const QCPDataSelection &selection)
     QPointF selectedPoint{};
     selectedPoint.setX(chartX);
 
-    if (chartType == ChartType::plot) {
-        auto plotData{ chartDataContainer.getPlot(showLastPoints) };
-        selectedPoint.setX(plotData.keys.at(chartX));
-        selectedPoint.setY(plotData.values.at(chartX));
-    } else if (chartType == ChartType::spectrum) {
-        auto spectrumData{ chartDataContainer.getSpectrum(showLastPoints) };
-        selectedPoint.setX(spectrumData.keys.at(chartX));
-        selectedPoint.setY(spectrumData.values.at(chartX));
-    }
+    QCPGraphDataContainer::const_iterator pointIter;
+    if (chartType == ChartType::plot)
+        pointIter = chartDataContainer.getPlotLast()->at(chartX);
+    else if (chartType == ChartType::spectrum)
+        pointIter = chartDataContainer.getSpectrumLast()->at(chartX);
+
+    selectedPoint.setX(pointIter->mainKey());
+    selectedPoint.setY(pointIter->mainValue());
 
     emit selectedPointChanged(selectedPoint);
 }
