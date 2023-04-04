@@ -339,10 +339,10 @@ void MainWindow::openPlotData()
     QFile file{ fileName };
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         chart->clear();
-        QList<qreal> dataList;
+        auto dataList{ QSharedPointer<QList<qreal>>::create() };
         QTextStream stream(&file);
         while (!stream.atEnd())
-            dataList.append(stream.readLine().toDouble());
+            dataList->append(stream.readLine().toDouble());
         chart->addData(dataList);
     }
 }

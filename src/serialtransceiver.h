@@ -32,13 +32,11 @@ public:
     };
     void setDataType(DataTypes dataType)
     {
-        dataList.clear();
         bufferArray.clear();
         this->dataType = dataType;
     }
     void setByteOrder(QDataStream::ByteOrder byteOrder)
     {
-        dataList.clear();
         bufferArray.clear();
         this->byteOrder = byteOrder;
     }
@@ -48,19 +46,18 @@ public:
 
 private:
     QSerialPort *serialPort{ new QSerialPort{ this } };
-    QList<qreal> dataList;
     QByteArray bufferArray;
     DataTypes dataType{ DataTypes::ascii };
     QDataStream::ByteOrder byteOrder{ QDataStream::LittleEndian };
 
     template<typename T>
-    void deserializeByteArray(QByteArray &byteArray);
+    void deserializeByteArray(QByteArray &byteArray, QList<qreal> &dataList);
 
 private slots:
     void receiveData();
 
 signals:
-    void newDataAvailable(QList<qreal> &dataList);
+    void newDataAvailable(QSharedPointer<QList<qreal>> dataList);
 };
 
 #endif // SERIALTRANSCEIVER_H
