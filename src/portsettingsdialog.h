@@ -40,9 +40,9 @@ private:
     void checkCustomPath(const int index) const;
     void updateSettings();
     void loadSettings();
-    void saveSettings();
+    void saveSettings() const;
     template<typename T>
-    void updateIndex(QComboBox *comboBox, T data);
+    void updateIndex(QComboBox *const comboBox, const T data);
 
 private slots:
     void ok();
