@@ -28,8 +28,8 @@ public:
     };
 
 private:
-    void appendPlot(const QList<qreal> &data);
-    void appendSpectrum(const QList<qreal> &data);
+    void appendPlot(const QList<qreal> &data, bool append, bool appendToLast);
+    void appendSpectrum(const QList<qreal> &data, bool append, bool appendToLast);
 
     qsizetype lastPointsCount{ -1 };
     QSharedPointer<QCPGraphDataContainer> plotData{
