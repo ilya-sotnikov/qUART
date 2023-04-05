@@ -9,15 +9,14 @@ class SerialTransceiver : public QObject
 
 public:
     explicit SerialTransceiver(QObject *parent = nullptr);
-    ~SerialTransceiver();
     bool serialOpen();
     void serialClose();
 
-    enum class DataTypes { ascii, u8, u16, u32, u64, i8, i16, i32, i64, f32, f64 };
+    enum DataTypes { ascii, u8, u16, u32, u64, i8, i16, i32, i64, f32, f64 };
     Q_ENUM(DataTypes)
 
     auto errorString() const { return serialPort->errorString(); };
-    auto setPortName(const QString &name) { serialPort->setPortName(name); };
+    auto setPortName(const QString &name) { return serialPort->setPortName(name); };
     auto setDataBits(QSerialPort::DataBits dataBits) { return serialPort->setDataBits(dataBits); };
     auto setParity(QSerialPort::Parity parity) { return serialPort->setParity(parity); };
     auto setStopBits(QSerialPort::StopBits stopBits) { return serialPort->setStopBits(stopBits); }
@@ -41,8 +40,8 @@ public:
         this->byteOrder = byteOrder;
     }
 
-    qint64 writeNumber(const QString &numString, bool isSigned);
-    qint64 writeString(const QString &string, bool appendNewline);
+    qint64 writeNumber(const QString &numString, bool isSigned) const;
+    qint64 writeString(const QString &string, bool appendNewline) const;
 
 private:
     QSerialPort *serialPort{ new QSerialPort{ this } };
@@ -57,7 +56,7 @@ private slots:
     void receiveData();
 
 signals:
-    void newDataAvailable(QSharedPointer<QList<qreal>> dataList);
+    void newDataAvailable(const QSharedPointer<const QList<qreal>> dataList) const;
 };
 
 #endif // SERIALTRANSCEIVER_H

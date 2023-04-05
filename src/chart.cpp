@@ -124,7 +124,7 @@ void Chart::clear()
  *
  * @param receivedData
  */
-void Chart::addData(QSharedPointer<QList<qreal>> receivedData)
+void Chart::addData(const QSharedPointer<const QList<qreal>> receivedData)
 {
     chartDataContainer.append(*receivedData, appendToPlot, appendToSpectrum);
     needsUpdate = true;
