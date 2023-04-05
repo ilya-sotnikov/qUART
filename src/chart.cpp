@@ -46,6 +46,13 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
             updateChart();
         }
     });
+
+    connect(customPlot, &QCustomPlot::mousePress, this, [this](QMouseEvent *event) {
+        if (event->button() == Qt::RightButton)
+            customPlot->setSelectionRectMode(QCP::SelectionRectMode::srmZoom);
+        else
+            customPlot->setSelectionRectMode(QCP::SelectionRectMode::srmNone);
+    });
 }
 
 /**
