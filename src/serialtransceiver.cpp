@@ -3,46 +3,35 @@
 #include <qregularexpression.h>
 #include <type_traits>
 
+using namespace Qt::Literals::StringLiterals;
+
 template<typename T, typename U>
 static constexpr auto CanTypeFitValue(const U value);
 
 template<typename T>
-static void writeSmallestToByteArray(QByteArray &byteArray, T num);
+static void writeSmallestToByteArray(QByteArray &byteArray, const T num,
+                                     const QDataStream::ByteOrder byteOrder);
 
-// See SerialTransceiver::deserializeByteArray
-// #define BUG_0xff
-
-/**
- * @brief Constructs a new SerialTransceiver object
- *
- * @param parent
- */
 SerialTransceiver::SerialTransceiver(QObject *parent) : QObject{ parent }
 {
     connect(serialPort, &QSerialPort::readyRead, this, &SerialTransceiver::receiveData);
 }
 
 /**
- * @brief Destroys the SerialTransceiver object and closes the serial port
- *
- */
-SerialTransceiver::~SerialTransceiver()
-{
-    serialClose();
-}
-
-/**
  * @brief Opens the serial port and returns connection status (bool)
  *
- * @return true
- * @return false
+ * @return A connection status
+ *
  */
 bool SerialTransceiver::serialOpen()
 {
-    bool isOpen{ serialPort->open(QIODevice::ReadWrite) };
+    const bool isOpen{ serialPort->open(QIODevice::ReadWrite) };
+
     if (isOpen) {
         serialPort->clear();
+        bufferArray.clear();
     }
+
     return isOpen;
 }
 
@@ -57,6 +46,8 @@ void SerialTransceiver::serialClose()
     bufferArray.clear();
 }
 
+// #define BUG_0xff
+
 /**
  * @brief Deserializes byte array according to the current data type
  *
@@ -65,10 +56,12 @@ void SerialTransceiver::serialClose()
  * I've tried multiple port settings, virtual serial ports, the bug was still
  * there. Can't reproduce it on Windows but decided to leave a hacky solution.
  * I don't know if it's a bug in Qt.
- * If you have this problem, define BUG_0xff at the top of this file.
+ * If you have this problem, uncomment BUG_0xff above
  *
- * @tparam T
- * @param byteArray
+ * @tparam T A data type to deserialize
+ * @param byteArray An array with raw data
+ * @param dataList A data list to append to
+ *
  */
 template<typename T>
 void SerialTransceiver::deserializeByteArray(QByteArray &byteArray, QList<qreal> &dataList)
@@ -84,7 +77,7 @@ void SerialTransceiver::deserializeByteArray(QByteArray &byteArray, QList<qreal>
     bufferArray.clear();
 
     qsizetype byteArraySize{ byteArray.size() };
-    quint8 byteCnt{ static_cast<quint8>(byteArraySize % sizeof(T)) };
+    const quint8 byteCnt{ static_cast<quint8>(byteArraySize % sizeof(T)) };
 
     bufferArray = byteArray.last(byteCnt);
     byteArray.chop(byteCnt);
@@ -103,10 +96,13 @@ void SerialTransceiver::deserializeByteArray(QByteArray &byteArray, QList<qreal>
 /**
  * @brief Receives data according to the current data type
  *
+ * The received data is deserialized according to the current
+ * dataType and the newDataAvailable signal is emitted
+ *
  */
 void SerialTransceiver::receiveData()
 {
-    QByteArray byteArray{ serialPort->readAll() };
+    auto byteArray{ serialPort->readAll() };
 
     QList<qreal> dataList;
 
@@ -147,7 +143,7 @@ void SerialTransceiver::receiveData()
         byteArray.prepend(bufferArray);
         bufferArray.clear();
 
-        for (auto byte : byteArray) {
+        for (const auto byte : byteArray) {
             if (QChar::isSpace(byte))
                 containsSeparator = true;
         }
@@ -156,9 +152,9 @@ void SerialTransceiver::receiveData()
         else {
             double num;
             bool ok;
-            auto stringList{ QString{ byteArray }.split(QRegularExpression{ "\\s+" },
-                                                        Qt::SkipEmptyParts) };
-            for (auto str : stringList) {
+            const auto stringList{ QString{ byteArray }.split(QRegularExpression{ u"\\s+"_s },
+                                                              Qt::SkipEmptyParts) };
+            for (const auto &str : stringList) {
                 num = str.toDouble(&ok);
                 if (ok)
                     dataList.append(num);
@@ -169,11 +165,19 @@ void SerialTransceiver::receiveData()
     }
 
     if (!dataList.isEmpty()) {
-        auto dataShared{ QSharedPointer<QList<qreal>>::create(dataList) };
+        const auto dataShared{ QSharedPointer<QList<qreal>>::create(dataList) };
         emit newDataAvailable(dataShared);
     }
 }
 
+/**
+ * @brief Checks if a type can fit a numeric value
+ *
+ * @tparam T A type
+ * @tparam U A value's type
+ * @param value A numeric value
+ * @return True if can fit, otherwise false
+ */
 template<typename T, typename U>
 static constexpr auto CanTypeFitValue(const U value)
 {
@@ -181,8 +185,17 @@ static constexpr auto CanTypeFitValue(const U value)
             && (static_cast<U>(static_cast<T>(value)) == value);
 }
 
+/**
+ * @brief Writes a number to the byteArray with the smallest possible type
+ *
+ * @tparam T A number's type
+ * @param byteArray An array to write to
+ * @param num A number
+ * @param byteOrder Endianness (little-endian or big-endian)
+ */
 template<typename T>
-static void writeSmallestToByteArray(QByteArray &byteArray, T num, QDataStream::ByteOrder byteOrder)
+static void writeSmallestToByteArray(QByteArray &byteArray, const T num,
+                                     const QDataStream::ByteOrder byteOrder)
 {
     auto dataStream{ QDataStream{ &byteArray, QIODeviceBase::WriteOnly } };
     dataStream.setByteOrder(byteOrder);
@@ -208,7 +221,15 @@ static void writeSmallestToByteArray(QByteArray &byteArray, T num, QDataStream::
     }
 }
 
-qint64 SerialTransceiver::writeNumber(const QString &numString, bool isSigned)
+/**
+ * @brief Writes a number to the serial port
+ *
+ * @param numString A string with a number
+ * @param isSigned Whether the number is signed or not
+ * @return The number of bytes that were written
+ *
+ */
+qint64 SerialTransceiver::writeNumber(const QString &numString, bool isSigned) const
 {
     QByteArray byteArray;
     qint64 numSigned;
@@ -232,7 +253,15 @@ qint64 SerialTransceiver::writeNumber(const QString &numString, bool isSigned)
     }
 }
 
-qint64 SerialTransceiver::writeString(const QString &string, bool appendNewline)
+/**
+ * @brief Writes a string to the serial port
+ *
+ * @param string A string to be written
+ * @param appendNewline Append a new line at the end of the string or not
+ * @return The number of bytes that were written
+ *
+ */
+qint64 SerialTransceiver::writeString(const QString &string, bool appendNewline) const
 {
     auto byteArray{ string.toUtf8() };
 
