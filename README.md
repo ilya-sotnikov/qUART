@@ -25,7 +25,7 @@ Real-time graph and spectrum (of values, not amplitudes) serial plotter written 
     - u8, u16, u32, u64, i8, i16, i32, i64, f32, f64, ASCII
 - change the byte order (little-endian, big-endian)
 - select any value on the chart
-- zoom, navigate
+- zoom (mouse wheel or RMB), navigate
 - toggle between log and linear scale
 - save and open plot/spectrum data
 - clear the chart
