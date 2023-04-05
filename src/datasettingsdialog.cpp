@@ -11,15 +11,15 @@ using namespace Qt::Literals::StringLiterals;
 
 DataSettingsDialog::DataSettingsDialog(QWidget *parent) : QDialog{ parent }
 {
-    auto layout{ new QVBoxLayout{ this } };
+    const auto layout{ new QVBoxLayout{ this } };
 
-    auto buttonBox{ new QDialogButtonBox{ QDialogButtonBox::Cancel | QDialogButtonBox::Ok,
-                                          Qt::Horizontal, this } };
+    const auto buttonBox{ new QDialogButtonBox{ QDialogButtonBox::Cancel | QDialogButtonBox::Ok,
+                                                Qt::Horizontal, this } };
 
-    auto settingsBox{ new QGroupBox{ u"Data settings"_s } };
-    auto settingsLayout{ new QGridLayout{ settingsBox } };
+    const auto settingsBox{ new QGroupBox{ u"Data settings"_s } };
+    const auto settingsLayout{ new QGridLayout{ settingsBox } };
 
-    auto dataFormatLabel{ new QLabel{ u"Data format"_s } };
+    const auto dataFormatLabel{ new QLabel{ u"Data format"_s } };
     dataTypeBox->addItem(u"ASCII"_s, SerialTransceiver::DataTypes::ascii);
     dataTypeBox->addItem(u"unsigned 8 bit"_s, SerialTransceiver::DataTypes::u8);
     dataTypeBox->addItem(u"unsigned 16 bit"_s, SerialTransceiver::DataTypes::u16);
@@ -34,7 +34,7 @@ DataSettingsDialog::DataSettingsDialog(QWidget *parent) : QDialog{ parent }
     settingsLayout->addWidget(dataFormatLabel, 0, 0);
     settingsLayout->addWidget(dataTypeBox, 0, 1);
 
-    auto byteOrderLabel{ new QLabel{ u"Byte order (for numeric)"_s } };
+    const auto byteOrderLabel{ new QLabel{ u"Byte order (for numeric)"_s } };
     byteOrderBox->addItem(u"little-endian"_s, QDataStream::LittleEndian);
     byteOrderBox->addItem(u"big-endian"_s, QDataStream::BigEndian);
     settingsLayout->addWidget(byteOrderLabel, 1, 0);
@@ -70,9 +70,9 @@ void DataSettingsDialog::updateSettings()
  * @param data Data from QComboBox
  */
 template<typename T>
-void DataSettingsDialog::updateIndex(QComboBox *comboBox, T data)
+void DataSettingsDialog::updateIndex(QComboBox *const comboBox, const T data)
 {
-    auto index{ comboBox->findData(data) };
+    const auto index{ comboBox->findData(data) };
     if (index != -1)
         comboBox->setCurrentIndex(index);
 }
@@ -99,7 +99,7 @@ void DataSettingsDialog::loadSettings()
  * @brief Saves settings to a file
  *
  */
-void DataSettingsDialog::saveSettings()
+void DataSettingsDialog::saveSettings() const
 {
     QSettings settingsFile;
 

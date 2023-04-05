@@ -30,11 +30,11 @@ private:
     QComboBox *dataTypeBox{ new QComboBox{ this } };
     QComboBox *byteOrderBox{ new QComboBox{ this } };
 
-    void saveSettings();
+    void saveSettings() const;
     void loadSettings();
     void updateSettings();
     template<typename T>
-    void updateIndex(QComboBox *comboBox, T data);
+    void updateIndex(QComboBox *const comboBox, const T data);
 
 private slots:
     void ok();
