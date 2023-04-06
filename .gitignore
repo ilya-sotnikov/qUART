@@ -1,8 +1,5 @@
 .cache
 .clang-format
-build
-build-release
+build*
 compile_commands.json
-*.a
-*.o
 todo.txt
