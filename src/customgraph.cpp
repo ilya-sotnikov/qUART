@@ -1,7 +1,16 @@
 #include "customgraph.h"
-#include "qcustomplot.h"
-#include <qnamespace.h>
 
+/**
+ * @brief Calculates the distance between the selected point's key and the data on the chart
+ *
+ * This is mostly copied from the QCustomPlot with only 2 differences:
+ * 1. The distance is calculated only by the X coordinate (key)
+ * 2. It doesn't calculate distance to graph line
+ *
+ * @param pixelPoint The point
+ * @param closestData An iterator which will point to the closest data point from the chart
+ * @return The distance between the point's X and the closes data point's X
+ */
 double CustomGraph::pointDistance(const QPointF &pixelPoint,
                                   QCPGraphDataContainer::const_iterator &closestData) const
 {
@@ -12,7 +21,7 @@ double CustomGraph::pointDistance(const QPointF &pixelPoint,
         return -1.0;
 
     // calculate minimum distances to graph data points and find closestData iterator:
-    double minDistSqr = (std::numeric_limits<double>::max)();
+    double minDistAbs = (std::numeric_limits<double>::max)();
     // determine which key range comes into question, taking selection tolerance around pos into
     // account:
     double posKeyMin, posKeyMax, dummy;
@@ -32,11 +41,9 @@ double CustomGraph::pointDistance(const QPointF &pixelPoint,
     for (QCPGraphDataContainer::const_iterator it = begin; it != end; ++it) {
         // const double currentDistSqr =
         //         QCPVector2D(coordsToPixels(it->key, it->value) - pixelPoint).lengthSquared();
-        const double currentDistSqr = qPow(keyAxis()->coordToPixel(it->key) - pixelPoint.x(), 2);
-        // const double currentDistSqr =
-        //         qPow(coordsToPixels(it->key, it->value).x() - pixelPoint.x(), 2);
-        if (currentDistSqr < minDistSqr) {
-            minDistSqr = currentDistSqr;
+        const double currentDistAbs = qAbs(keyAxis()->coordToPixel(it->key) - pixelPoint.x());
+        if (currentDistAbs < minDistAbs) {
+            minDistAbs = currentDistAbs;
             closestData = it;
         }
     }
@@ -63,9 +70,22 @@ double CustomGraph::pointDistance(const QPointF &pixelPoint,
     //     }
     // }
 
-    return qSqrt(minDistSqr);
+    return minDistAbs;
 }
 
+/**
+ * @brief This function is used to decide whether a click hits a layerable object or not
+ *
+ * This is entirely copied from the QCustomPlot without any modifications just to call overriden
+ * non-virtual pointDistance method above instead of QCPGraph::pointDistance
+ *
+ * @param pos A point in pixel coordinates on the QCustomPlot surface
+ * @param onlySelectable If true and the object is not selectable, -1.0 is returned
+ * @param details An optional output parameter, every layerable subclass may place anything here
+ * @return The shortest pixel distance of this point to the object, if the object is either
+ * invisible or the distance couldn't be determined, -1.0 is returned
+ *
+ */
 double CustomGraph::selectTest(const QPointF &pos, bool onlySelectable, QVariant *details) const
 {
     if ((onlySelectable && mSelectable == QCP::stNone) || mDataContainer->isEmpty())
