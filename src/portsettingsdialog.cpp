@@ -8,54 +8,51 @@
 #include <qserialportinfo.h>
 #include <qsettings.h>
 
-/**
- * @brief Constructs a new PortSettingsDialog object
- *
- * @param parent
- */
+using namespace Qt::Literals::StringLiterals;
+
 PortSettingsDialog::PortSettingsDialog(QWidget *parent) : QDialog{ parent }
 {
-    auto layout{ new QVBoxLayout{ this } };
-    auto buttonBox{ new QDialogButtonBox{ QDialogButtonBox::Cancel | QDialogButtonBox::Ok,
-                                          Qt::Horizontal, this } };
+    const auto layout{ new QVBoxLayout{ this } };
+    const auto buttonBox{ new QDialogButtonBox{ QDialogButtonBox::Cancel | QDialogButtonBox::Ok,
+                                                Qt::Horizontal, this } };
 
-    auto selectBox{ new QGroupBox{ "Serial port configuration", this } };
+    const auto settingsBox{ new QGroupBox{ u"Serial port configuration"_s } };
 
-    auto controlsLayout{ new QGridLayout{ selectBox } };
+    const auto settingsLayout{ new QGridLayout{ settingsBox } };
 
-    auto portsInfoLabel{ new QLabel{ "Ports info", selectBox } };
-    controlsLayout->addWidget(portsInfoLabel, 0, 0, 1, 1);
-    auto portsInfoButton{ new QPushButton{ "Show", selectBox } };
-    controlsLayout->addWidget(portsInfoButton, 0, 1, 1, 1);
+    const auto portsInfoLabel{ new QLabel{ u"Ports info"_s } };
+    settingsLayout->addWidget(portsInfoLabel, 0, 0);
+    const auto portsInfoButton{ new QPushButton{ u"Show"_s } };
+    settingsLayout->addWidget(portsInfoButton, 0, 1);
 
-    auto serialPortLabel{ new QLabel{ "Serial port", selectBox } };
-    controlsLayout->addWidget(serialPortLabel, 1, 0, 1, 1);
-    controlsLayout->addWidget(serialPortBox, 1, 1, 1, 1);
+    const auto serialPortLabel{ new QLabel{ u"Serial port"_s } };
+    settingsLayout->addWidget(serialPortLabel, 1, 0);
+    settingsLayout->addWidget(serialPortBox, 1, 1);
 
-    auto baudRateLabel{ new QLabel{ "Baud rate", selectBox } };
-    controlsLayout->addWidget(baudRateLabel, 2, 0, 1, 1);
-    controlsLayout->addWidget(baudRateBox, 2, 1, 1, 1);
+    const auto baudRateLabel{ new QLabel{ u"Baud rate"_s } };
+    settingsLayout->addWidget(baudRateLabel, 2, 0);
+    settingsLayout->addWidget(baudRateBox, 2, 1);
 
-    auto dataBitsLabel{ new QLabel{ "Data bits", selectBox } };
-    controlsLayout->addWidget(dataBitsLabel, 3, 0, 1, 1);
-    controlsLayout->addWidget(dataBitsBox, 3, 1, 1, 1);
+    const auto dataBitsLabel{ new QLabel{ u"Data bits"_s } };
+    settingsLayout->addWidget(dataBitsLabel, 3, 0);
+    settingsLayout->addWidget(dataBitsBox, 3, 1);
 
-    auto parityLabel{ new QLabel{ "Parity", selectBox } };
-    controlsLayout->addWidget(parityLabel, 4, 0, 1, 1);
-    controlsLayout->addWidget(parityBox, 4, 1, 1, 1);
+    const auto parityLabel{ new QLabel{ u"Parity"_s } };
+    settingsLayout->addWidget(parityLabel, 4, 0);
+    settingsLayout->addWidget(parityBox, 4, 1);
 
-    auto stopBitsLabel{ new QLabel{ "Stop bits", selectBox } };
-    controlsLayout->addWidget(stopBitsLabel, 5, 0, 1, 1);
-    controlsLayout->addWidget(stopBitsBox, 5, 1, 1, 1);
+    const auto stopBitsLabel{ new QLabel{ u"Stop bits"_s } };
+    settingsLayout->addWidget(stopBitsLabel, 5, 0);
+    settingsLayout->addWidget(stopBitsBox, 5, 1);
 
-    auto flowControlLabel{ new QLabel{ "Flow control", selectBox } };
-    controlsLayout->addWidget(flowControlLabel, 6, 0, 1, 1);
-    controlsLayout->addWidget(flowControlBox, 6, 1, 1, 1);
+    const auto flowControlLabel{ new QLabel{ u"Flow control"_s } };
+    settingsLayout->addWidget(flowControlLabel, 6, 0);
+    settingsLayout->addWidget(flowControlBox, 6, 1);
 
-    layout->addWidget(selectBox, 0, Qt::AlignTop);
+    layout->addWidget(settingsBox, 0, Qt::AlignTop);
     layout->addWidget(buttonBox, 0, Qt::AlignBottom);
 
-    setWindowTitle("Port settings");
+    setWindowTitle(u"Port settings"_s);
     setModal(true);
 
     connect(portsInfoButton, &QPushButton::pressed, portsInfoDialog, &PortsInfoDialog::show);
@@ -66,7 +63,6 @@ PortSettingsDialog::PortSettingsDialog(QWidget *parent) : QDialog{ parent }
     enumeratePorts();
     fillSettings();
     loadSettings();
-    updateSettings();
 }
 
 /**
@@ -75,35 +71,35 @@ PortSettingsDialog::PortSettingsDialog(QWidget *parent) : QDialog{ parent }
  */
 void PortSettingsDialog::fillSettings() const
 {
-    baudRateBox->addItem(QStringLiteral("1200"), QSerialPort::Baud1200);
-    baudRateBox->addItem(QStringLiteral("2400"), QSerialPort::Baud2400);
-    baudRateBox->addItem(QStringLiteral("4800"), QSerialPort::Baud4800);
-    baudRateBox->addItem(QStringLiteral("9600"), QSerialPort::Baud9600);
-    baudRateBox->addItem(QStringLiteral("19200"), QSerialPort::Baud19200);
-    baudRateBox->addItem(QStringLiteral("38400"), QSerialPort::Baud38400);
-    baudRateBox->addItem(QStringLiteral("57600"), QSerialPort::Baud57600);
-    baudRateBox->addItem(QStringLiteral("115200"), QSerialPort::Baud115200);
+    baudRateBox->addItem(u"1200"_s, QSerialPort::Baud1200);
+    baudRateBox->addItem(u"2400"_s, QSerialPort::Baud2400);
+    baudRateBox->addItem(u"4800"_s, QSerialPort::Baud4800);
+    baudRateBox->addItem(u"9600"_s, QSerialPort::Baud9600);
+    baudRateBox->addItem(u"19200"_s, QSerialPort::Baud19200);
+    baudRateBox->addItem(u"38400"_s, QSerialPort::Baud38400);
+    baudRateBox->addItem(u"57600"_s, QSerialPort::Baud57600);
+    baudRateBox->addItem(u"115200"_s, QSerialPort::Baud115200);
 
-    dataBitsBox->addItem(QStringLiteral("5"), QSerialPort::Data5);
-    dataBitsBox->addItem(QStringLiteral("6"), QSerialPort::Data6);
-    dataBitsBox->addItem(QStringLiteral("7"), QSerialPort::Data7);
-    dataBitsBox->addItem(QStringLiteral("8"), QSerialPort::Data8);
+    dataBitsBox->addItem(u"5"_s, QSerialPort::Data5);
+    dataBitsBox->addItem(u"6"_s, QSerialPort::Data6);
+    dataBitsBox->addItem(u"7"_s, QSerialPort::Data7);
+    dataBitsBox->addItem(u"8"_s, QSerialPort::Data8);
 
-    parityBox->addItem(QStringLiteral("None"), QSerialPort::NoParity);
-    parityBox->addItem(QStringLiteral("Even"), QSerialPort::EvenParity);
-    parityBox->addItem(QStringLiteral("Odd"), QSerialPort::OddParity);
-    parityBox->addItem(QStringLiteral("Mark"), QSerialPort::MarkParity);
-    parityBox->addItem(QStringLiteral("Space"), QSerialPort::SpaceParity);
+    parityBox->addItem(u"None"_s, QSerialPort::NoParity);
+    parityBox->addItem(u"Even"_s, QSerialPort::EvenParity);
+    parityBox->addItem(u"Odd"_s, QSerialPort::OddParity);
+    parityBox->addItem(u"Mark"_s, QSerialPort::MarkParity);
+    parityBox->addItem(u"Space"_s, QSerialPort::SpaceParity);
 
-    stopBitsBox->addItem(QStringLiteral("1"), QSerialPort::OneStop);
+    stopBitsBox->addItem(u"1"_s, QSerialPort::OneStop);
 #ifdef Q_OS_WIN
-    stopBitsBox->addItem(QStringLiteral("1.5"), QSerialPort::OneAndHalfStop);
+    stopBitsBox->addItem(u"1.5"_s, QSerialPort::OneAndHalfStop);
 #endif
-    stopBitsBox->addItem(QStringLiteral("2"), QSerialPort::TwoStop);
+    stopBitsBox->addItem(u"2"_s, QSerialPort::TwoStop);
 
-    flowControlBox->addItem(QStringLiteral("None"), QSerialPort::NoFlowControl);
-    flowControlBox->addItem(QStringLiteral("RTS/CTS"), QSerialPort::HardwareControl);
-    flowControlBox->addItem(QStringLiteral("XON/XOFF"), QSerialPort::SoftwareControl);
+    flowControlBox->addItem(u"None"_s, QSerialPort::NoFlowControl);
+    flowControlBox->addItem(u"RTS/CTS"_s, QSerialPort::HardwareControl);
+    flowControlBox->addItem(u"XON/XOFF"_s, QSerialPort::SoftwareControl);
 }
 
 /**
@@ -119,13 +115,13 @@ void PortSettingsDialog::enumeratePorts() const
     for (const auto &port : ports) {
         serialPortBox->addItem(port.portName(), port.portName());
     }
-    serialPortBox->addItem("Custom");
+    serialPortBox->addItem(u"Custom"_s);
 }
 
 /**
  * @brief Allows to type in a custom serial port name
  *
- * @param index
+ * @param index An index to check
  */
 void PortSettingsDialog::checkCustomPath(const int index) const
 {
@@ -154,9 +150,9 @@ void PortSettingsDialog::updateSettings()
  *
  */
 template<typename T>
-void PortSettingsDialog::updateIndex(QComboBox *comboBox, T data)
+void PortSettingsDialog::updateIndex(QComboBox *const comboBox, const T data)
 {
-    auto index{ comboBox->findData(data) };
+    const auto index{ comboBox->findData(data) };
     if (index != -1)
         comboBox->setCurrentIndex(index);
 }
@@ -169,20 +165,21 @@ void PortSettingsDialog::loadSettings()
 {
     QSettings settingsFile;
 
-    settingsFile.beginGroup("port");
+    settingsFile.beginGroup(u"port"_s);
 
-    settings.name = settingsFile.value("name", "").toString();
-    settings.baudRate =
-            static_cast<QSerialPort::BaudRate>(settingsFile.value("baudRate", "9600").toInt());
+    settings.name = settingsFile.value(u"name"_s, u""_s).toString();
+    settings.baudRate = static_cast<QSerialPort::BaudRate>(
+            settingsFile.value(u"baudRate"_s, u"9600"_s).toInt());
     settings.dataBits =
-            static_cast<QSerialPort::DataBits>(settingsFile.value("dataBits", "8").toInt());
-    settings.parity = static_cast<QSerialPort::Parity>(settingsFile.value("parity", "0").toInt());
+            static_cast<QSerialPort::DataBits>(settingsFile.value(u"dataBits"_s, u"8"_s).toInt());
+    settings.parity =
+            static_cast<QSerialPort::Parity>(settingsFile.value(u"parity"_s, u"0"_s).toInt());
     settings.stopBits =
-            static_cast<QSerialPort::StopBits>(settingsFile.value("stopBits", "1").toInt());
-    settings.flowControl =
-            static_cast<QSerialPort::FlowControl>(settingsFile.value("flowControl", "0").toInt());
+            static_cast<QSerialPort::StopBits>(settingsFile.value(u"stopBits"_s, u"1"_s).toInt());
+    settings.flowControl = static_cast<QSerialPort::FlowControl>(
+            settingsFile.value(u"flowControl"_s, u"0"_s).toInt());
 
-    auto portNameIndex{ serialPortBox->findData(settings.name) };
+    const auto portNameIndex{ serialPortBox->findData(settings.name) };
     if (portNameIndex == -1) {
         serialPortBox->setEditable(true);
         serialPortBox->setEditText(settings.name);
@@ -203,17 +200,17 @@ void PortSettingsDialog::loadSettings()
  * @brief Saves serial port settings to a file
  *
  */
-void PortSettingsDialog::saveSettings()
+void PortSettingsDialog::saveSettings() const
 {
     QSettings settingsFile;
 
-    settingsFile.beginGroup("port");
-    settingsFile.setValue("name", settings.name);
-    settingsFile.setValue("baudRate", settings.baudRate);
-    settingsFile.setValue("dataBits", settings.dataBits);
-    settingsFile.setValue("parity", settings.parity);
-    settingsFile.setValue("stopBits", settings.stopBits);
-    settingsFile.setValue("flowControl", settings.flowControl);
+    settingsFile.beginGroup(u"port"_s);
+    settingsFile.setValue(u"name"_s, settings.name);
+    settingsFile.setValue(u"baudRate"_s, settings.baudRate);
+    settingsFile.setValue(u"dataBits"_s, settings.dataBits);
+    settingsFile.setValue(u"parity"_s, settings.parity);
+    settingsFile.setValue(u"stopBits"_s, settings.stopBits);
+    settingsFile.setValue(u"flowControl"_s, settings.flowControl);
     settingsFile.endGroup();
 }
 
