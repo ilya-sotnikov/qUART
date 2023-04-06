@@ -38,7 +38,7 @@ private:
     QAction *actionDataSettings{ new QAction{ "Data", this } };
     QAction *actionChartType{ new QAction{ "Chart type", this } };
     QAction *actionResetZoom{ new QAction{ "Reset zoom", this } };
-    QAction *actionAppendToPlot{ new QAction{ "Append to chart", this } };
+    QAction *actionAppendToPlot{ new QAction{ "Append to plot", this } };
     QAction *actionAppendToSpectrum{ new QAction{ "Append to spectrum", this } };
     QLineEdit *sendNumLineEdit{ new QLineEdit{ this } };
     QCheckBox *sendSignedCheckBox{ new QCheckBox{ "Signed" } };

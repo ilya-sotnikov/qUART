@@ -1,21 +1,15 @@
 #include "chart.h"
 
-/**
- * @brief Construct a new Chart object
- *
- * @param parent
- */
 Chart::Chart(QWidget *parent) : QWidget{ parent }
 {
     constexpr qreal lineWidth{ 1 };
     constexpr qreal plotScatterSize{ 10 };
-    constexpr QColor plotSelectionColor{ QColor{ 80, 80, 255 } };
+    constexpr auto plotSelectionColor{ QColor{ 80, 80, 255 } };
 
-    auto layout{ new QHBoxLayout{ this } };
+    const auto layout{ new QHBoxLayout{ this } };
     layout->addWidget(customPlot);
 
     customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-    // customPlot->setSelectionRectMode(QCP::srmZoom);
     customPlot->setSelectionTolerance(20);
     customPlot->setAntialiasedElements(QCP::aePlottables);
 
@@ -26,11 +20,6 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
     graph->selectionDecorator()->setScatterStyle(QCPScatterStyle{
             QCPScatterStyle::ssCross, QPen{ QBrush{ plotSelectionColor }, lineWidth + 1 },
             QBrush{ plotSelectionColor }, plotScatterSize });
-
-    // spectrum->setSelectable(QCP::stSingleData);
-    // spectrum->setPen(QPen{ QBrush{ Qt::black }, lineWidth });
-    // spectrum->setBrush(QBrush{ Qt::gray });
-    // spectrum->setWidth(0.5);
 
     customPlot->replot();
 
@@ -47,7 +36,7 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
         }
     });
 
-    connect(customPlot, &QCustomPlot::mousePress, this, [this](QMouseEvent *event) {
+    connect(customPlot, &QCustomPlot::mousePress, this, [this](const QMouseEvent *event) {
         if (event->button() == Qt::RightButton)
             customPlot->setSelectionRectMode(QCP::SelectionRectMode::srmZoom);
         else
@@ -56,10 +45,10 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
 }
 
 /**
- * @brief Updates the data on the chart, rescales axes and replots
+ * @brief Updates the data on the chart, rescales axes if needed, updates the selection and replots
  *
  */
-void Chart::updateChart()
+void Chart::updateChart() const
 {
     if (chartType == ChartType::plot)
         graph->setData(chartDataContainer.getPlotLast());
@@ -72,7 +61,7 @@ void Chart::updateChart()
     if (autoscaleY)
         graph->valueAxis()->rescale(true);
 
-    auto selection{ graph->selection() };
+    const auto selection{ graph->selection() };
     if (!selection.isEmpty())
         updateSelectedPoint(selection);
 
@@ -119,10 +108,8 @@ void Chart::clear()
 /**
  * @brief Adds data to the chart
  *
- * If the current chart type is plot, then plots data.
- * If it's spectrum, then plot frequency of an each data point.
- *
  * @param receivedData
+ *
  */
 void Chart::addData(const QSharedPointer<const QList<qreal>> receivedData)
 {
@@ -130,6 +117,12 @@ void Chart::addData(const QSharedPointer<const QList<qreal>> receivedData)
     needsUpdate = true;
 }
 
+/**
+ * @brief Sets spectrumData to raw data, useful when loading data from a file
+ *
+ * @param rawData
+ *
+ */
 void Chart::setRawSpectrumData(const QCPGraphDataContainer &rawData)
 {
     chartDataContainer.setRawSpectrumData(rawData);
@@ -137,7 +130,7 @@ void Chart::setRawSpectrumData(const QCPGraphDataContainer &rawData)
 }
 
 /**
- * @brief Rescales axes and replots
+ * @brief Sets autoscaling for both axes, rescales them and replots
  *
  */
 void Chart::resetZoom()
@@ -148,16 +141,17 @@ void Chart::resetZoom()
 }
 
 /**
- * @brief Returns the selected data point from its coordinates
+ * @brief Updates the selected data point from its coordinates and emits a signal
  *
  * @param selection
+ *
  */
-void Chart::updateSelectedPoint(const QCPDataSelection &selection)
+void Chart::updateSelectedPoint(const QCPDataSelection &selection) const
 {
     if (selection.isEmpty())
         return;
 
-    auto chartX{ selection.dataRange().begin() };
+    const auto chartX{ selection.dataRange().begin() };
     QPointF selectedPoint{};
     selectedPoint.setX(chartX);
 
@@ -173,11 +167,81 @@ void Chart::updateSelectedPoint(const QCPDataSelection &selection)
     emit selectedPointChanged(selectedPoint);
 }
 
-void Chart::setUpdateInterval(int msec)
+/**
+ * @brief Sets update interval of a chart
+ *
+ * @param msec Update interval in milliseconds
+ */
+void Chart::setUpdateInterval(const int msec) const
 {
     customPlot->deselectAll();
 
     timer->stop();
     timer->setInterval(msec);
     timer->start();
+}
+
+/**
+ * @brief Sets value axis scaling (log or linear)
+ *
+ * @param log If true then log, otherwise linear
+ */
+void Chart::setLogarithmic(const bool log)
+{
+    if (log) {
+        customPlot->yAxis->setScaleType(QCPAxis::stLogarithmic);
+        customPlot->yAxis->setTicker(QSharedPointer<QCPAxisTickerLog>::create());
+    } else {
+        customPlot->yAxis->setScaleType(QCPAxis::stLinear);
+        customPlot->yAxis->setTicker(QSharedPointer<QCPAxisTicker>::create());
+    }
+
+    needsUpdate = true;
+};
+
+/**
+ * @brief Enables or disables autoscaling for both axes
+ *
+ * @param autoscaleX
+ * @param autoscaleY
+ *
+ */
+void Chart::setAutoscale(const bool autoscaleX, const bool autoscaleY)
+{
+    setAutoscaleX(autoscaleX);
+    setAutoscaleY(autoscaleY);
+};
+
+/**
+ * @brief Enables or disables autoscaling for the X axis (keys)
+ *
+ * @param autoscale
+ *
+ */
+void Chart::setAutoscaleX(const bool autoscale)
+{
+    const auto prevAutoScaleX{ autoscaleX };
+    autoscaleX = autoscale;
+
+    needsUpdate = true;
+
+    if ((prevAutoScaleX != autoscaleX))
+        emit autoscaleChanged(autoscaleX, autoscaleY);
+}
+
+/**
+ * @brief Enables or disables autoscaling for the Y axis (values)
+ *
+ * @param autoscale
+ *
+ */
+void Chart::setAutoscaleY(const bool autoscale)
+{
+    const auto prevAutoScaleY{ autoscaleY };
+    autoscaleY = autoscale;
+
+    needsUpdate = true;
+
+    if ((prevAutoScaleY != autoscaleY))
+        emit autoscaleChanged(autoscaleX, autoscaleY);
 }
