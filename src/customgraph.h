@@ -3,6 +3,10 @@
 
 #include "qcustomplot.h"
 
+/**
+ * @brief Subclass of QCPGraph to select data by their keys (not by a key-value pair)
+ *
+ */
 class CustomGraph : public QCPGraph
 {
 protected:
