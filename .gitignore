@@ -1,4 +1,8 @@
 .cache
 .clang-format
 build
+build-release
 compile_commands.json
+*.a
+*.o
+todo.txt
