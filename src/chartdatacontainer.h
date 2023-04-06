@@ -6,11 +6,12 @@
 
 /**
  * @brief A data container for a plot and a spectrum
+ *
  */
 class ChartDataContainer
 {
 public:
-    void append(const QList<qreal> &data, bool appendToPlot, bool appendToSpectrum);
+    void append(const QList<qreal> &data, const bool appendToPlot, const bool appendToSpectrum);
     void setRawSpectrumData(const QCPGraphDataContainer &rawData);
     void clear();
 
@@ -18,20 +19,19 @@ public:
     const auto &getSpectrum() const { return spectrumData; }
     auto getLastPointsCount() const { return lastPointsCount; };
     auto setLastPointsCount(qsizetype n) { lastPointsCount = n; };
-    const QSharedPointer<QCPGraphDataContainer> &getPlotLast() const
-    {
-        return (lastPointsCount < 0) ? plotData : plotDataLast;
-    };
-    const QSharedPointer<QCPGraphDataContainer> &getSpectrumLast() const
+    const auto &getPlotLast() const { return (lastPointsCount < 0) ? plotData : plotDataLast; };
+    const auto &getSpectrumLast() const
     {
         return (lastPointsCount < 0) ? spectrumData : spectrumDataLast;
     };
 
 private:
-    void appendPlot(const QList<qreal> &data, bool append, bool appendToLast);
-    void appendSpectrum(const QList<qreal> &data, bool append, bool appendToLast);
+    void appendPlot(const QList<qreal> &data, const bool append, const bool appendToLast);
+    void appendSpectrum(const QList<qreal> &data, const bool append, const bool appendToLast) const;
+    void appendSpectrumValue(const double value, QCPGraphDataContainer &spectrumContainer) const;
 
     qsizetype lastPointsCount{ -1 };
+    qreal currentPlotDataCount{ 0 };
     QSharedPointer<QCPGraphDataContainer> plotData{
         QSharedPointer<QCPGraphDataContainer>::create()
     };
