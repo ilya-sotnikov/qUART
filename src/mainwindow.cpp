@@ -1,37 +1,33 @@
 #include "mainwindow.h"
 
-/**
- * @brief Constructs a new MainWindow object
- *
- * @param parent
- */
+using namespace Qt::Literals::StringLiterals;
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
 {
-    setMinimumSize(QSize{ 320, 240 });
-    resize(QSize{ 800, 600 });
-    setWindowTitle("qUART");
-    setWindowIcon(QIcon{ ":app.png" });
+    setMinimumSize(QSize{ 800, 600 });
+    setWindowTitle(u"qUART"_s);
+    setWindowIcon(QIcon{ u":app.png"_s });
 
-    auto menuBar{ new QMenuBar{ this } };
-    auto menuFile{ new QMenu{ "File", menuBar } };
-    auto menuSettings{ new QMenu{ "Settings", menuBar } };
+    const auto menuBar{ new QMenuBar{ this } };
+    const auto menuFile{ new QMenu{ u"File"_s, menuBar } };
+    const auto menuSettings{ new QMenu{ u"Settings"_s, menuBar } };
     setMenuBar(menuBar);
 
     setStatusBar(statusBar);
 
-    actionConnect->setIcon(QIcon{ ":actionConnect.png" });
-    actionDisconnect->setIcon(QIcon{ ":actionDisconnect.png" });
-    actionClear->setIcon(QIcon{ ":actionClear.png" });
-    actionChartType->setIcon(QIcon{ ":actionChartType.png" });
-    actionResetZoom->setIcon(QIcon{ ":actionResetZoom.png" });
-    actionAppendToPlot->setIcon(QIcon{ ":actionAppendToPlot.png" });
+    actionConnect->setIcon(QIcon{ u":actionConnect.png"_s });
+    actionDisconnect->setIcon(QIcon{ u":actionDisconnect.png"_s });
+    actionClear->setIcon(QIcon{ u":actionClear.png"_s });
+    actionChartType->setIcon(QIcon{ u":actionChartType.png"_s });
+    actionResetZoom->setIcon(QIcon{ u":actionResetZoom.png"_s });
+    actionAppendToPlot->setIcon(QIcon{ u":actionAppendToPlot.png"_s });
     actionAppendToPlot->setCheckable(true);
     actionAppendToPlot->setChecked(true);
-    actionAppendToSpectrum->setIcon(QIcon{ ":actionAppendToSpectrum.png" });
+    actionAppendToSpectrum->setIcon(QIcon{ u":actionAppendToSpectrum.png"_s });
     actionAppendToSpectrum->setCheckable(true);
     actionAppendToSpectrum->setChecked(true);
 
-    auto toolBar{ new QToolBar{ this } };
+    const auto toolBar{ new QToolBar{ this } };
     addToolBar(Qt::TopToolBarArea, toolBar);
 
     menuBar->addAction(menuFile->menuAction());
@@ -52,43 +48,43 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
     toolBar->addAction(actionAppendToPlot);
     toolBar->addAction(actionAppendToSpectrum);
 
-    auto sidePanel{ new QGroupBox };
-    sidePanel->setTitle("Side panel");
+    const auto sidePanel{ new QGroupBox };
+    sidePanel->setTitle(u"Side panel"_s);
 
-    auto sidePanelLayout{ new QVBoxLayout };
+    const auto sidePanelLayout{ new QVBoxLayout };
 
-    auto lastPointsLabel{ new QLabel{ "Show last N points:" } };
+    const auto lastPointsLabel{ new QLabel{ u"Show last N points:"_s } };
     sidePanelLayout->addWidget(lastPointsLabel);
-    auto lastPointsLineEdit{ new QLineEdit };
-    lastPointsLineEdit->setToolTip("Empty means show all data");
+    const auto lastPointsLineEdit{ new QLineEdit };
+    lastPointsLineEdit->setToolTip(u"Empty means show all data"_s);
     sidePanelLayout->addWidget(lastPointsLineEdit);
 
-    auto updateIntervalLabel{ new QLabel{ "Update interval (ms):" } };
+    const auto updateIntervalLabel{ new QLabel{ u"Update interval (ms):"_s } };
     sidePanelLayout->addWidget(updateIntervalLabel);
     sidePanelLayout->addWidget(updateIntervalLineEdit);
 
     sidePanelLayout->addWidget(logScaleCheckBox);
 
-    auto autoscaleLabel{ new QLabel{ "Autoscale:" } };
+    const auto autoscaleLabel{ new QLabel{ u"Autoscale:"_s } };
     sidePanelLayout->addWidget(autoscaleLabel);
-    auto autoscaleLayout{ new QHBoxLayout{} };
+    const auto autoscaleLayout{ new QHBoxLayout{} };
     autoscaleLayout->addWidget(autoscaleCheckboxX);
     autoscaleCheckboxX->setChecked(chart->getAutoScaleX());
     autoscaleCheckboxY->setChecked(chart->getAutoScaleY());
     autoscaleLayout->addWidget(autoscaleCheckboxY);
     sidePanelLayout->addLayout(autoscaleLayout);
 
-    auto sendNumLabel{ new QLabel{ "Send a number:" } };
+    const auto sendNumLabel{ new QLabel{ u"Send a number:"_s } };
     sidePanelLayout->addWidget(sendNumLabel);
-    sendNumLineEdit->setToolTip("0x__ for hex, 0b__ for binary, Enter to send");
+    sendNumLineEdit->setToolTip(u"0x__ for hex, 0b__ for binary, Enter to send"_s);
     sendNumLineEdit->setEnabled(false);
     sidePanelLayout->addWidget(sendNumLineEdit);
     sidePanelLayout->addWidget(sendSignedCheckBox);
     sendSignedCheckBox->setEnabled(false);
 
-    auto sendStringLabel{ new QLabel{ "Send a string:" } };
+    const auto sendStringLabel{ new QLabel{ u"Send a string:"_s } };
     sidePanelLayout->addWidget(sendStringLabel);
-    sendStringLineEdit->setToolTip("Enter to send");
+    sendStringLineEdit->setToolTip(u"Enter to send"_s);
     sendStringLineEdit->setEnabled(false);
     sidePanelLayout->addWidget(sendStringLineEdit);
     sidePanelLayout->addWidget(sendStringNewlineCheckBox);
@@ -98,11 +94,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
     sidePanelLayout->addStretch();
     sidePanel->setLayout(sidePanelLayout);
 
-    auto windowLayout{ new QHBoxLayout };
+    const auto windowLayout{ new QHBoxLayout };
     windowLayout->addWidget(sidePanel, 0);
     windowLayout->addWidget(chart, 1);
 
-    auto window{ new QWidget };
+    const auto window{ new QWidget };
     window->setLayout(windowLayout);
     setCentralWidget(window);
 
@@ -112,9 +108,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
 
     statusBar->addPermanentWidget(chartTypeWidget);
     if (chart->getChartType() == Chart::ChartType::plot)
-        chartTypeWidget->setText("Chart type: Plot");
+        chartTypeWidget->setText(u"Chart type: Plot"_s);
     else if (chart->getChartType() == Chart::ChartType::spectrum)
-        chartTypeWidget->setText("Chart type: Spectrum");
+        chartTypeWidget->setText(u"Chart type: Spectrum"_s);
 
     connect(serialTransceiver, &SerialTransceiver::newDataAvailable, chart, &Chart::addData);
     connect(actionConnect, &QAction::triggered, this, &MainWindow::serialConnect);
@@ -138,74 +134,42 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
 
     connect(lastPointsLineEdit, &QLineEdit::textChanged, this, [this](const QString &text) {
         bool ok;
-        auto n{ text.toLongLong(&ok, 0) };
+        const auto n{ text.toLongLong(&ok, 0) };
 
         if (ok)
             chart->setShowLastPoints(n);
         else
             chart->setShowLastPoints(-1);
-
-        chart->requestUpdate();
     });
 
     connect(sendNumLineEdit, &QLineEdit::returnPressed, this, [this]() {
-        auto numString{ sendNumLineEdit->text() };
-        bool isSigned{ sendSignedCheckBox->isChecked() };
+        const auto numString{ sendNumLineEdit->text() };
+        const bool isSigned{ sendSignedCheckBox->isChecked() };
         serialTransceiver->writeNumber(numString, isSigned);
     });
 
     connect(sendStringLineEdit, &QLineEdit::returnPressed, this, [this]() {
-        auto string{ sendStringLineEdit->text() };
-        bool appendNewline{ sendStringNewlineCheckBox->isChecked() };
+        const auto string{ sendStringLineEdit->text() };
+        const bool appendNewline{ sendStringNewlineCheckBox->isChecked() };
         serialTransceiver->writeString(string, appendNewline);
     });
 
     connect(updateIntervalLineEdit, &QLineEdit::textChanged, this, [this]() {
         bool ok;
-        auto ms{ updateIntervalLineEdit->text().toInt(&ok) };
+        const auto ms{ updateIntervalLineEdit->text().toInt(&ok) };
         if (ok)
             chart->setUpdateInterval(ms);
     });
 
-    connect(logScaleCheckBox, &QCheckBox::stateChanged, this, [this](int state) {
-        if (state == Qt::Checked)
-            chart->setLogarithmic(true);
-        else
-            chart->setLogarithmic(false);
-    });
+    connect(chart, &Chart::autoscaleChanged, this,
+            [this](const bool autoscaleX, const bool autoscaleY) {
+                autoscaleCheckboxX->setChecked(autoscaleX);
+                autoscaleCheckboxY->setChecked(autoscaleY);
+            });
 
+    connect(logScaleCheckBox, &QCheckBox::stateChanged, chart, &Chart::setLogarithmic);
     connect(autoscaleCheckboxX, &QCheckBox::stateChanged, chart, &Chart::setAutoscaleX);
     connect(autoscaleCheckboxY, &QCheckBox::stateChanged, chart, &Chart::setAutoscaleY);
-
-    connect(chart, &Chart::autoscaleChanged, this, [this](bool autoscaleX, bool autoscaleY) {
-        autoscaleCheckboxX->setChecked(autoscaleX);
-        autoscaleCheckboxY->setChecked(autoscaleY);
-    });
-}
-
-/**
- * @brief A helper function to create a file dialog with specified parameters
- *
- * This function can be used to create an open dialog or save dialog
- * with the file extension filter and default file suffix.
- * Returns the selected file name or empty string if none was selected.
- *
- * @param acceptMode
- * @param nameFilter
- * @param defaultSuffix
- * @return QString
- */
-QString MainWindow::createFileDialog(QFileDialog::AcceptMode acceptMode, QString nameFilter,
-                                     QString defaultSuffix)
-{
-    QFileDialog fileDialog{ this };
-    fileDialog.setAcceptMode(acceptMode);
-    fileDialog.setNameFilter(nameFilter);
-    fileDialog.setDefaultSuffix(defaultSuffix);
-    if (!fileDialog.exec() || fileDialog.selectedFiles().isEmpty())
-        return "";
-    else
-        return fileDialog.selectedFiles().at(0);
 }
 
 /**
@@ -243,7 +207,7 @@ void MainWindow::serialConnect()
         sendStringLineEdit->setEnabled(true);
         sendStringNewlineCheckBox->setEnabled(true);
     } else {
-        QMessageBox::critical(this, "Error", serialTransceiver->errorString());
+        QMessageBox::warning(this, u"Warning"_s, serialTransceiver->errorString());
     }
 }
 
@@ -254,7 +218,7 @@ void MainWindow::serialConnect()
  * while the serial port is disconnected.
  *
  */
-void MainWindow::serialDisconnect()
+void MainWindow::serialDisconnect() const
 {
     serialTransceiver->serialClose();
     actionConnect->setEnabled(true);
@@ -278,11 +242,62 @@ void MainWindow::serialDisconnect()
  */
 void MainWindow::saveImage()
 {
-    auto fileName{ createFileDialog(QFileDialog::AcceptSave, "Images (*.png)", "png") };
+    auto fileName{ createFileDialog(QFileDialog::AcceptSave, u"Images (*.png)"_s, u"png"_s) };
     if (fileName.isEmpty())
         return;
     QPixmap pixMap{ chart->grab() };
     pixMap.save(fileName, "PNG");
+}
+
+/**
+ * @brief A helper function to create a file dialog with specified parameters
+ *
+ * This function can be used to create an open dialog or save dialog
+ * with the file extension filter and default file suffix.
+ *
+ * @param acceptMode
+ * @param nameFilter
+ * @param defaultSuffix
+ * @return QString The selected file name or empty string if none was selected
+
+ */
+QString MainWindow::createFileDialog(QFileDialog::AcceptMode acceptMode, const QString &nameFilter,
+                                     const QString &defaultSuffix)
+{
+    QFileDialog fileDialog{ this };
+    fileDialog.setAcceptMode(acceptMode);
+    fileDialog.setNameFilter(nameFilter);
+    fileDialog.setDefaultSuffix(defaultSuffix);
+    if (!fileDialog.exec() || fileDialog.selectedFiles().isEmpty())
+        return u""_s;
+    else
+        return fileDialog.selectedFiles().at(0);
+}
+
+/**
+ * @brief A helper function to open a file and create a QTextStream on it
+ *
+ * It uses a custom deleter which deletes the attached file when the stream is deleted
+ *
+ * @param fileName
+ * @param fileFlags
+ * @return std::unique_ptr to QTextStream or nullptr if can't open a file
+ */
+std::unique_ptr<QTextStream, std::function<void(QTextStream *)>>
+MainWindow::openFileStream(const QString &fileName, QIODevice::OpenMode fileFlags)
+{
+    const auto file{ new QFile{ fileName } };
+    const auto fileDeleter{ [file](QTextStream *stream) {
+        delete stream;
+        file->deleteLater();
+    } };
+    if (!file->open(fileFlags)) {
+        QMessageBox::warning(this, u"Warning"_s, file->errorString());
+        file->deleteLater();
+        return { nullptr };
+    } else {
+        return { new QTextStream{ file }, fileDeleter };
+    }
 }
 
 /**
@@ -293,101 +308,133 @@ void MainWindow::saveImage()
  */
 void MainWindow::savePlotData()
 {
-    auto fileName{ createFileDialog(QFileDialog::AcceptSave, "Text files (*.txt)", "txt") };
+    const auto fileName{ createFileDialog(QFileDialog::AcceptSave, u"Text files (*.txt)"_s,
+                                          u"txt"_s) };
     if (fileName.isEmpty())
         return;
-    QFile file{ fileName };
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        const auto dataList{ chart->getPlotData() };
-        QTextStream stream(&file);
-        // for (auto data : dataList)
-        //     stream << QString::number(data) << "\n";
-    }
+
+    auto stream{ openFileStream(fileName, QIODevice::WriteOnly | QIODevice::Text) };
+    if (stream.get() == nullptr)
+        return;
+
+    const auto dataList{ chart->getPlotData() };
+    for (const auto &data : *dataList)
+        *stream << QString::number(data.mainValue()) << u"\n"_s;
 }
 
 void MainWindow::saveSpectrumData()
 {
-    auto fileName{ createFileDialog(QFileDialog::AcceptSave, "Text files (*.txt)", "txt") };
+    const auto fileName{ createFileDialog(QFileDialog::AcceptSave, u"Text files (*.txt)"_s,
+                                          u"txt"_s) };
     if (fileName.isEmpty())
         return;
-    QFile file{ fileName };
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        const auto dataList{ chart->getSpectrumData() };
-        QTextStream stream(&file);
-        auto dataEnd{ dataList->constEnd() };
-        for (auto it{ dataList->constBegin() }; it != dataEnd; ++it)
-            stream << QString::number(it->mainKey()) << " " << QString::number(it->mainValue())
-                   << "\n";
-    }
+
+    auto stream{ openFileStream(fileName, QIODevice::WriteOnly | QIODevice::Text) };
+    if (stream.get() == nullptr)
+        return;
+
+    const auto dataList{ chart->getSpectrumData() };
+    const auto dataEnd{ dataList->constEnd() };
+    for (auto it{ dataList->constBegin() }; it != dataEnd; ++it)
+        *stream << QString::number(it->mainKey()) << u" "_s << QString::number(it->mainValue())
+                << u"\n"_s;
 }
 
 /**
- * @brief Opens the text file and plots data from it
+ * @brief Opens the text file and displays plot data from it
  *
  */
 void MainWindow::openPlotData()
 {
-    auto fileName{ createFileDialog(QFileDialog::AcceptOpen, "Text files (*.txt)", "txt") };
+    const auto fileName{ createFileDialog(QFileDialog::AcceptOpen, u"Text files (*.txt)"_s,
+                                          u"txt"_s) };
     if (fileName.isEmpty())
         return;
-    QFile file{ fileName };
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        chart->clear();
-        auto dataList{ QSharedPointer<QList<qreal>>::create() };
-        QTextStream stream(&file);
-        while (!stream.atEnd())
-            dataList->append(stream.readLine().toDouble());
-        chart->addData(dataList);
-    }
-}
 
-void MainWindow::openSpectrumData()
-{
-    auto fileName{ createFileDialog(QFileDialog::AcceptOpen, "Text files (*.txt)", "txt") };
-    if (fileName.isEmpty())
+    auto stream{ openFileStream(fileName, QIODevice::ReadOnly | QIODevice::Text) };
+    if (stream.get() == nullptr)
         return;
-    QFile file{ fileName };
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        chart->clear();
-        QCPGraphDataContainer data;
-        QTextStream stream(&file);
-        QStringList xy;
-        qreal x;
-        qreal y;
-        bool ok;
-        while (!stream.atEnd()) {
-            xy = stream.readLine().split(QRegularExpression{ "\\s+" }, Qt::SkipEmptyParts);
-            if (xy.empty())
-                continue;
 
-            if (xy.size() < 2)
-                continue;
-
-            x = xy.at(0).toDouble(&ok);
-            if (!ok)
-                continue;
-
-            y = xy.at(1).toDouble(&ok);
-            if (!ok)
-                continue;
-
-            data.add(QCPGraphData{ x, y });
+    chart->clear();
+    const auto dataList{ QSharedPointer<QList<qreal>>::create() };
+    bool ok;
+    qreal num;
+    const auto warningMsg{ u"Can't read plot data at line "_s };
+    quint64 lineCount{ 0 };
+    while (!stream->atEnd()) {
+        num = stream->readLine().toDouble(&ok);
+        if (!ok) {
+            QMessageBox::warning(this, u"Warning"_s, warningMsg + QString::number(lineCount));
+            return;
         }
-        chart->setRawSpectrumData(data);
+
+        dataList->append(num);
+
+        ++lineCount;
     }
+    chart->addData(dataList);
 }
 
 /**
- * @brief Updates the status bar
+ * @brief Opens the text file and displays spectrum data from it
  *
  */
-void MainWindow::chartTypeChanged()
+void MainWindow::openSpectrumData()
+{
+    const auto fileName{ createFileDialog(QFileDialog::AcceptOpen, u"Text files (*.txt)"_s,
+                                          u"txt"_s) };
+    if (fileName.isEmpty())
+        return;
+
+    auto stream{ openFileStream(fileName, QIODevice::ReadOnly | QIODevice::Text) };
+    if (stream.get() == nullptr)
+        return;
+
+    chart->clear();
+    QCPGraphDataContainer data;
+    QStringList xy;
+    qreal x;
+    qreal y;
+    bool ok;
+    quint64 lineNumber{ 0 };
+    const auto warningMsg{ u"Can't read spectrum data at line "_s };
+    while (!stream->atEnd()) {
+        xy = stream->readLine().split(QRegularExpression{ u"\\s+"_s }, Qt::SkipEmptyParts);
+        if (xy.empty() || (xy.size() < 2)) {
+            QMessageBox::warning(this, u"Warning"_s, warningMsg + QString::number(lineNumber));
+            return;
+        }
+
+        x = xy.at(0).toDouble(&ok);
+        if (!ok) {
+            QMessageBox::warning(this, u"Warning"_s, warningMsg + QString::number(lineNumber));
+            return;
+        }
+
+        y = xy.at(1).toDouble(&ok);
+        if (!ok) {
+            QMessageBox::warning(this, u"Warning"_s, warningMsg + QString::number(lineNumber));
+            return;
+        }
+
+        data.add(QCPGraphData{ x, y });
+
+        ++lineNumber;
+    }
+    chart->setRawSpectrumData(data);
+}
+
+/**
+ * @brief Updates the status bar chart type indicator (plot or spectrum)
+ *
+ */
+void MainWindow::chartTypeChanged() const
 {
     const auto chartType{ chart->getChartType() };
     if (chartType == Chart::ChartType::plot)
-        chartTypeWidget->setText("Chart type: Plot");
+        chartTypeWidget->setText(u"Chart type: Plot"_s);
     else if (chartType == Chart::ChartType::spectrum)
-        chartTypeWidget->setText("Chart type: Spectrum");
+        chartTypeWidget->setText(u"Chart type: Spectrum"_s);
 }
 
 /**
@@ -395,11 +442,11 @@ void MainWindow::chartTypeChanged()
  *
  * @param point
  */
-void MainWindow::updateSelectedPoint(const QPointF point)
+void MainWindow::updateSelectedPoint(const QPointF point) const
 {
-    QString msg{ "x: " };
+    QString msg{ u"x: "_s };
     msg += QString::number(point.x());
-    msg += "     y: ";
+    msg += u"     y: "_s;
     msg += QString::number(point.y());
     statusBar->showMessage(msg);
 }

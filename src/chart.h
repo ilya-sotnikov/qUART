@@ -30,10 +30,6 @@ public:
     void setUpdateInterval(int msec) const;
     auto getUpdateInterval() const { return updateInterval; }
     void requestUpdate() { needsUpdate = true; }
-    void setLogarithmic(const bool log);
-    void setAutoscale(const bool autoscaleX, const bool autoscaleY);
-    void setAutoscaleX(const bool autoscale);
-    void setAutoscaleY(const bool autoscale);
     auto getAutoScaleX() const { return autoscaleX; }
     auto getAutoScaleY() const { return autoscaleY; }
 
@@ -55,9 +51,17 @@ private:
 public slots:
     void resetZoom();
     void addData(const QSharedPointer<const QList<qreal>> receivedData);
-    void setShowLastPoints(const qsizetype n) { chartDataContainer.setLastPointsCount(n); }
     void setAppendToPlot(const bool state) { appendToPlot = state; }
     void setAppendToSpectrum(const bool state) { appendToSpectrum = state; }
+    void setLogarithmic(const bool log);
+    void setAutoscale(const bool autoscaleX, const bool autoscaleY);
+    void setAutoscaleX(const bool autoscale);
+    void setAutoscaleY(const bool autoscale);
+    void setShowLastPoints(const qsizetype n)
+    {
+        chartDataContainer.setLastPointsCount(n);
+        needsUpdate = true;
+    }
 
 private slots:
     void updateSelectedPoint(const QCPDataSelection &selection) const;
