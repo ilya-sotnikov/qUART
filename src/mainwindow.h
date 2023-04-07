@@ -50,18 +50,20 @@ private:
     QCheckBox *autoscaleCheckboxX{ new QCheckBox{ "X" } };
     QCheckBox *autoscaleCheckboxY{ new QCheckBox{ "Y" } };
 
-    QString createFileDialog(QFileDialog::AcceptMode acceptMode, QString nameFilter,
-                             QString defaultSuffix);
+    QString createFileDialog(const QFileDialog::AcceptMode acceptMode, const QString &nameFilter,
+                             const QString &defaultSuffix);
+    std::unique_ptr<QTextStream, std::function<void(QTextStream *)>>
+    openFileStream(const QString &fileName, QIODevice::OpenMode flags);
 
 private slots:
     void serialConnect();
-    void serialDisconnect();
+    void serialDisconnect() const;
     void saveImage();
     void savePlotData();
     void openPlotData();
     void saveSpectrumData();
     void openSpectrumData();
-    void chartTypeChanged();
-    void updateSelectedPoint(const QPointF point);
+    void chartTypeChanged() const;
+    void updateSelectedPoint(const QPointF point) const;
 };
 #endif // MAINWINDOW_H

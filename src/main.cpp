@@ -1,11 +1,13 @@
 #include "mainwindow.h"
 
+using namespace Qt::Literals::StringLiterals;
+
 int main(int argc, char *argv[])
 {
-    QApplication a{ argc, argv };
+    const QApplication a{ argc, argv };
 
-    QCoreApplication::setOrganizationName("qUART");
-    QCoreApplication::setApplicationName("qUART");
+    QCoreApplication::setOrganizationName(u"qUART"_s);
+    QCoreApplication::setApplicationName(u"qUART"_s);
 
     MainWindow w;
     w.show();
