@@ -12,11 +12,11 @@ finish-args:
 modules:
   - name: qUART
     buildsystem: cmake-ninja
-    config-opts:
-      - -DCMAKE_BUILD_TYPE=Release
     build-options:
       build-args:
         - --share=network
+      config-opts:
+        - -DCMAKE_BUILD_TYPE=Release
     build-commands:
       - mkdir -p /app/share/applications
       - cp io.github.ilya_sotnikov.qUART.desktop /app/share/applications/
