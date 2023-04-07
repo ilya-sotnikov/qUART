@@ -25,6 +25,13 @@ public:
     };
     const auto &getSettings() const { return settings; };
 
+public slots:
+    void showDialog()
+    {
+        updateIndexes();
+        show();
+    }
+
 private:
     PortsInfoDialog *portsInfoDialog{ new PortsInfoDialog{ this } };
     Settings settings;
@@ -42,7 +49,8 @@ private:
     void loadSettings();
     void saveSettings() const;
     template<typename T>
-    void updateIndex(QComboBox *const comboBox, const T data);
+    void updateIndex(QComboBox *const comboBox, const T data) const;
+    void updateIndexes() const;
 
 private slots:
     void ok();

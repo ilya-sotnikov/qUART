@@ -127,8 +127,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
     connect(actionSaveSpectrum, &QAction::triggered, this, &MainWindow::saveSpectrumData);
     connect(actionOpenSpectrum, &QAction::triggered, this, &MainWindow::openSpectrumData);
     connect(actionSaveImage, &QAction::triggered, this, &MainWindow::saveImage);
-    connect(actionPortSettings, &QAction::triggered, portSettingsDialog, &PortSettingsDialog::show);
-    connect(actionDataSettings, &QAction::triggered, dataSettingsDialog, &DataSettingsDialog::show);
+    connect(actionPortSettings, &QAction::triggered, portSettingsDialog,
+            &PortSettingsDialog::showDialog);
+    connect(actionDataSettings, &QAction::triggered, dataSettingsDialog,
+            &DataSettingsDialog::showDialog);
 
     connect(chart, &Chart::selectedPointChanged, this, &MainWindow::updateSelectedPoint);
 

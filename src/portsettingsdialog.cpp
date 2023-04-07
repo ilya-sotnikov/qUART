@@ -150,7 +150,7 @@ void PortSettingsDialog::updateSettings()
  *
  */
 template<typename T>
-void PortSettingsDialog::updateIndex(QComboBox *const comboBox, const T data)
+void PortSettingsDialog::updateIndex(QComboBox *const comboBox, const T data) const
 {
     const auto index{ comboBox->findData(data) };
     if (index != -1)
@@ -158,7 +158,28 @@ void PortSettingsDialog::updateIndex(QComboBox *const comboBox, const T data)
 }
 
 /**
- * @brief Loads settings from a file and checks the correct boxes
+ * @brief Updates indexes of all combo boxes
+ *
+ */
+void PortSettingsDialog::updateIndexes() const
+{
+    const auto portNameIndex{ serialPortBox->findData(settings.name) };
+    if (portNameIndex == -1) {
+        serialPortBox->setEditable(true);
+        serialPortBox->setEditText(settings.name);
+    } else {
+        serialPortBox->setCurrentIndex(portNameIndex);
+    }
+
+    updateIndex(baudRateBox, settings.baudRate);
+    updateIndex(dataBitsBox, settings.dataBits);
+    updateIndex(parityBox, settings.parity);
+    updateIndex(stopBitsBox, settings.stopBits);
+    updateIndex(flowControlBox, settings.flowControl);
+}
+
+/**
+ * @brief Loads settings from a file
  *
  */
 void PortSettingsDialog::loadSettings()
@@ -179,21 +200,7 @@ void PortSettingsDialog::loadSettings()
     settings.flowControl = static_cast<QSerialPort::FlowControl>(
             settingsFile.value(u"flowControl"_s, u"0"_s).toInt());
 
-    const auto portNameIndex{ serialPortBox->findData(settings.name) };
-    if (portNameIndex == -1) {
-        serialPortBox->setEditable(true);
-        serialPortBox->setEditText(settings.name);
-    } else {
-        serialPortBox->setCurrentIndex(portNameIndex);
-    }
-
     settingsFile.endGroup();
-
-    updateIndex(baudRateBox, settings.baudRate);
-    updateIndex(dataBitsBox, settings.dataBits);
-    updateIndex(parityBox, settings.parity);
-    updateIndex(stopBitsBox, settings.stopBits);
-    updateIndex(flowControlBox, settings.flowControl);
 }
 
 /**

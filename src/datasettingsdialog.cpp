@@ -70,7 +70,7 @@ void DataSettingsDialog::updateSettings()
  * @param data Data from QComboBox
  */
 template<typename T>
-void DataSettingsDialog::updateIndex(QComboBox *const comboBox, const T data)
+void DataSettingsDialog::updateIndex(QComboBox *const comboBox, const T data) const
 {
     const auto index{ comboBox->findData(data) };
     if (index != -1)
@@ -78,7 +78,17 @@ void DataSettingsDialog::updateIndex(QComboBox *const comboBox, const T data)
 }
 
 /**
- * @brief Loads settings from a file and checks the correct boxes
+ * @brief Updates indexes of all combo boxes
+ *
+ */
+void DataSettingsDialog::updateIndexes() const
+{
+    updateIndex(dataTypeBox, settings.dataType);
+    updateIndex(byteOrderBox, settings.byteOrder);
+}
+
+/**
+ * @brief Loads settings from a file
  *
  */
 void DataSettingsDialog::loadSettings()
@@ -90,9 +100,6 @@ void DataSettingsDialog::loadSettings()
     settings.byteOrder = static_cast<QDataStream::ByteOrder>(
             settingsFile.value(u"byteOrder"_s, QDataStream::LittleEndian).toInt());
     settingsFile.endGroup();
-
-    updateIndex(dataTypeBox, settings.dataType);
-    updateIndex(byteOrderBox, settings.byteOrder);
 }
 
 /**
