@@ -9,6 +9,7 @@
 
 /**
  * @brief Displays a chart (in plot mode or spectrum mode)
+ *
  */
 class Chart : public QWidget
 {
@@ -17,60 +18,24 @@ class Chart : public QWidget
 public:
     explicit Chart(QWidget *parent = nullptr);
 
-    enum class ChartType { plot, spectrum };
+    enum ChartType { plot, spectrum };
     Q_ENUM(ChartType)
-    auto getChartType() const { return chartType; };
-    auto getPlotData() const { return chartDataContainer.getPlot(); }
-    auto getSpectrumData() const { return chartDataContainer.getSpectrum(); }
-    void updateChart();
+    auto getChartType() const { return chartType; }
+    const auto &getPlotData() const { return chartDataContainer.getPlot(); }
+    const auto &getSpectrumData() const { return chartDataContainer.getSpectrum(); }
+    void updateChart() const;
     void changeType();
     void clear();
     void setRawSpectrumData(const QCPGraphDataContainer &rawData);
-    void setUpdateInterval(int msec);
-    auto getUpdateInterval() const { return updateInterval; };
+    void setUpdateInterval(int msec) const;
+    auto getUpdateInterval() const { return updateInterval; }
     void requestUpdate() { needsUpdate = true; }
-    void setLogarithmic(bool log)
-    {
-        if (log) {
-            customPlot->yAxis->setScaleType(QCPAxis::stLogarithmic);
-            customPlot->yAxis->setTicker(QSharedPointer<QCPAxisTickerLog>{ new QCPAxisTickerLog });
-        } else {
-            customPlot->yAxis->setScaleType(QCPAxis::stLinear);
-            customPlot->yAxis->setTicker(QSharedPointer<QCPAxisTicker>{ new QCPAxisTicker });
-        }
-
-        needsUpdate = true;
-    };
-    void setAutoscale(bool x, bool y)
-    {
-        setAutoscaleX(x);
-        setAutoscaleY(y);
-    };
-    void setAutoscaleX(bool x)
-    {
-        auto prevAutoScaleX{ autoscaleX };
-        autoscaleX = x;
-
-        needsUpdate = true;
-
-        if ((prevAutoScaleX != autoscaleX))
-            emit autoscaleChanged(autoscaleX, autoscaleY);
-    }
-    void setAutoscaleY(bool y)
-    {
-        auto prevAutoScaleY{ autoscaleY };
-        autoscaleY = y;
-
-        needsUpdate = true;
-
-        if ((prevAutoScaleY != autoscaleY))
-            emit autoscaleChanged(autoscaleX, autoscaleY);
-    }
-    bool getAutoScaleX() { return autoscaleX; };
-    bool getAutoScaleY() { return autoscaleY; };
-
-    bool appendToPlot{ true };
-    bool appendToSpectrum{ true };
+    void setLogarithmic(const bool log);
+    void setAutoscale(const bool autoscaleX, const bool autoscaleY);
+    void setAutoscaleX(const bool autoscale);
+    void setAutoscaleY(const bool autoscale);
+    auto getAutoScaleX() const { return autoscaleX; }
+    auto getAutoScaleY() const { return autoscaleY; }
 
 private:
     QCustomPlot *customPlot{ new QCustomPlot{ this } };
@@ -78,24 +43,28 @@ private:
     Chart::ChartType chartType{ ChartType::plot };
     ChartDataContainer chartDataContainer;
     QTimer *timer{ new QTimer{ this } };
+    bool appendToPlot{ true };
+    bool appendToSpectrum{ true };
     bool autoscaleX{ true };
     bool autoscaleY{ true };
     int updateInterval{ 33 };
     bool needsUpdate{ false };
-    int defaultTickLength{ graph->keyAxis()->tickLengthIn() };
-    int defaultSubTickLength{ graph->keyAxis()->subTickLengthIn() };
+    const int defaultTickLength{ graph->keyAxis()->tickLengthIn() };
+    const int defaultSubTickLength{ graph->keyAxis()->subTickLengthIn() };
 
 public slots:
     void resetZoom();
     void addData(const QSharedPointer<const QList<qreal>> receivedData);
-    void setShowLastPoints(qsizetype n) { chartDataContainer.setLastPointsCount(n); }
+    void setShowLastPoints(const qsizetype n) { chartDataContainer.setLastPointsCount(n); }
+    void setAppendToPlot(const bool state) { appendToPlot = state; }
+    void setAppendToSpectrum(const bool state) { appendToSpectrum = state; }
 
 private slots:
-    void updateSelectedPoint(const QCPDataSelection &selection);
+    void updateSelectedPoint(const QCPDataSelection &selection) const;
 
 signals:
-    void selectedPointChanged(const QPointF selectedPoint);
-    void autoscaleChanged(bool x, bool y);
+    void selectedPointChanged(const QPointF selectedPoint) const;
+    void autoscaleChanged(const bool autoscaleX, const bool autoscaleY) const;
 };
 
 #endif // CHART_H

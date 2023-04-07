@@ -123,10 +123,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
     connect(actionChartType, &QAction::triggered, chart, &Chart::changeType);
     connect(actionChartType, &QAction::triggered, this, &MainWindow::chartTypeChanged);
     connect(actionResetZoom, &QAction::triggered, chart, &Chart::resetZoom);
-    connect(actionAppendToPlot, &QAction::triggered, this,
-            [this] { chart->appendToPlot = !chart->appendToPlot; });
-    connect(actionAppendToSpectrum, &QAction::triggered, this,
-            [this] { chart->appendToSpectrum = !chart->appendToSpectrum; });
+    connect(actionAppendToPlot, &QAction::toggled, chart, &Chart::setAppendToPlot);
+    connect(actionAppendToSpectrum, &QAction::toggled, chart, &Chart::setAppendToPlot);
 
     connect(actionSavePlot, &QAction::triggered, this, &MainWindow::savePlotData);
     connect(actionOpenPlot, &QAction::triggered, this, &MainWindow::openPlotData);
@@ -176,15 +174,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
             chart->setLogarithmic(false);
     });
 
-    connect(autoscaleCheckboxX, &QCheckBox::stateChanged, this,
-            [this](int state) { chart->setAutoscaleX(state); });
+    connect(autoscaleCheckboxX, &QCheckBox::stateChanged, chart, &Chart::setAutoscaleX);
+    connect(autoscaleCheckboxY, &QCheckBox::stateChanged, chart, &Chart::setAutoscaleY);
 
-    connect(autoscaleCheckboxY, &QCheckBox::stateChanged, this,
-            [this](int state) { chart->setAutoscaleY(state); });
-
-    connect(chart, &Chart::autoscaleChanged, this, [this](bool x, bool y) {
-        autoscaleCheckboxX->setChecked(x);
-        autoscaleCheckboxY->setChecked(y);
+    connect(chart, &Chart::autoscaleChanged, this, [this](bool autoscaleX, bool autoscaleY) {
+        autoscaleCheckboxX->setChecked(autoscaleX);
+        autoscaleCheckboxY->setChecked(autoscaleY);
     });
 }
 
