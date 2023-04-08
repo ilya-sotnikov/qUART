@@ -84,7 +84,13 @@ void SerialTransceiver::deserializeByteArray(QByteArray &byteArray, QList<qreal>
 
     T data;
     QDataStream dataStream{ &byteArray, QIODevice::ReadOnly };
-    dataStream.setByteOrder(byteOrder);
+
+    // since data is received in reverse order
+    if (byteOrder == QDataStream::LittleEndian)
+        dataStream.setByteOrder(QDataStream::BigEndian);
+    else
+        dataStream.setByteOrder(QDataStream::LittleEndian);
+
     if (dataType == DataTypes::f32)
         dataStream.setFloatingPointPrecision(QDataStream::SinglePrecision);
     while (!dataStream.atEnd()) {
