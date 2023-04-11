@@ -90,7 +90,7 @@ If you have already downloaded QCustomPlot you can set `QCUSTOMPLOT_SRC_PATH` in
 1. `git clone https://github.com/ilya-sotnikov/qUART`
 2. `cd qUART`
 3. `mkdir build && cd build`
-4. `cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build .`
+4. `cmake -DCMAKE_BUILD_TYPE=Release -G Ninja .. && cmake --build .`
 5. `cmake --install .`
 
 ## Contributing
