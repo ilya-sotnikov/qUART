@@ -3,12 +3,17 @@
 
 #include "qcustomplot.h"
 
-/**
- * @brief Subclass of QCPGraph to select data by their keys (not by a key-value pair)
- *
- */
 class CustomGraph : public QCPGraph
 {
+public:
+    void rescalePlotKeyAxis(bool onlyEnlarge = false) { rescaleKeyAxis(onlyEnlarge); };
+    void rescalePlotValueAxis(bool onlyEnlarge = false, bool inKeyRange = false)
+    {
+        rescaleValueAxis(onlyEnlarge, inKeyRange);
+    };
+    void rescaleSpectrumKeyAxis(bool onlyEnlarge = false);
+    void rescaleSpectrumValueAxis(bool onlyEnlarge = false, bool inKeyRange = false);
+
 protected:
     using QCPGraph::QCPGraph;
     double pointDistance(const QPointF &pixelPoint,

@@ -105,3 +105,40 @@ double CustomGraph::selectTest(const QPointF &pos, bool onlySelectable, QVariant
     } else
         return -1;
 }
+
+/**
+ * @brief Rescales the key axis of the spectrum so the whole spectrum is visible
+ *
+ * @param onlyEnlarge If true don't shrink axis
+ */
+void CustomGraph::rescaleSpectrumKeyAxis(bool onlyEnlarge)
+{
+    rescaleKeyAxis(onlyEnlarge);
+    auto keyRange{ keyAxis()->range() };
+    keyRange.expand(keyRange.lower - 10);
+    keyRange.expand(keyRange.upper + 10);
+    keyAxis()->setRange(keyRange);
+};
+
+/**
+ * @brief Rescales the value axis of the spectrum so the whole spectrum is visible.
+ *
+ * @param onlyEnlarge If true don't shrink axis
+ * @param inKeyRange If true then only the data points which are in the currently visible axis
+ * range are considered.
+ */
+void CustomGraph::rescaleSpectrumValueAxis(bool onlyEnlarge, bool inKeyRange)
+{
+    // a hack for rescaleValueAxis in case of !QCPRange::validRange(newRange)
+    valueAxis()->setRange(QCPRange{ 0, 2 });
+    rescaleValueAxis(onlyEnlarge, inKeyRange);
+    auto valueRange{ valueAxis()->range() };
+    if (valueAxis()->scaleType() == QCPAxis::stLinear) {
+        valueRange.expand(0);
+        valueRange.expand(valueRange.upper + 1);
+    } else { // log
+        valueRange.expand(0.1);
+        valueRange.expand(100);
+    }
+    valueAxis()->setRange(valueRange);
+}

@@ -50,16 +50,19 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
  */
 void Chart::updateChart() const
 {
-    if (chartType == ChartType::plot)
+    if (chartType == ChartType::plot) {
         graph->setData(chartDataContainer.getPlotLast());
-    else if (chartType == ChartType::spectrum)
+        if (autoscaleX)
+            graph->rescalePlotKeyAxis();
+        if (autoscaleY)
+            graph->rescalePlotValueAxis();
+    } else if (chartType == ChartType::spectrum) {
         graph->setData(chartDataContainer.getSpectrumLast());
-
-    if (autoscaleX)
-        graph->keyAxis()->rescale(true);
-
-    if (autoscaleY)
-        graph->valueAxis()->rescale(true);
+        if (autoscaleX)
+            graph->rescaleSpectrumKeyAxis();
+        if (autoscaleY)
+            graph->rescaleSpectrumValueAxis();
+    }
 
     const auto selection{ graph->selection() };
     if (!selection.isEmpty())
@@ -136,8 +139,7 @@ void Chart::setRawSpectrumData(const QCPGraphDataContainer &rawData)
 void Chart::resetZoom()
 {
     setAutoscale(true, true);
-    customPlot->rescaleAxes(true);
-    customPlot->replot();
+    needsUpdate = true;
 }
 
 /**
