@@ -150,14 +150,24 @@ void SerialTransceiver::receiveData()
         bufferArray.clear();
 
         for (const auto byte : byteArray) {
-            if (QChar::isSpace(byte))
+            if (QChar::isSpace(byte)) {
                 containsSeparator = true;
+                break;
+            }
         }
         if (!containsSeparator)
             bufferArray.prepend(byteArray);
         else {
             double num;
             bool ok;
+            if (!QChar::isSpace(byteArray.back())) {
+                for (auto i{ byteArray.size() - 1 }; i > 0; --i) {
+                    if (QChar::isSpace(byteArray.at(i))) {
+                        bufferArray.prepend(byteArray.last(byteArray.size() - i));
+                        byteArray.truncate(i);
+                    }
+                }
+            }
             const auto stringList{ QString{ byteArray }.split(QRegularExpression{ u"\\s+"_s },
                                                               Qt::SkipEmptyParts) };
             for (const auto &str : stringList) {

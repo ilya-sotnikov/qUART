@@ -118,10 +118,10 @@ void ChartDataContainer::appendPlot(const QList<qreal> &data, const bool append,
 
         if (appendToLast)
             plotDataLast->add(QCPGraphData{ key, value });
-
-        if (append || appendToLast)
-            ++currentPlotDataCount;
     }
+
+    if (append || appendToLast)
+        currentPlotDataCount += dataSize;
 
     if (lastPointsCount <= 0)
         return;
