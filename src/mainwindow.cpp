@@ -16,10 +16,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
     setStatusBar(statusBar);
 
     actionConnect->setIcon(QIcon{ u":actionConnect.png"_s });
+    actionConnect->setShortcut(QKeySequence{ u"Alt+C"_s });
     actionDisconnect->setIcon(QIcon{ u":actionDisconnect.png"_s });
+    actionDisconnect->setShortcut(QKeySequence{ u"Alt+D"_s });
     actionClear->setIcon(QIcon{ u":actionClear.png"_s });
+    actionClear->setShortcut(QKeySequence{ u"Ctrl+L"_s });
     actionChartType->setIcon(QIcon{ u":actionChartType.png"_s });
+    actionChartType->setShortcut(QKeySequence{ u"Ctrl+T"_s });
     actionResetZoom->setIcon(QIcon{ u":actionResetZoom.png"_s });
+    actionResetZoom->setShortcut(QKeySequence{ u"Ctrl+R"_s });
     actionAppendToPlot->setIcon(QIcon{ u":actionAppendToPlot.png"_s });
     actionAppendToPlot->setCheckable(true);
     actionAppendToPlot->setChecked(true);
