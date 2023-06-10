@@ -113,6 +113,9 @@ double CustomGraph::selectTest(const QPointF &pos, bool onlySelectable, QVariant
  */
 void CustomGraph::rescaleSpectrumKeyAxis(bool onlyEnlarge)
 {
+    if (dataCount() == 0)
+        return;
+
     rescaleKeyAxis(onlyEnlarge);
     auto keyRange{ keyAxis()->range() };
     keyRange.expand(keyRange.lower - 10);
@@ -129,6 +132,9 @@ void CustomGraph::rescaleSpectrumKeyAxis(bool onlyEnlarge)
  */
 void CustomGraph::rescaleSpectrumValueAxis(bool onlyEnlarge, bool inKeyRange)
 {
+    if (dataCount() == 0)
+        return;
+
     // a hack for rescaleValueAxis in case of !QCPRange::validRange(newRange)
     valueAxis()->setRange(QCPRange{ 0, 2 });
     rescaleValueAxis(onlyEnlarge, inKeyRange);
