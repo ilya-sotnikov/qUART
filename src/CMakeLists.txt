@@ -21,6 +21,8 @@ set(PROJECT_SOURCES
         portsinfodialog.cpp
         textwidget.h
         textwidget.cpp
+        customaction.h
+        customaction.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/../icons/icons.qrc
 )
 

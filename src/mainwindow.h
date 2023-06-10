@@ -6,6 +6,7 @@
 #include "portsettingsdialog.h"
 #include "serialtransceiver.h"
 #include "textwidget.h"
+#include "customaction.h"
 
 #include <qmainwindow.h>
 #include <qstatusbar.h>
@@ -26,20 +27,20 @@ private:
     TextWidget *chartTypeWidget{ new TextWidget{ this } };
     QStatusBar *statusBar{ new QStatusBar{ this } };
 
-    QAction *actionConnect{ new QAction{ "Connect", this } };
-    QAction *actionDisconnect{ new QAction{ "Disconnect", this } };
-    QAction *actionPortSettings{ new QAction{ "Port", this } };
-    QAction *actionClear{ new QAction{ "Clear", this } };
-    QAction *actionSaveImage{ new QAction{ "Save Image", this } };
-    QAction *actionSavePlot{ new QAction{ "Save Plot", this } };
-    QAction *actionOpenPlot{ new QAction{ "Open Plot", this } };
-    QAction *actionSaveSpectrum{ new QAction{ "Save Spectrum", this } };
-    QAction *actionOpenSpectrum{ new QAction{ "Open Spectrum", this } };
-    QAction *actionDataSettings{ new QAction{ "Data", this } };
-    QAction *actionChartType{ new QAction{ "Chart type", this } };
-    QAction *actionResetZoom{ new QAction{ "Reset zoom", this } };
-    QAction *actionAppendToPlot{ new QAction{ "Append to plot", this } };
-    QAction *actionAppendToSpectrum{ new QAction{ "Append to spectrum", this } };
+    CustomAction *actionConnect{ new CustomAction{ "Connect", this } };
+    CustomAction *actionDisconnect{ new CustomAction{ "Disconnect", this } };
+    CustomAction *actionPortSettings{ new CustomAction{ "Port", this } };
+    CustomAction *actionClear{ new CustomAction{ "Clear", this } };
+    CustomAction *actionSaveImage{ new CustomAction{ "Save Image", this } };
+    CustomAction *actionSavePlot{ new CustomAction{ "Save Plot", this } };
+    CustomAction *actionOpenPlot{ new CustomAction{ "Open Plot", this } };
+    CustomAction *actionSaveSpectrum{ new CustomAction{ "Save Spectrum", this } };
+    CustomAction *actionOpenSpectrum{ new CustomAction{ "Open Spectrum", this } };
+    CustomAction *actionDataSettings{ new CustomAction{ "Data", this } };
+    CustomAction *actionChartType{ new CustomAction{ "Chart type", this } };
+    CustomAction *actionResetZoom{ new CustomAction{ "Reset zoom", this } };
+    CustomAction *actionAppendToPlot{ new CustomAction{ "Append to plot", this } };
+    CustomAction *actionAppendToSpectrum{ new CustomAction{ "Append to spectrum", this } };
     QLineEdit *sendNumLineEdit{ new QLineEdit{ this } };
     QCheckBox *sendSignedCheckBox{ new QCheckBox{ "Signed" } };
     QLineEdit *sendStringLineEdit{ new QLineEdit{ this } };
