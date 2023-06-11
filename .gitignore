@@ -6,4 +6,5 @@ compile_commands.json
 todo.txt
 *.flatpak
 io.github.ilya_sotnikov
-qUART*
+*.AppImage
+AppDir
