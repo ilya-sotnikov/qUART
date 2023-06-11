@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=qUART
+Type=Application
+Categories=Development
+Exec=qUART
+Icon=app
+Terminal=false
