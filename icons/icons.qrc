@@ -1,13 +1,21 @@
 <RCC>
     <qresource prefix="/">
-        <file>actionConnect.png</file>
-        <file>actionDisconnect.png</file>
-        <file>actionClear.png</file>
-        <file>actionChartType.png</file>
-        <file>actionResetZoom.png</file>
-        <file>actionHideMarker.png</file>
-        <file>actionAppendToPlot.png</file>
-        <file>actionAppendToSpectrum.png</file>
+        <file>actionConnectBlack.png</file>
+        <file>actionConnectWhite.png</file>
+        <file>actionDisconnectBlack.png</file>
+        <file>actionDisconnectWhite.png</file>
+        <file>actionClearBlack.png</file>
+        <file>actionClearWhite.png</file>
+        <file>actionChartTypeBlack.png</file>
+        <file>actionChartTypeWhite.png</file>
+        <file>actionResetZoomBlack.png</file>
+        <file>actionResetZoomWhite.png</file>
+        <file>actionHideMarkerBlack.png</file>
+        <file>actionHideMarkerWhite.png</file>
+        <file>actionAppendToPlotBlack.png</file>
+        <file>actionAppendToPlotWhite.png</file>
+        <file>actionAppendToSpectrumBlack.png</file>
+        <file>actionAppendToSpectrumWhite.png</file>
         <file>app.png</file>
     </qresource>
 </RCC>

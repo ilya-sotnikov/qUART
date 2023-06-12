@@ -15,20 +15,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
 
     setStatusBar(statusBar);
 
-    actionConnect->setIcon(QIcon{ u":actionConnect.png"_s });
+    actionConnect->setIconWithTheme(u":actionConnect.png"_s);
     actionConnect->setShortcut(QKeySequence{ u"Alt+C"_s }, true);
-    actionDisconnect->setIcon(QIcon{ u":actionDisconnect.png"_s });
+    actionDisconnect->setIconWithTheme(u":actionDisconnect.png"_s);
     actionDisconnect->setShortcut(QKeySequence{ u"Alt+D"_s }, true);
-    actionClear->setIcon(QIcon{ u":actionClear.png"_s });
+    actionClear->setIconWithTheme(u":actionClear.png"_s);
     actionClear->setShortcut(QKeySequence{ u"Ctrl+L"_s }, true);
-    actionChartType->setIcon(QIcon{ u":actionChartType.png"_s });
+    actionChartType->setIconWithTheme(u":actionChartType.png"_s);
     actionChartType->setShortcut(QKeySequence{ u"Ctrl+T"_s }, true);
-    actionResetZoom->setIcon(QIcon{ u":actionResetZoom.png"_s });
+    actionResetZoom->setIconWithTheme(u":actionResetZoom.png"_s);
     actionResetZoom->setShortcut(QKeySequence{ u"Ctrl+R"_s }, true);
-    actionAppendToPlot->setIcon(QIcon{ u":actionAppendToPlot.png"_s });
+    actionAppendToPlot->setIconWithTheme(u":actionAppendToPlot.png"_s);
     actionAppendToPlot->setCheckable(true);
     actionAppendToPlot->setChecked(true);
-    actionAppendToSpectrum->setIcon(QIcon{ u":actionAppendToSpectrum.png"_s });
+    actionAppendToSpectrum->setIconWithTheme(u":actionAppendToSpectrum.png"_s);
     actionAppendToSpectrum->setCheckable(true);
     actionAppendToSpectrum->setChecked(true);
 
