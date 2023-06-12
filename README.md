@@ -68,11 +68,21 @@ If you don't need information about the frequency distribution of the data, you 
 
 Prebuilt executables are in the latest release.
 
-For GNU/Linux x86-64 there is a flatpak bundle, to install it:
+### GNU/Linux x86-64
 
-`flatpak install --user qUART-linux_x86-64.flatpak`
+Flatpak bundle:
 
-If you don't like flatpaks, you can build qUART yourself, the process is very simple. See the build instructions.
+`flatpak install qUART-linux_x86-64.flatpak`
+
+AppImage:
+
+`chmod u+x qUART-linux_x86-64.AppImage`
+
+`./qUART-linux_x86-64.AppImage`
+
+You can build qUART yourself, the process is very simple. See the build instructions.
+
+### Windows 10 or later
 
 For Windows x86-64 there is a zip archive. Just unpack it and run qUART.exe.
 
