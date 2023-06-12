@@ -23,6 +23,10 @@ set(PROJECT_SOURCES
         textwidget.cpp
         customaction.h
         customaction.cpp
+        themeinfo.h
+        themeinfo.cpp
+        customplot.h
+        customplot.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/../icons/icons.qrc
 )
 

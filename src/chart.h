@@ -3,6 +3,7 @@
 
 #include "chartdatacontainer.h"
 #include "customgraph.h"
+#include "customplot.h"
 
 #include "qcustomplot.h"
 #include <qwidget.h>
@@ -34,7 +35,7 @@ public:
     auto getAutoScaleY() const { return autoscaleY; }
 
 private:
-    QCustomPlot *customPlot{ new QCustomPlot{ this } };
+    CustomPlot *customPlot{ new CustomPlot{ this } };
     CustomGraph *graph{ new CustomGraph{ customPlot->xAxis, customPlot->yAxis } };
     Chart::ChartType chartType{ ChartType::plot };
     ChartDataContainer chartDataContainer;

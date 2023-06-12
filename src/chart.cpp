@@ -2,24 +2,8 @@
 
 Chart::Chart(QWidget *parent) : QWidget{ parent }
 {
-    constexpr qreal lineWidth{ 1 };
-    constexpr qreal plotScatterSize{ 10 };
-    constexpr auto plotSelectionColor{ QColor{ 80, 80, 255 } };
-
     const auto layout{ new QHBoxLayout{ this } };
     layout->addWidget(customPlot);
-
-    customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-    customPlot->setSelectionTolerance(20);
-    customPlot->setAntialiasedElements(QCP::aePlottables);
-
-    graph->setSelectable(QCP::stSingleData);
-    graph->setPen(QPen{ QBrush{ Qt::black }, lineWidth });
-    graph->setScatterStyle(
-            QCPScatterStyle{ QCPScatterStyle::ssCross, Qt::transparent, plotScatterSize });
-    graph->selectionDecorator()->setScatterStyle(QCPScatterStyle{
-            QCPScatterStyle::ssCross, QPen{ QBrush{ plotSelectionColor }, lineWidth + 1 },
-            QBrush{ plotSelectionColor }, plotScatterSize });
 
     customPlot->replot();
 

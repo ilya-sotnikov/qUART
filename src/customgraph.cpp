@@ -1,4 +1,20 @@
 #include "customgraph.h"
+#include "themeinfo.h"
+
+CustomGraph::CustomGraph(QCPAxis *keyAxis, QCPAxis *valueAxis) : QCPGraph{ keyAxis, valueAxis }
+{
+    constexpr qreal lineWidth{ 1 };
+    constexpr qreal plotScatterSize{ 10 };
+    constexpr auto plotSelectionColor{ QColor{ 80, 80, 255 } };
+
+    setSelectable(QCP::stSingleData);
+    setPen(QPen{ QBrush{ Qt::black }, lineWidth });
+    setScatterStyle(QCPScatterStyle{ QCPScatterStyle::ssCross, Qt::transparent, plotScatterSize });
+    selectionDecorator()->setScatterStyle(QCPScatterStyle{
+            QCPScatterStyle::ssCross, QPen{ QBrush{ plotSelectionColor }, lineWidth + 1 },
+            QBrush{ plotSelectionColor }, plotScatterSize });
+    setPen(QPen{ ThemeInfo::windowTextColor() });
+}
 
 /**
  * @brief Calculates the distance between the selected point's key and the data on the chart

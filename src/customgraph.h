@@ -6,6 +6,8 @@
 class CustomGraph : public QCPGraph
 {
 public:
+    explicit CustomGraph(QCPAxis *keyAxis, QCPAxis *valueAxis);
+
     void rescalePlotKeyAxis(bool onlyEnlarge = false) { rescaleKeyAxis(onlyEnlarge); };
     void rescalePlotValueAxis(bool onlyEnlarge = false, bool inKeyRange = false)
     {
