@@ -29,4 +29,4 @@ modules:
       - type: file
         path: io.github.ilya_sotnikov.qUART.desktop
       - type: file
-        path: ../../icons/app.png
+        path: ../../../icons/app.png

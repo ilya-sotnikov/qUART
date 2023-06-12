@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 name="qUART"
 
 deploy_dir=`pwd`
