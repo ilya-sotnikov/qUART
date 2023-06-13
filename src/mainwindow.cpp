@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
     const auto menuBar{ new QMenuBar{ this } };
     const auto menuFile{ new QMenu{ u"File"_s, menuBar } };
     const auto menuSettings{ new QMenu{ u"Settings"_s, menuBar } };
+    const auto menuHelp{ new CustomAction{ u"Help"_s, menuBar } };
     setMenuBar(menuBar);
 
     setStatusBar(statusBar);
@@ -37,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
 
     menuBar->addAction(menuFile->menuAction());
     menuBar->addAction(menuSettings->menuAction());
+    menuBar->addAction(menuHelp);
     menuFile->addAction(actionSavePlot);
     menuFile->addAction(actionOpenPlot);
     menuFile->addAction(actionSaveSpectrum);
@@ -177,6 +179,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow{ parent }
     connect(logScaleCheckBox, &QCheckBox::stateChanged, chart, &Chart::setLogarithmic);
     connect(autoscaleCheckboxX, &QCheckBox::stateChanged, chart, &Chart::setAutoscaleX);
     connect(autoscaleCheckboxY, &QCheckBox::stateChanged, chart, &Chart::setAutoscaleY);
+
+    connect(menuHelp, &QAction::triggered, this, [this]() {
+        const auto helpString{ u"License:\n"_s
+                               u"qUART is licensed under GPL-3.0\n"_s
+                               u"Qt 6 is licensed under LGPL-3.0\n"_s
+                               u"QCustomPlot is licensed under GPL-3.0\n"_s
+                               u"Material Symbols are licensed under Apache-2.0\n\n"_s
+                               u"GitHub:\n"_s
+                               u"https://github.com/ilya-sotnikov/qUART"_s };
+        QMessageBox::information(this, u"Help"_s, helpString);
+    });
 }
 
 /**
