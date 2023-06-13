@@ -6,13 +6,13 @@ Real-time graph and spectrum (of values, not amplitudes) serial plotter written 
 ### Data representation
 | Plot | Spec |
 | --- | --- |
-| ![plot](https://user-images.githubusercontent.com/93074662/230701589-416c601c-b989-4ac9-9ae6-a1228335f202.png) | ![spectrum](https://user-images.githubusercontent.com/93074662/230701486-989114de-f245-4ae4-8270-8f248d615ca9.png) |
+| ![plot](https://github.com/ilya-sotnikov/qUART/assets/93074662/6db5cbd7-3270-4cf9-bebd-8e14cb34ac47) | ![spectrum](https://github.com/ilya-sotnikov/qUART/assets/93074662/3dd3f165-c832-42e7-809e-4dc748378c19) |
 
 ### Settings
 
 | Conf | Info | Data |
 | --- | --- | --- |
-| ![conf](https://user-images.githubusercontent.com/93074662/230701678-89395b29-93e0-41fe-aa9a-7181ce4a9455.png) | ![info](https://user-images.githubusercontent.com/93074662/230701835-5f8053c5-d2eb-4153-9793-53d716ca4d12.png) | ![data](https://user-images.githubusercontent.com/93074662/230701883-89a8a6d5-69d0-4050-ac80-130be5deb8e8.png) |
+| ![conf](https://github.com/ilya-sotnikov/qUART/assets/93074662/cd44bc96-aa0e-49cf-bbcc-9b37ff730c1e) | ![info](https://github.com/ilya-sotnikov/qUART/assets/93074662/aac73184-8d13-484f-9542-d0f8dfedfc14) | ![data](https://github.com/ilya-sotnikov/qUART/assets/93074662/ec9eb716-a51d-4c41-b061-200ae6988947) |
 
 ## Controls
 
