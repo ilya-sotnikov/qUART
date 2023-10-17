@@ -32,7 +32,7 @@ Chart::Chart(QWidget *parent) : QWidget{ parent }
  * @brief Updates the data on the chart, rescales axes if needed, updates the selection and replots
  *
  */
-void Chart::updateChart() const
+void Chart::updateChart()
 {
     if (chartType == ChartType::plot) {
         graph->setData(chartDataContainer.getPlotLast());
@@ -132,7 +132,7 @@ void Chart::resetZoom()
  * @param selection
  *
  */
-void Chart::updateSelectedPoint(const QCPDataSelection &selection) const
+void Chart::updateSelectedPoint(const QCPDataSelection &selection)
 {
     if (selection.isEmpty())
         return;

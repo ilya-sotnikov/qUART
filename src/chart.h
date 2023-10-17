@@ -24,7 +24,7 @@ public:
     auto getChartType() const { return chartType; }
     const auto &getPlotData() const { return chartDataContainer.getPlot(); }
     const auto &getSpectrumData() const { return chartDataContainer.getSpectrum(); }
-    void updateChart() const;
+    void updateChart();
     void changeType();
     void clear();
     void setRawSpectrumData(const QCPGraphDataContainer &rawData);
@@ -65,11 +65,11 @@ public slots:
     }
 
 private slots:
-    void updateSelectedPoint(const QCPDataSelection &selection) const;
+    void updateSelectedPoint(const QCPDataSelection &selection);
 
 signals:
-    void selectedPointChanged(const QPointF selectedPoint) const;
-    void autoscaleChanged(const bool autoscaleX, const bool autoscaleY) const;
+    void selectedPointChanged(const QPointF selectedPoint);
+    void autoscaleChanged(const bool autoscaleX, const bool autoscaleY);
 };
 
 #endif // CHART_H

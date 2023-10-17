@@ -149,7 +149,7 @@ void SerialTransceiver::receiveData()
         byteArray.prepend(bufferArray);
         bufferArray.clear();
 
-        for (const auto byte : byteArray) {
+        for (const auto byte : qAsConst(byteArray)) {
             if (QChar::isSpace(byte)) {
                 containsSeparator = true;
                 break;

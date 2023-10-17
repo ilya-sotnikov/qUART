@@ -56,7 +56,7 @@ private slots:
     void receiveData();
 
 signals:
-    void newDataAvailable(const QSharedPointer<const QList<qreal>> dataList) const;
+    void newDataAvailable(const QSharedPointer<const QList<qreal>> dataList);
 };
 
 #endif // SERIALTRANSCEIVER_H
