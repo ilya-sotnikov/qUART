@@ -24,7 +24,6 @@ set(PROJECT_SOURCES
         customaction.h
         customaction.cpp
         themeinfo.h
-        themeinfo.cpp
         customplot.h
         customplot.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/../icons/icons.qrc
@@ -32,7 +31,7 @@ set(PROJECT_SOURCES
 
 qt_add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::SerialPort  QCustomPlot)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::SerialPort QCustomPlot)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
@@ -45,8 +44,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4)
 else()
-    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
-    set(SANITIZERS "-fsanitize=address,undefined,leak")
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic)
+    set(SANITIZERS "-fsanitize=address,undefined")
     target_compile_options(${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${SANITIZERS}>")
     target_link_options(${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${SANITIZERS}>")
 endif()
